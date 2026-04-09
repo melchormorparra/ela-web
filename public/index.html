@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuronas con Chispa - Asociación para la investigación de la ELA</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="/" class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Neuronas con Chispa</span>
+                </a>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#sobre-nosotros">Quiénes Somos</a></li>
+                    <li><a href="#ela">Qué es la ELA</a></li>
+                    <li><a href="#tienda">Tienda</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#donar">Donar</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <a href="#" id="loginBtn"><i class="fas fa-user"></i> Iniciar sesión</a>
+                    </li>
+                </ul>
+                <div class="header-actions">
+                    <button class="cart-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <a href="/admin.html" class="admin-link" id="adminLink" style="display:none;">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>Neuronas con Chispa</h1>
+                <p class="tagline">Asociación para la investigación de la ELA</p>
+                <p class="hero-text">Juntos podemos hacer la diferencia. Cada compra, cada donación nos acerca a un futuro sin ELA.</p>
+                <div class="hero-btns">
+                    <a href="#tienda" class="btn btn-primary">Ver Tienda Solidaria</a>
+                    <a href="#donar" class="btn btn-secondary">Haz una Donación</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span class="stat-number" data-count="150">0</span>
+                        <span class="stat-label">Familias atendidas</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-euro-sign"></i>
+                        <span class="stat-number" data-count="45000">0</span>
+                        <span class="stat-label">Euros donados a investigación</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="stat-number" data-count="12">0</span>
+                        <span class="stat-label">Eventos organizados</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <span class="stat-number" data-count="500">0</span>
+                        <span class="stat-label">Voluntarios</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="sobre-nosotros">
+            <div class="container">
+                <h2 class="section-title">Quiénes Somos</h2>
+                <div class="about-grid">
+                    <div class="about-content">
+                        <p>Neuronas con Chispa es una asociación sin ánimo de lucro dedicada a mejorar la calidad de vida de las personas afectadas por la Esclerosis Lateral Amiotrófica (ELA) y sus familias.</p>
+                        <p>Nuestro objetivo principal es fomentar la investigación científica para encontrar una cura definitiva, mientras acompañamos y apoyamos a los afectados en su día a día.</p>
+                        <div class="about-features">
+                            <div class="feature">
+                                <i class="fas fa-search"></i>
+                                <h4>Investigación</h4>
+                                <p>Financiamos proyectos de investigación punteros</p>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-hands-helping"></i>
+                                <h4>Apoyo</h4>
+                                <p>Asesoramiento y acompañamiento a familias</p>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bullhorn"></i>
+                                <h4>Visibilidad</h4>
+                                <p>Damos voz a quienes no la tienen</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=500" alt="Investigación ELA">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section bg-light" id="ela">
+            <div class="container">
+                <h2 class="section-title">¿Qué es la ELA?</h2>
+                <div class="ela-content">
+                    <div class="ela-text">
+                        <p>La <strong>Esclerosis Lateral Amiotrófica (ELA)</strong> es una enfermedad neurodegenerativa que afecta a las neuronas motoras del cerebro y de la médula espinal.</p>
+                        <p>Esto provoca que las neuronas dejen de funcionar correctamente y, con el tiempo, mueren. Como resultado, los músculos se debilitan gradualmente, afectando a:</p>
+                        <ul class="ela-list">
+                            <li><i class="fas fa-check"></i> La capacidad de caminar, hablar y moverte</li>
+                            <li><i class="fas fa-check"></i> La respiración y deglución</li>
+                            <li><i class="fas fa-check"></i> La comunicación verbal y gestual</li>
+                        </ul>
+                        <p class="ela-warning"><i class="fas fa-exclamation-triangle"></i> Actualmente no existe cura. La esperanza de vida media es de 2 a 5 años desde el diagnóstico.</p>
+                    </div>
+                    <div class="ela-facts">
+                        <div class="fact-card">
+                            <span class="fact-number">4.000+</span>
+                            <span class="fact-label">Personas con ELA en España</span>
+                        </div>
+                        <div class="fact-card">
+                            <span class="fact-number">900</span>
+                            <span class="fact-label">Nuevos casos al año</span>
+                        </div>
+                        <div class="fact-card">
+                            <span class="fact-number">35.000-60.000€</span>
+                            <span class="fact-label">Coste anual por paciente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="tienda">
+            <div class="container">
+                <h2 class="section-title">Tienda Solidaria</h2>
+                <p class="section-subtitle">Cada compra ayuda a financiar investigación y apoyo a familias</p>
+                <div class="products-grid" id="productsGrid"></div>
+            </div>
+        </section>
+
+        <section class="section" id="blog">
+            <div class="container">
+                <h2 class="section-title">Blog y Noticias</h2>
+                <p class="section-subtitle">Últimas novedades sobre la ELA y nuestra asociación</p>
+                <div class="blog-grid" id="blogGrid"></div>
+                <div class="blog-filters" id="blogFilters">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn" data-filter="investigacion">Investigación</button>
+                    <button class="filter-btn" data-filter="eventos">Eventos</button>
+                    <button class="filter-btn" data-filter="familias">Familias</button>
+                    <button class="filter-btn" data-filter="sensibilizacion">Sensibilización</button>
+                </div>
+                <div class="newsletter-box">
+                    <h3><i class="fas fa-envelope"></i> Suscríbete a nuestro boletín</h3>
+                    <p>Recibe las últimas novedades directamente en tu email</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Tu email" required>
+                        <button type="submit" class="btn btn-primary">Suscribirme</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="section bg-primary" id="donar">
+            <div class="container">
+                <h2 class="section-title light">Haz tu Donación</h2>
+                <p class="section-subtitle light">Tu aportación marca la diferencia</p>
+                <div class="donation-options">
+                    <div class="donation-cards">
+                        <div class="donation-card">
+                            <div class="donation-icon"><i class="fas fa-heart"></i></div>
+                            <h3>Donación única</h3>
+                            <p>Ayúdanos con lo que puedas. Cada euro cuenta.</p>
+                            <div class="donation-amounts">
+                                <button class="amount-btn" data-amount="20">20€</button>
+                                <button class="amount-btn" data-amount="50">50€</button>
+                                <button class="amount-btn" data-amount="100">100€</button>
+                                <button class="amount-btn selected" data-amount="25">25€</button>
+                            </div>
+                            <p class="donation-impact"><i class="fas fa-info-circle"></i> 25€ = 1 hora de cuidador especializado</p>
+                            <a href="#" class="btn btn-white" onclick="handleDonation(25); return false;">Donar 25€</a>
+                        </div>
+                        <div class="donation-card featured">
+                            <div class="featured-badge">Más popular</div>
+                            <div class="donation-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <h3>Hazte Socio</h3>
+                            <p>Comprométete con nuestra causa de forma mensual.</p>
+                            <div class="socio-prices">
+                                <span class="socio-price">Desde <strong>15€</strong>/mes</span>
+                            </div>
+                            <p class="donation-impact"><i class="fas fa-info-circle"></i> 15€/mes = Acceso a productos de apoyo</p>
+                            <a href="#contacto" class="btn btn-white">Hacerme socio</a>
+                        </div>
+                        <div class="donation-card">
+                            <div class="donation-icon"><i class="fas fa-gift"></i></div>
+                            <h3>Bizum</h3>
+                            <p>Donación rápida y segura desde tu móvil.</p>
+                            <div class="bizum-info">
+                                <p><strong id="bizumPhone">617 123 456</strong></p>
+                                <p>Indica "Donación ELA" en el concepto</p>
+                            </div>
+                            <a href="#" class="btn btn-white" onclick="alert('Abre tu app de banco y envía tu donativo'); return false;">Donar por Bizum</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contacto">
+            <div class="container">
+                <h2 class="section-title">Contacto</h2>
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Dirección</h4>
+                                <p>C/ Ejemplo, 123<br>29001 Málaga, España</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Teléfono</h4>
+                                <p>+34 612 345 678</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p id="contactEmail">info@neuronasconchispa.es</p>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nombre completo</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Asunto</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="info">Solicitar información</option>
+                                <option value="socio">Hacerme socio</option>
+                                <option value="voluntario">Voluntariado</option>
+                                <option value="tienda">Consulta sobre tienda</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mensaje</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Enviar mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-brain"></i> Neuronas con Chispa</h3>
+                    <p>Asociación para la investigación de la ELA</p>
+                    <p class="footer-note">Entidad sin ánimo de lucro. Donaciones deducibles.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#sobre-nosotros">Quiénes Somos</a></li>
+                        <li><a href="#tienda">Tienda</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#donar">Donar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Aviso Legal</a></li>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Neuronas con Chispa. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3><i class="fas fa-shopping-cart"></i> Carrito</h3>
+                <button class="cart-close" id="cartClose">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-empty" id="cartEmpty">
+                <i class="fas fa-shopping-bag"></i>
+                <p>Tu carrito está vacío</p>
+            </div>
+            <div class="cart-footer" id="cartFooter">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">0.00€</span>
+                </div>
+                <div class="payment-methods">
+                    <button class="btn btn-primary btn-block" id="paypalBtn">
+                        <i class="fab fa-paypal"></i> PayPal
+                    </button>
+                    <button class="btn btn-card btn-block" id="cardBtn">
+                        <i class="fas fa-credit-card"></i> Tarjeta
+                    </button>
+                    <button class="btn btn-transfer btn-block" id="transferBtn">
+                        <i class="fas fa-university"></i> Transferencia
+                    </button>
+                    <button class="btn btn-bizum btn-block" id="bizumBtn">
+                        <i class="fas fa-mobile-alt"></i> Bizum
+                    </button>
+                </div>
+                <p class="cart-note"><i class="fas fa-lock"></i> Pago 100% seguro</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon success"><i class="fas fa-check"></i></div>
+            <h3>¡Gracias por tu pedido!</h3>
+            <p>Recibirás un email de confirmación en breve.</p>
+            <button class="btn btn-primary" onclick="closeModal('successModal')">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal" id="blogModal">
+        <div class="modal-content blog-modal-content">
+            <button class="modal-close" onclick="closeModal('blogModal')">&times;</button>
+            <div class="blog-modal-header">
+                <span class="blog-category" id="blogModalCategory"></span>
+                <h2 id="blogModalTitle"></h2>
+                <div class="blog-meta">
+                    <span><i class="fas fa-calendar"></i> <span id="blogModalDate"></span></span>
+                    <span><i class="fas fa-user"></i> <span id="blogModalAuthor"></span></span>
+                </div>
+            </div>
+            <div class="blog-modal-image" id="blogModalImage"></div>
+            <div class="blog-modal-body" id="blogModalBody"></div>
+            <div class="blog-modal-share">
+                <p>Compartir:</p>
+                <div class="share-buttons">
+                    <a href="#" class="share-btn facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="share-btn twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="share-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="transferModal">
+        <div class="modal-content" style="max-width:500px;">
+            <button class="modal-close" onclick="closeModal('transferModal')">&times;</button>
+            <div style="text-align:center; padding:20px;">
+                <i class="fas fa-university" style="font-size:3rem; color:var(--primary); margin-bottom:20px;"></i>
+                <h2 style="margin-bottom:20px;">Transferencia Bancaria</h2>
+                <p style="color:var(--gray); margin-bottom:25px;">Realiza una transferencia por el importe total de tu pedido. Los datos bancarios son:</p>
+                
+                <div class="transfer-data">
+                    <div class="transfer-row">
+                        <span class="transfer-label">Titular:</span>
+                        <span class="transfer-value" id="transferHolder">Neuronas con Chispa</span>
+                    </div>
+                    <div class="transfer-row">
+                        <span class="transfer-label">IBAN:</span>
+                        <span class="transfer-value" id="transferIban">ES00 0000 0000 0000 0000 0000</span>
+                    </div>
+                    <div class="transfer-row">
+                        <span class="transfer-label">Concepto:</span>
+                        <span class="transfer-value" id="transferRef">Tienda Solidaria</span>
+                    </div>
+                    <div class="transfer-row total">
+                        <span class="transfer-label">Importe:</span>
+                        <span class="transfer-value" id="transferAmount">0.00€</span>
+                    </div>
+                </div>
+                
+                <p style="font-size:0.85rem; color:var(--gray); margin:20px 0;"> recibir un email de confirmación en cuanto comprobemos el pago.</p>
+                
+                <button class="btn btn-primary btn-block" onclick="confirmTransfer()">
+                    <i class="fas fa-check"></i> He realizado la transferencia
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="cardModal">
+        <div class="modal-content" style="max-width:500px;">
+            <button class="modal-close" onclick="closeModal('cardModal')">&times;</button>
+            <div style="padding:20px;">
+                <div style="text-align:center; margin-bottom:25px;">
+                    <i class="fas fa-credit-card" style="font-size:3rem; color:var(--primary);"></i>
+                    <h2 style="margin-top:15px;">Pago con Tarjeta</h2>
+                    <p style="color:var(--gray); font-size:0.9rem; margin-top:5px;">Pago 100% seguro con Stripe</p>
+                </div>
+                
+                <form id="cardForm">
+                    <div class="form-group">
+                        <label>Nombre en la tarjeta</label>
+                        <input type="text" id="cardName" placeholder="Como aparece en la tarjeta" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Datos de la tarjeta</label>
+                        <div id="cardElement" style="padding:15px; border:2px solid #e0e0e0; border-radius:8px; background:white;"></div>
+                    </div>
+                    <div style="background:var(--light); padding:15px; border-radius:8px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span>Total a pagar:</span>
+                            <strong id="cardTotal">0.00€</strong>
+                        </div>
+                        <div style="display:flex; gap:10px; justify-content:center; opacity:0.6;">
+                            <i class="fab fa-cc-visa" style="font-size:1.5rem;"></i>
+                            <i class="fab fa-cc-mastercard" style="font-size:1.5rem;"></i>
+                            <i class="fab fa-cc-amex" style="font-size:1.5rem;"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="payCardBtn">
+                        <i class="fas fa-lock"></i> Pagar ahora
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="emailModal">
+        <div class="modal-content" style="max-width:500px;">
+            <button class="modal-close" onclick="closeModal('emailModal')">&times;</button>
+            <div style="text-align:center; padding:30px;">
+                <i class="fas fa-envelope" style="font-size:4rem; color:var(--primary);"></i>
+                <h2 style="margin:20px 0;">Confirma tu email</h2>
+                <p style="color:var(--gray); margin-bottom:25px;">Para enviarte la confirmación de tu pedido, introduce tu email:</p>
+                <div class="form-group">
+                    <input type="email" id="customerEmail" placeholder="tu@email.com" required style="text-align:center; font-size:1.1rem;">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="confirmOrder()">
+                    <i class="fas fa-paper-plane"></i> Confirmar pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content" style="max-width:450px;">
+            <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+            <div style="padding:20px;">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="showAuthTab('login')">Iniciar sesión</button>
+                    <button class="auth-tab" onclick="showAuthTab('register')">Registrarse</button>
+                </div>
+                
+                <div id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="handleLogin()">
+                        <i class="fas fa-sign-in-alt"></i> Entrar
+                    </button>
+                    <p class="auth-switch">¿No tienes cuenta? <a href="#" onclick="showAuthTab('register')">Regístrate</a></p>
+                </div>
+                
+                <div id="registerForm" class="auth-form" style="display:none;">
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" id="registerName" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono (opcional)</label>
+                        <input type="tel" id="registerPhone" placeholder="600 123 456">
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="handleRegister()">
+                        <i class="fas fa-user-plus"></i> Crear cuenta
+                    </button>
+                    <p class="auth-switch">¿Ya tienes cuenta? <a href="#" onclick="showAuthTab('login')">Inicia sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="userOrdersModal">
+        <div class="modal-content" style="max-width:700px;">
+            <button class="modal-close" onclick="closeModal('userOrdersModal')">&times;</button>
+            <div style="padding:20px;">
+                <h2 style="margin-bottom:20px;"><i class="fas fa-receipt"></i> Mis Pedidos</h2>
+                <div id="userOrdersList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
