@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/admin/products", "dest": "/api/admin/products.js" },
+    { "src": "/api/admin/blog", "dest": "/api/admin/blog.js" },
+    { "src": "/api/admin/delete-product", "dest": "/api/admin/delete-product.js" },
+    { "src": "/api/admin/delete-blog", "dest": "/api/admin/delete-blog.js" },
+    { "src": "/api/admin/orders", "dest": "/api/admin/orders.js" },
+    { "src": "/api/admin/users", "dest": "/api/admin/users.js" },
+    { "src": "/api/admin/config", "dest": "/api/admin/config.js" },
+    { "src": "/api/admin/change-password", "dest": "/api/admin/change-password.js" },
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/admin", "dest": "/public/admin.html" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}
