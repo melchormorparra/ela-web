@@ -847,6 +847,15 @@ function changePassword() {
             `).join('');
         }
 
+        function renderUsers() {
+            const list = document.getElementById('usersList');
+            if (users.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No hay usuarios registrados.</p></div>';
+                return;
+            }
+            list.innerHTML = `<table class="orders-table"><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Fecha registro</th><th>Acción</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone || '-'}</td><td>${new Date(u.createdAt).toLocaleDateString('es-ES')}</td><td><button class="btn-delete" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>`;
+        }
+
         function showSection(name) {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
