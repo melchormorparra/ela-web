@@ -603,7 +603,7 @@
                 renderOrders();
                 renderUsers();
                 loadConfig(c);
-            });
+            }).catch(err => console.error('Error cargando datos:', err));
         }
 
         function renderProducts() {
