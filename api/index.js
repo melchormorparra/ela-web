@@ -95,6 +95,7 @@ module.exports = async (req, res) => {
     }
     
     if (url === '/api/login' && req.method === 'POST') {
+      console.log('Login attempt:', req.body);
       const { password } = req.body || {};
       if (password === data.admin.password) {
         return res.status(200).json({ success: true, token: 'admin-token', user: { id: 0, name: 'Admin', email: data.admin.email, isAdmin: true } });
