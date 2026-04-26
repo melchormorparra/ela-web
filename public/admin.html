@@ -827,6 +827,26 @@ function changePassword() {
             }).then(() => loadUsers());
         }
 
+        function renderOrders() {
+            const list = document.getElementById('ordersList');
+            if (orders.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>No hay pedidos.</p></div>';
+                return;
+            }
+            list.innerHTML = orders.map(o => `
+                <div class="item-card">
+                    <div class="item-info">
+                        <h4>Pedido #${o.id}</h4>
+                        <p>${new Date(o.date).toLocaleString('es-ES')}</p>
+                        <p>${o.items?.map(i => `${i.name} x${i.quantity}`).join(', ')}</p>
+                    </div>
+                    <div class="item-actions">
+                        <span class="status ${o.status}">${o.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function showSection(name) {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
