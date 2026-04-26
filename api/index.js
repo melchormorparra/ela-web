@@ -132,7 +132,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true, order });
     }
     
-    if (url.match(/^\/api\/users\/\d+\/orders$/) && req.method === 'GET') {
+    if (url.startsWith('/api/users/') && url.includes('/orders') && req.method === 'GET') {
       const userId = parseInt(url.split('/')[3]);
       const userOrders = data.orders.filter(o => o.userId === userId);
       return res.status(200).json(userOrders);
@@ -153,10 +153,10 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true, product });
     }
     
-    if (url.match(/^\/api\/admin\/delete-product\?id=\d+$/) && req.method === 'GET') {
+    if (url.startsWith('/api/admin/delete-product') && req.method === 'GET') {
       if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-      const id = parseInt(req.query.id);
-      data.products = data.products.filter(p => p.id !== id);
+      const id = req.query.id;
+      data.products = data.products.filter(p => p.id != id);
       await saveData(data);
       return res.status(200).json({ success: true });
     }
@@ -176,10 +176,10 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true, post });
     }
     
-    if (url.match(/^\/api\/admin\/delete-blog\?id=\d+$/) && req.method === 'GET') {
+    if (url.startsWith('/api/admin/delete-blog') && req.method === 'GET') {
       if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-      const id = parseInt(req.query.id);
-      data.blogPosts = data.blogPosts.filter(p => p.id !== id);
+      const id = req.query.id;
+      data.blogPosts = data.blogPosts.filter(p => p.id != id);
       await saveData(data);
       return res.status(200).json({ success: true });
     }
@@ -195,10 +195,10 @@ module.exports = async (req, res) => {
       return res.status(200).json(usersWithoutPasswords);
     }
     
-    if (url.match(/^\/api\/admin\/delete-user\?id=\d+$/) && req.method === 'GET') {
+    if (url.startsWith('/api/admin/delete-user') && req.method === 'GET') {
       if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-      const id = parseInt(req.query.id);
-      data.users = data.users.filter(u => u.id !== id);
+      const id = req.query.id;
+      data.users = data.users.filter(u => u.id != id);
       await saveData(data);
       return res.status(200).json({ success: true });
     }
