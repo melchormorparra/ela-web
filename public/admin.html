@@ -810,32 +810,21 @@
             }).then(() => alert('Configuración guardada'));
         }
 
-        function changePassword() {
+function changePassword() {
             const newPass = document.getElementById('newPassword').value;
             if (!newPass) return alert('Introduce la nueva contraseña');
             fetch(`${API}/admin/change-password`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ newPassword: newPass })
-            }).then(() => { alert('Contraseña cambiada'); document.getElementById('newPassword').value = ''; });
+            }).then(() => alert('Contraseña cambiada'));
         }
 
-        function renderOrders() {
-            const list = document.getElementById('ordersList');
-            if (orders.length === 0) {
-                list.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>No hay pedidos todavía.</p></div>';
-                return;
-            }
-            list.innerHTML = `<table class="orders-table"><thead><tr><th>ID</th><th>Fecha</th><th>Items</th><th>Total</th></tr></thead><tbody>${orders.map(o => `<tr><td>#${o.id}</td><td>${new Date(o.date).toLocaleDateString('es-ES')}</td><td>${o.items?.length || 0} productos</td><td>${parseFloat(o.total).toFixed(2)}€</td></tr>`).join('')}</tbody></table>`;
-        }
-
-        function renderUsers() {
-            const list = document.getElementById('usersList');
-            if (users.length === 0) {
-                list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No hay usuarios registrados.</p></div>';
-                return;
-            }
-            list.innerHTML = `<table class="orders-table"><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Fecha registro</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone || '-'}</td><td>${new Date(u.createdAt).toLocaleDateString('es-ES')}</td></tr>`).join('')}</tbody></table>`;
+        function deleteUser(id) {
+            if (!confirm('¿Eliminar este usuario?')) return;
+            fetch(`${API}/admin/delete-user?id=${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(() => loadUsers());
         }
 
         function showSection(name) {

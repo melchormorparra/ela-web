@@ -194,6 +194,14 @@ module.exports = async (req, res) => {
       return res.status(200).json(usersWithoutPasswords);
     }
     
+    if (url.match(/^\/api\/admin\/delete-user\?id=\d+$/) && req.method === 'GET') {
+      if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
+      const id = parseInt(req.query.id);
+      data.users = data.users.filter(u => u.id !== id);
+      await saveData(data);
+      return res.status(200).json({ success: true });
+    }
+    
     if (url === '/api/admin/config' && req.method === 'GET') {
       if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
       return res.status(200).json(data.config);
