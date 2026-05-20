@@ -1,0 +1,9 @@
+{
+  "name": "neuronas-con-chispa",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
+    "stripe": "^17.0.0"
+  }
+}

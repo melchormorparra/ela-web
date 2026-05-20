@@ -12,16 +12,21 @@ let currentUser = JSON.parse(localStorage.getItem('elaUser')) || null;
 
 const API_URL = '/api';
 
+let contentBlocks = {};
+
 async function fetchData() {
     try {
-        const [productsRes, blogRes, configRes] = await Promise.all([
+        const [productsRes, blogRes, configRes, contentRes] = await Promise.all([
             fetch(`${API_URL}/products`),
             fetch(`${API_URL}/blog`),
-            fetch(`${API_URL}/config`)
+            fetch(`${API_URL}/config`),
+            fetch(`${API_URL}/content-blocks`)
         ]);
         products = await productsRes.json();
         blogPosts = await blogRes.json();
         config = await configRes.json();
+        contentBlocks = await contentRes.json();
+        applyContentBlocks();
         
         if (config.paypalEmail) paypalEmail = config.paypalEmail;
         if (config.bizumPhone) bizumPhone = config.bizumPhone;
@@ -30,6 +35,21 @@ async function fetchData() {
         if (config.stripePublishableKey) stripePublishableKey = config.stripePublishableKey;
         document.getElementById('bizumPhone').textContent = bizumPhone;
         document.getElementById('contactEmail').textContent = paypalEmail;
+        
+        // Show/hide Bizum based on admin config
+        const bizumVisible = config.bizumVisible === true;
+        document.getElementById('bizumCard')?.style.setProperty('display', bizumVisible ? '' : 'none');
+        document.getElementById('bizumBtn')?.style.setProperty('display', bizumVisible ? '' : 'none');
+        
+        // Show/hide Tienda based on admin config
+        const tiendaVisible = config.tiendaVisible === true;
+        const tiendaDisplay = tiendaVisible ? '' : 'none';
+        document.getElementById('navTienda')?.style.setProperty('display', tiendaDisplay);
+        document.getElementById('footerNavTienda')?.style.setProperty('display', tiendaDisplay);
+        document.getElementById('heroTiendaBtn')?.style.setProperty('display', tiendaDisplay);
+        document.getElementById('tienda')?.style.setProperty('display', tiendaDisplay);
+        document.getElementById('cartBtn')?.style.setProperty('display', tiendaDisplay);
+        if (!tiendaVisible) document.getElementById('cartModal')?.classList.remove('active');
         
         if (emailJSConfig.publicKey) {
             emailjs.init(emailJSConfig.publicKey);
@@ -52,6 +72,109 @@ async function fetchData() {
         console.error('Error fetching data:', err);
         document.getElementById('productsGrid').innerHTML = '<p style="text-align:center;">Error al cargar productos. Intenta más tarde.</p>';
         document.getElementById('blogGrid').innerHTML = '<p style="text-align:center;">Error al cargar blog. Intenta más tarde.</p>';
+    }
+}
+
+function applyContentBlocks() {
+    if (!contentBlocks || Object.keys(contentBlocks).length === 0) return;
+    const map = {
+        hero_title: '#inicio h1',
+        hero_tagline: '#inicio .tagline',
+        hero_text: '#inicio .hero-text',
+        quienes_somos_titulo: '#sobre-nosotros .section-title',
+        quienes_somos_p1: '#sobre-nosotros .about-content > p:nth-child(1)',
+        quienes_somos_p2: '#sobre-nosotros .about-content > p:nth-child(2)',
+        que_es_ela_titulo: '#ela .section-title',
+        que_es_ela_texto: '#ela .ela-text',
+        que_es_ela_lista: '#ela .ela-list',
+        tienda_titulo: '#tienda .section-title',
+        tienda_subtitulo: '#tienda .section-subtitle',
+        donar_titulo: '#donar .section-title',
+        donar_subtitulo: '#donar .section-subtitle',
+        contacto_titulo: '#contacto .section-title',
+        blog_titulo: '#blog .section-title',
+        blog_subtitulo: '#blog .section-subtitle'
+    };
+    for (const [key, selector] of Object.entries(map)) {
+        if (contentBlocks[key]) {
+            const el = document.querySelector(selector);
+            if (el) {
+                if (key === 'que_es_ela_texto') {
+                    el.innerHTML = contentBlocks[key];
+                } else if (key === 'que_es_ela_lista') {
+                    el.innerHTML = contentBlocks[key];
+                } else {
+                    el.textContent = contentBlocks[key];
+                }
+            }
+        }
+    }
+    // Apply ELA facts
+    for (let i = 1; i <= 3; i++) {
+        const key = 'ela_fact_' + i;
+        if (contentBlocks[key]) {
+            try {
+                const fact = JSON.parse(contentBlocks[key]);
+                const cards = document.querySelectorAll('#ela .fact-card');
+                if (cards[i-1]) {
+                    cards[i-1].querySelector('.fact-number').textContent = fact.number;
+                    cards[i-1].querySelector('.fact-label').textContent = fact.label;
+                }
+            } catch(e) {}
+        }
+    }
+    // Apply contact info
+    if (contentBlocks.contacto_direccion) {
+        document.querySelector('#contacto .contact-item:nth-child(1) p').innerHTML = contentBlocks.contacto_direccion;
+    }
+    if (contentBlocks.contacto_telefono) {
+        document.querySelector('#contacto .contact-item:nth-child(2) p').textContent = contentBlocks.contacto_telefono;
+    }
+    if (contentBlocks.contacto_email_valor) {
+        document.querySelector('#contacto .contact-item:nth-child(3) p').textContent = contentBlocks.contacto_email_valor;
+        document.getElementById('contactEmail').textContent = contentBlocks.contacto_email_valor;
+    }
+    // Social links
+    const socialMap = [
+        { key: 'facebook_url', icon: 'fa-facebook-f' },
+        { key: 'twitter_url', icon: 'fa-twitter' },
+        { key: 'instagram_url', icon: 'fa-instagram' },
+        { key: 'youtube_url', icon: 'fa-youtube' }
+    ];
+    const socialLinks = document.querySelectorAll('.social-links .social-link');
+    socialLinks.forEach((a, i) => {
+        const block = socialMap[i];
+        if (block && contentBlocks[block.key] && contentBlocks[block.key] !== '#') {
+            a.href = contentBlocks[block.key];
+        }
+    });
+
+    // Apply palette colors
+    if (contentBlocks.palette) {
+        try {
+            const p = JSON.parse(contentBlocks.palette);
+            const root = document.documentElement;
+            if (p.primary) root.style.setProperty('--primary', p.primary);
+            if (p.primaryDark) root.style.setProperty('--primary-dark', p.primaryDark);
+            if (p.secondary) root.style.setProperty('--secondary', p.secondary);
+            if (p.accent) root.style.setProperty('--accent', p.accent);
+            if (p.dark) root.style.setProperty('--dark', p.dark);
+        } catch(e) {}
+    }
+
+    // Donation impact messages
+    if (contentBlocks.donar_impacto_5) {
+        document.getElementById('donationMessage').innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.donar_impacto_5;
+    }
+    if (contentBlocks.colaborador_titulo) {
+        document.querySelector('#donar .donation-card.featured h3').textContent = contentBlocks.colaborador_titulo;
+    }
+    if (contentBlocks.colaborador_texto) {
+        document.querySelector('#donar .donation-card.featured p').textContent = contentBlocks.colaborador_texto;
+    }
+    if (contentBlocks.colaborador_impacto) {
+        const cols = document.querySelectorAll('#donar .donation-card.featured .donation-impact');
+        if (cols.length > 0) cols[0].innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.colaborador_impacto;
     }
 }
 
@@ -356,6 +479,7 @@ async function confirmOrder() {
     if (emailJSConfig.serviceId && emailJSConfig.templateId) {
         try {
             await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                subject: 'NCCH: Confirmación de pedido',
                 to_email: email,
                 to_name: currentUser?.name || currentOrder.items[0]?.name || 'Cliente',
                 order_total: currentOrder.total.toFixed(2) + '€',
@@ -404,7 +528,9 @@ function showModal(modalId) {
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
+    document.getElementById(modalId)?.classList.remove('active');
+    const video = document.getElementById('donationVideo');
+    if (video) { video.pause(); video.currentTime = 0; }
 }
 
 function showNotification(message) {
@@ -423,9 +549,35 @@ const style = document.createElement('style');
 style.textContent = '@keyframes slideUp{from{transform:translateX(-50%) translateY(100%);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}@keyframes slideDown{from{transform:translateX(-50%) translateY(0);opacity:1}to{transform:translateX(-50%) translateY(100%);opacity:0}}';
 document.head.appendChild(style);
 
+const donationMessages = {
+    5: '5€ = Ayudas a mantener nuestra web y redes sociales',
+    10: '10€ = Contribuyes a material de difusión e información',
+    15: '15€ = Ayudas a organizar eventos de concienciación',
+    25: '25€ = 1 hora de cuidador especializado',
+    50: '50€ = Sesión de logopedia o fisioterapia para un paciente'
+};
+
 function handleDonation(amount) {
-    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=Donacion+ELA&amount=${amount}&currency_code=EUR`;
-    window.open(paypalUrl, '_blank');
+    const customInput = document.getElementById('customDonation');
+    const customAmount = customInput ? parseFloat(customInput.value) : 0;
+    const finalAmount = customAmount > 0 ? customAmount : amount;
+    
+    // Update bank details in modal
+    const holderEl = document.getElementById('donationBankHolder');
+    const ibanEl = document.getElementById('donationBankIban');
+    if (holderEl) holderEl.textContent = bankAccount.holder;
+    if (ibanEl) ibanEl.textContent = bankAccount.iban;
+    
+    // Show donation modal with video
+    const video = document.getElementById('donationVideo');
+    if (video) { video.currentTime = 0; video.play(); }
+    showModal('donationModal');
+}
+
+function closeDonationModal() {
+    const video = document.getElementById('donationVideo');
+    if (video) { video.pause(); video.currentTime = 0; }
+    closeModal('donationModal');
 }
 
 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -433,10 +585,33 @@ document.querySelectorAll('.amount-btn').forEach(btn => {
         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
         this.classList.add('selected');
         const amount = this.dataset.amount;
-        const link = this.closest('.donation-card').querySelector('.btn-white');
-        link.href = '#';
-        link.onclick = () => { handleDonation(amount); return false; };
+        const messageEl = document.getElementById('donationMessage');
+        if (messageEl && donationMessages[amount]) {
+            messageEl.innerHTML = `<i class="fas fa-info-circle"></i> ${donationMessages[amount]}`;
+        }
+        const btnWhite = this.closest('.donation-card').querySelector('.btn-white');
+        btnWhite.onclick = () => { handleDonation(parseInt(amount)); return false; };
+        btnWhite.innerHTML = `Donar ${amount}€`;
     });
+});
+
+document.getElementById('customDonation')?.addEventListener('input', function() {
+    const amount = parseFloat(this.value);
+    const btnWhite = this.closest('.donation-card').querySelector('.btn-white');
+    const messageEl = document.getElementById('donationMessage');
+    if (amount > 0) {
+        document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+        btnWhite.onclick = () => { handleDonation(amount); return false; };
+        btnWhite.innerHTML = `Donar ${amount}€`;
+        if (messageEl) messageEl.innerHTML = `<i class="fas fa-info-circle"></i> Tu aportación cuenta, ¡gracias!`;
+    } else {
+        const defaultAmount = document.querySelector('.amount-btn.selected')?.dataset.amount || 5;
+        btnWhite.onclick = () => { handleDonation(parseInt(defaultAmount)); return false; };
+        btnWhite.innerHTML = `Donar ${defaultAmount}€`;
+        if (messageEl && donationMessages[defaultAmount]) {
+            messageEl.innerHTML = `<i class="fas fa-info-circle"></i> ${donationMessages[defaultAmount]}`;
+        }
+    }
 });
 
 function initNavigation() {
@@ -488,18 +663,50 @@ function animateCounter(element) {
 function initForms() {
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(contactForm);
             const data = Object.fromEntries(formData);
-            console.log('Formulario enviado:', data);
+            
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Consulta - ' + (data.subject || 'Sin asunto'),
+                        to_email: 'neuronasconchispa@gmail.com',
+                        message: `Consulta de contacto:\n\nNombre: ${data.name || 'No especificado'}\nEmail: ${data.email || 'No especificado'}\nAsunto: ${data.subject || 'No especificado'}\nMensaje: ${data.message || 'No especificado'}`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+            
             alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
             contactForm.reset();
         });
     }
-    document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
+    document.getElementById('newsletterForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
         const email = this.querySelector('input').value;
+        try {
+            await fetch(`${API_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Nuevo suscriptor boletín',
+                        to_email: 'neuronasconchispa@gmail.com',
+                        message: `Nuevo suscriptor al boletín:\n\nEmail: ${email}`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+        } catch (err) {
+            console.error('Subscribe error:', err);
+        }
         alert(`¡Gracias por suscribirte con ${email}! Recibirás nuestras novedades pronto.`);
         this.reset();
     });
@@ -507,6 +714,7 @@ function initForms() {
 
 function renderBlog() {
     const grid = document.getElementById('blogGrid');
+    blogPosts.sort((a, b) => (a.id || 0) - (b.id || 0));
     let featuredPost = blogPosts.find(post => post.featured);
     let regularPosts = blogPosts.filter(post => !post.featured);
     let html = '';
@@ -526,6 +734,10 @@ function renderBlog() {
             </div>`;
     }
     
+    html += `<div class="blog-carousel">
+        <button class="blog-carousel-btn prev" onclick="scrollBlogCarousel(-1)" id="blogCarouselPrev" disabled><i class="fas fa-chevron-left"></i></button>
+        <div class="blog-carousel-inner" id="blogCarouselInner">`;
+    
     html += regularPosts.map(post => `
         <div class="blog-card" onclick="openBlogPost(${post.id})">
             <div class="blog-card-image">
@@ -544,7 +756,33 @@ function renderBlog() {
         </div>
     `).join('');
     
+    html += `</div>
+        <button class="blog-carousel-btn next" onclick="scrollBlogCarousel(1)" id="blogCarouselNext"><i class="fas fa-chevron-right"></i></button>
+    </div>`;
+    
     grid.innerHTML = html;
+    const inner = document.getElementById('blogCarouselInner');
+    if (inner) {
+        inner.addEventListener('scroll', () => updateCarouselButtons(inner));
+        setTimeout(() => updateCarouselButtons(inner), 100);
+    }
+}
+
+function scrollBlogCarousel(direction) {
+    const inner = document.getElementById('blogCarouselInner');
+    if (!inner) return;
+    const card = inner.querySelector('.blog-card');
+    const scrollAmount = card ? card.offsetWidth + 30 : 380;
+    inner.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    setTimeout(() => updateCarouselButtons(inner), 400);
+}
+
+function updateCarouselButtons(inner) {
+    const prev = document.getElementById('blogCarouselPrev');
+    const next = document.getElementById('blogCarouselNext');
+    if (!inner || !prev || !next) return;
+    prev.disabled = inner.scrollLeft <= 5;
+    next.disabled = inner.scrollLeft + inner.clientWidth >= inner.scrollWidth - 5;
 }
 
 function openBlogPost(postId) {
@@ -556,6 +794,13 @@ function openBlogPost(postId) {
     document.getElementById('blogModalAuthor').textContent = post.author;
     document.getElementById('blogModalImage').innerHTML = `<img src="${post.image}" alt="${post.title}">`;
     document.getElementById('blogModalBody').innerHTML = post.content;
+    
+    const url = encodeURIComponent(window.location.origin + '/#blog');
+    const text = encodeURIComponent(post.title);
+    document.querySelector('.share-btn.facebook').href = `https://www.facebook.com/sharer.php?u=${url}`;
+    document.querySelector('.share-btn.twitter').href = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    document.querySelector('.share-btn.whatsapp').href = `https://wa.me/?text=${text}%20${url}`;
+    
     showModal('blogModal');
 }
 
@@ -602,7 +847,7 @@ window.addEventListener('scroll', () => {
 document.getElementById('loginBtn').addEventListener('click', (e) => {
     e.preventDefault();
     if (currentUser) {
-        showUserOrders();
+        showUserDashboard();
     } else {
         showModal('authModal');
     }
@@ -625,7 +870,7 @@ async function handleLogin() {
     }
     
     try {
-        const res = await fetch(`${API_URL}/login`, {
+        const res = await fetch(`${API_URL}/user-login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -635,6 +880,7 @@ async function handleLogin() {
         if (data.success) {
             currentUser = data.user;
             localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            if (data.token) localStorage.setItem('adminToken', data.token);
             closeModal('authModal');
             updateUserUI();
             showNotification('Bienvenido, ' + currentUser.name);
@@ -647,11 +893,92 @@ async function handleLogin() {
     }
 }
 
+function showForgotPassword() {
+    closeModal('authModal');
+    document.getElementById('forgotSent').style.display = 'none';
+    document.getElementById('forgotEmail').value = '';
+    showModal('forgotPasswordModal');
+}
+
+async function handleForgotPassword() {
+    const email = document.getElementById('forgotEmail').value;
+    if (!email) return alert('Introduce tu email');
+    
+    try {
+        const res = await fetch(`${API_URL}/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        
+        if (data.token && emailJSConfig.serviceId && emailJSConfig.templateId) {
+            try {
+                await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                    subject: 'NCCH: Código de recuperación de contraseña',
+                    to_email: email,
+                    message: `Tu código de recuperación es: ${data.token}\n\nEste código expira en 1 hora.\n\nSi no has solicitado este cambio, ignora este mensaje.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
+                });
+            } catch (err) {
+                console.error('EmailJS error:', err);
+            }
+        }
+        
+        document.getElementById('forgotSent').style.display = 'block';
+        document.getElementById('forgotEmail').value = '';
+        document.getElementById('resetEmail').value = email;
+        setTimeout(() => {
+            closeModal('forgotPasswordModal');
+            document.getElementById('resetToken').value = '';
+            document.getElementById('resetPassword').value = '';
+            if (data.token) showModal('resetPasswordModal');
+        }, 2000);
+    } catch (err) {
+        console.error('Forgot password error:', err);
+        alert('Error al conectar con el servidor');
+    }
+}
+
+async function handleResetPassword() {
+    const email = document.getElementById('resetEmail').value;
+    const token = document.getElementById('resetToken').value;
+    const newPassword = document.getElementById('resetPassword').value;
+    
+    if (!token || !newPassword) return alert('Completa todos los campos');
+    if (newPassword.length < 6) return alert('La contraseña debe tener al menos 6 caracteres');
+    
+    try {
+        const res = await fetch(`${API_URL}/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, token, newPassword })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            alert('Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
+            closeModal('resetPasswordModal');
+        } else {
+            alert(data.error || 'Error al restablecer la contraseña');
+        }
+    } catch (err) {
+        console.error('Reset password error:', err);
+        alert('Error al conectar con el servidor');
+    }
+}
+
+function toggleIbanField() {
+    document.getElementById('ibanGroup').style.display = 
+        document.getElementById('registerColaborador').checked ? 'block' : 'none';
+}
+
 async function handleRegister() {
     const name = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const phone = document.getElementById('registerPhone').value;
+    const isColaborador = document.getElementById('registerColaborador').checked;
+    const iban = document.getElementById('registerIban').value;
     
     if (!name || !email || !password) {
         alert('Por favor, completa los campos obligatorios');
@@ -663,11 +990,16 @@ async function handleRegister() {
         return;
     }
     
+    if (isColaborador && !iban) {
+        alert('Introduce tu IBAN para ser colaborador mensual');
+        return;
+    }
+    
     try {
         const res = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password, phone })
+            body: JSON.stringify({ name, email, password, phone, isColaborador, iban })
         });
         const data = await res.json();
         
@@ -677,6 +1009,33 @@ async function handleRegister() {
             closeModal('authModal');
             updateUserUI();
             showNotification('Cuenta creada. ¡Bienvenido, ' + currentUser.name + '!');
+            
+            // Send welcome email to user
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Bienvenido a Neuronas con Chispa',
+                        to_email: email,
+                        to_name: name,
+                        message: `Hola ${name},\n\nGracias por registrarte en Neuronas con Chispa.\n\nTu cuenta ha sido creada correctamente. Ya puedes iniciar sesión con tu email y contraseña.\n\n${isColaborador ? 'Te damos la bienvenida como colaborador mensual. Tu apoyo de 5€/mes nos ayuda a seguir investigando la ELA.\n\n' : ''}Juntos podemos hacer la diferencia.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+            
+            // Notify admin if collaborator registered
+            if (isColaborador && emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Nuevo colaborador',
+                        to_email: 'neuronasconchispa@gmail.com',
+                        message: `Nuevo colaborador mensual:\n\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
         } else {
             alert(data.error || 'Error al crear la cuenta');
         }
@@ -699,7 +1058,7 @@ function updateUserUI() {
     
     if (currentUser) {
         userMenu.innerHTML = `
-            <a href="#" class="user-logged" onclick="showUserOrders(); return false;">
+            <a href="#" class="user-logged" onclick="showUserDashboard(); return false;">
                 <i class="fas fa-user"></i> ${currentUser.name}
             </a>
             <a href="#" onclick="handleLogout(); return false;" style="font-size:0.8rem; color:var(--gray);">
@@ -719,40 +1078,201 @@ function updateUserUI() {
     }
 }
 
-async function showUserOrders() {
+function maskIban(iban) {
+    if (!iban || iban.length < 8) return iban || 'No especificado';
+    return iban.slice(0, 4) + ' **** **** **** ' + iban.slice(-4);
+}
+
+function getMemberDuration(createdAt) {
+    if (!createdAt) return '';
+    const start = new Date(createdAt);
+    const now = new Date();
+    const diffMs = now - start;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(diffDays / 30);
+    const days = diffDays % 30;
+    if (months > 0) {
+        return `${months} mes${months !== 1 ? 'es' : ''}${days > 0 ? ` y ${days} día${days !== 1 ? 's' : ''}` : ''}`;
+    }
+    return `${diffDays} día${diffDays !== 1 ? 's' : ''}`;
+}
+
+async function upgradeToColaborador() {
+    const iban = document.getElementById('upgradeIban')?.value;
+    if (!iban) {
+        alert('Por favor, introduce tu IBAN');
+        return;
+    }
+    try {
+        const res = await fetch(`${API_URL}/users/${currentUser.id}/upgrade`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ iban })
+        });
+        const data = await res.json();
+        if (data.success) {
+            currentUser = data.user;
+            localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            
+            // Send confirmation email to user
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Bienvenido como colaborador',
+                        to_email: currentUser.email,
+                        to_name: currentUser.name,
+                        message: `Hola ${currentUser.name},\n\n¡Gracias por hacerte colaborador mensual de Neuronas con Chispa!\n\nTu contribución de 5€/mes nos ayuda a seguir investigando la ELA y apoyando a las familias.\n\nIBAN para domiciliación: ${iban}\n\nJuntos podemos hacer la diferencia.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+            
+            // Notify admin
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Nuevo colaborador (upgrade)',
+                        to_email: 'neuronasconchispa@gmail.com',
+                        message: `Un usuario se ha convertido en colaborador:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+            
+            showNotification('¡Bienvenido como colaborador! Gracias por tu apoyo.');
+            closeModal('userDashboardModal');
+        } else {
+            alert(data.error || 'Error al actualizar');
+        }
+    } catch (err) {
+        console.error('Upgrade error:', err);
+        alert('Error al conectar con el servidor');
+    }
+}
+
+async function showUserDashboard() {
     if (!currentUser) return;
     
     try {
         const res = await fetch(`${API_URL}/users/${currentUser.id}/orders`);
-        const orders = await res.json();
+        const data = await res.json();
+        const orders = data.orders || [];
+        const userInfo = data.user;
         
-        const list = document.getElementById('userOrdersList');
-        
-        if (orders.length === 0) {
-            list.innerHTML = '<p style="text-align:center; color:var(--gray); padding:40px;">Aún no tienes pedidos.</p>';
-        } else {
-            list.innerHTML = orders.map(o => `
-                <div class="user-orders-item">
-                    <div class="order-header">
-                        <span>Pedido #${o.id} - ${new Date(o.date).toLocaleDateString('es-ES')}</span>
-                        <span>${parseFloat(o.total).toFixed(2)}€</span>
-                    </div>
-                    <div class="order-items">
-                        ${o.items.map(i => `${i.name} x${i.quantity}`).join('<br>')}
-                    </div>
-                    <div style="margin-top:10px;">
-                        <span class="order-status ${o.status}">${o.status === 'confirmed' ? 'Completado' : 'Pendiente'}</span>
-                        <span style="margin-left:10px; font-size:0.85rem; color:var(--gray);">
-                            <i class="fas fa-credit-card"></i> ${o.paymentMethod}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
+        if (!userInfo) {
+            alert('No se pudo cargar la información del usuario.');
+            return;
         }
         
-        showModal('userOrdersModal');
+        const container = document.getElementById('userDashboardContent');
+        
+        // --- Profile section ---
+        let html = `
+        <div class="dash-grid">
+            <div class="dash-card dash-card-full">
+                <div class="dash-card-header">
+                    <i class="fas fa-id-card"></i> Mi Perfil
+                </div>
+                <div class="dash-card-body dash-profile-grid">
+                    <div><strong>Nombre:</strong> ${userInfo.name}</div>
+                    <div><strong>Email:</strong> ${userInfo.email}</div>
+                    <div><strong>Teléfono:</strong> ${userInfo.phone || 'No especificado'}</div>
+                    <div><strong>Miembro desde:</strong> ${new Date(userInfo.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                    <div><strong>Tipo de cuenta:</strong> ${userInfo.role === 'colaborador' 
+                        ? '<span style="color:var(--success);"><i class="fas fa-hand-holding-heart"></i> Colaborador mensual</span>' 
+                        : '<span style="color:var(--primary);"><i class="fas fa-user"></i> Usuario</span>'}</div>
+                </div>
+            </div>`;
+        
+        // --- Collaborator section / upgrade prompt ---
+        if (userInfo.role === 'colaborador') {
+            const subs = userInfo.subscriptions || [];
+            const lastPayment = subs.length > 0 ? subs[subs.length - 1] : null;
+            const duration = getMemberDuration(userInfo.createdAt);
+            
+            html += `
+            <div class="dash-card dash-card-full">
+                <div class="dash-card-header" style="color:var(--success);">
+                    <i class="fas fa-hand-holding-heart"></i> Colaborador Mensual
+                </div>
+                <div class="dash-card-body">
+                    <div class="dash-collab-stats">
+                        <div class="dash-stat-box">
+                            <span class="dash-stat-number">5€</span>
+                            <span class="dash-stat-label">Cuota mensual</span>
+                        </div>
+                        <div class="dash-stat-box">
+                            <span class="dash-stat-number">${duration || '—'}</span>
+                            <span class="dash-stat-label">Como colaborador</span>
+                        </div>
+                        <div class="dash-stat-box">
+                            <span class="dash-stat-number">${subs.length}</span>
+                            <span class="dash-stat-label">Pagos realizados</span>
+                        </div>
+                        <div class="dash-stat-box">
+                            <span class="dash-stat-number">${(subs.length * 5).toFixed(0)}€</span>
+                            <span class="dash-stat-label">Total aportado</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:15px; padding:12px; background:#f8f9fa; border-radius:8px;">
+                        <p style="margin-bottom:5px;"><strong>IBAN:</strong> ${maskIban(userInfo.iban)}</p>
+                        <p><strong>Estado:</strong> ${subs.length > 0
+                            ? '<span style="color:var(--success);">Al corriente</span> - Último cobro: ' + new Date(lastPayment.date).toLocaleDateString('es-ES')
+                            : '<span style="color:var(--warning);">Pendiente de primer cobro</span>'}</p>
+                        ${subs.length > 0 ? `<p style="margin-top:5px;"><strong>Próximo cobro estimado:</strong> ${new Date(new Date(lastPayment.date).getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>` : ''}
+                    </div>`;
+            
+            // Payment history
+            if (subs.length > 0) {
+                html += `
+                    <div style="margin-top:15px;">
+                        <h4 style="margin-bottom:10px; font-size:0.95rem; color:var(--gray);">Historial de cobros</h4>
+                        <div class="dash-payment-list">
+                            ${subs.slice().reverse().map(s => `
+                                <div class="dash-payment-item">
+                                    <span><i class="fas fa-check-circle" style="color:var(--success);"></i> ${new Date(s.date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                    <span><strong>${s.amount}€</strong></span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+            
+            html += `</div></div>`;
+        } else {
+            html += `
+            <div class="dash-card dash-card-full">
+                <div class="dash-card-header" style="color:var(--success);">
+                    <i class="fas fa-hand-holding-heart"></i> Hazte Colaborador Mensual
+                </div>
+                <div class="dash-card-body">
+                    <p style="margin-bottom:15px;">Conviértete en colaborador mensual por solo <strong>5€/mes</strong> y ayuda a la investigación de la ELA de forma continua.</p>
+                    <div id="upgradeForm">
+                        <div class="form-group" style="margin-bottom:12px;">
+                            <label>IBAN (para domiciliación mensual)</label>
+                            <input type="text" id="upgradeIban" class="dash-input" placeholder="ES00 0000 0000 0000 0000 0000">
+                        </div>
+                        <button class="btn btn-success" onclick="upgradeToColaborador()">
+                            <i class="fas fa-hand-holding-heart"></i> Hacerme colaborador
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+        
+        container.innerHTML = html;
+        showModal('userDashboardModal');
     } catch (err) {
-        console.error('Error loading orders:', err);
-        alert('Error cargando tus pedidos');
+        console.error('Error loading dashboard:', err);
+        alert('Error cargando tus datos');
     }
 }
+
+document.getElementById('logoLink')?.addEventListener('click', function(e) {
+    const video = document.getElementById('donationVideo');
+    if (video) { video.pause(); video.currentTime = 0; }
+    document.getElementById('donationModal')?.classList.remove('active');
+});

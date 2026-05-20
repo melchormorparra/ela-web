@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neuronas con Chispa - Asociación para la investigación de la ELA</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,9 +13,9 @@
     <header class="header">
         <nav class="navbar">
             <div class="nav-container">
-                <a href="/" class="logo">
-                    <i class="fas fa-brain"></i>
-                    <span>Neuronas con Chispa</span>
+                <a href="/" class="logo" id="logoLink">
+                    <!-- <i class="fas fa-brain"></i> -->
+                    <img src="/images/logo.png" alt="Neuronas con Chispa" class="icono-logo">
                 </a>
                 <button class="nav-toggle" id="navToggle">
                     <i class="fas fa-bars"></i>
@@ -23,7 +24,7 @@
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#sobre-nosotros">Quiénes Somos</a></li>
                     <li><a href="#ela">Qué es la ELA</a></li>
-                    <li><a href="#tienda">Tienda</a></li>
+                    <li id="navTienda"><a href="#tienda">Tienda</a></li>
                     <li><a href="#blog">Blog</a></li>
                     <li><a href="#donar">Donar</a></li>
                     <li><a href="#contacto">Contacto</a></li>
@@ -47,11 +48,14 @@
     <main>
         <section class="hero" id="inicio">
             <div class="hero-content">
+
+                <img src="/images/logo.png" alt="Logo Neuronas con Chispa" class="hero-logo">
+
                 <h1>Neuronas con Chispa</h1>
                 <p class="tagline">Asociación para la investigación de la ELA</p>
-                <p class="hero-text">Juntos podemos hacer la diferencia. Cada compra, cada donación nos acerca a un futuro sin ELA.</p>
+                <p class="hero-text">Juntos podemos hacer la diferencia. Cada donación nos acerca a un futuro sin ELA.</p>
                 <div class="hero-btns">
-                    <a href="#tienda" class="btn btn-primary">Ver Tienda Solidaria</a>
+                    <a href="#tienda" class="btn btn-primary" id="heroTiendaBtn">Ver Tienda Solidaria</a>
                     <a href="#donar" class="btn btn-secondary">Haz una Donación</a>
                 </div>
             </div>
@@ -128,7 +132,6 @@
                             <li><i class="fas fa-check"></i> La respiración y deglución</li>
                             <li><i class="fas fa-check"></i> La comunicación verbal y gestual</li>
                         </ul>
-                        <p class="ela-warning"><i class="fas fa-exclamation-triangle"></i> Actualmente no existe cura. La esperanza de vida media es de 2 a 5 años desde el diagnóstico.</p>
                     </div>
                     <div class="ela-facts">
                         <div class="fact-card">
@@ -149,7 +152,7 @@
         </section>
 
         <section class="section" id="tienda">
-            <div class="container">
+            <div class="container" id="tiendaSection">
                 <h2 class="section-title">Tienda Solidaria</h2>
                 <p class="section-subtitle">Cada compra ayuda a financiar investigación y apoyo a familias</p>
                 <div class="products-grid" id="productsGrid"></div>
@@ -190,26 +193,31 @@
                             <h3>Donación única</h3>
                             <p>Ayúdanos con lo que puedas. Cada euro cuenta.</p>
                             <div class="donation-amounts">
-                                <button class="amount-btn" data-amount="20">20€</button>
+                                <button class="amount-btn selected" data-amount="5">5€</button>
+                                <button class="amount-btn" data-amount="10">10€</button>
+                                <button class="amount-btn" data-amount="15">15€</button>
+                                <button class="amount-btn" data-amount="25">25€</button>
                                 <button class="amount-btn" data-amount="50">50€</button>
-                                <button class="amount-btn" data-amount="100">100€</button>
-                                <button class="amount-btn selected" data-amount="25">25€</button>
                             </div>
-                            <p class="donation-impact"><i class="fas fa-info-circle"></i> 25€ = 1 hora de cuidador especializado</p>
-                            <a href="#" class="btn btn-white" onclick="handleDonation(25); return false;">Donar 25€</a>
+                            <div style="display:flex; gap:8px; align-items:center; margin-bottom:15px;">
+                                <input type="number" id="customDonation" min="1" step="1" placeholder="Otra cantidad" style="width:100%; padding:10px; border:2px solid #ddd; border-radius:8px; font-size:1rem;">
+                                <span style="font-weight:bold; font-size:1.1rem;">€</span>
+                            </div>
+                            <p class="donation-impact" id="donationMessage"><i class="fas fa-info-circle"></i> 5€ = Ayudas a mantener nuestra web y redes sociales</p>
+                            <a href="#" class="btn btn-white" onclick="handleDonation(5); return false;">Donar ahora</a>
                         </div>
                         <div class="donation-card featured">
                             <div class="featured-badge">Más popular</div>
-                            <div class="donation-icon"><i class="fas fa-hand-holding-usd"></i></div>
-                            <h3>Hazte Socio</h3>
-                            <p>Comprométete con nuestra causa de forma mensual.</p>
+                            <div class="donation-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                            <h3>Hazte Colaborador</h3>
+                            <p>Conviértete en colaborador mensual y apoya la investigación de la ELA.</p>
                             <div class="socio-prices">
-                                <span class="socio-price">Desde <strong>15€</strong>/mes</span>
+                                <span class="socio-price"><strong>5€</strong>/mes</span>
                             </div>
-                            <p class="donation-impact"><i class="fas fa-info-circle"></i> 15€/mes = Acceso a productos de apoyo</p>
-                            <a href="#contacto" class="btn btn-white">Hacerme socio</a>
+                            <p class="donation-impact"><i class="fas fa-info-circle"></i> 5€/mes = Ayuda constante para la investigación</p>
+                            <a href="#" class="btn btn-white" onclick="showModal('authModal'); showAuthTab('register'); return false;">Hacerme colaborador</a>
                         </div>
-                        <div class="donation-card">
+                        <div class="donation-card" id="bizumCard">
                             <div class="donation-icon"><i class="fas fa-gift"></i></div>
                             <h3>Bizum</h3>
                             <p>Donación rápida y segura desde tu móvil.</p>
@@ -271,7 +279,7 @@
                             <select id="subject" name="subject" required>
                                 <option value="">Selecciona una opción</option>
                                 <option value="info">Solicitar información</option>
-                                <option value="socio">Hacerme socio</option>
+                                <option value="colaborador">Hacerme colaborador</option>
                                 <option value="voluntario">Voluntariado</option>
                                 <option value="tienda">Consulta sobre tienda</option>
                                 <option value="otro">Otro</option>
@@ -301,7 +309,7 @@
                     <ul>
                         <li><a href="#inicio">Inicio</a></li>
                         <li><a href="#sobre-nosotros">Quiénes Somos</a></li>
-                        <li><a href="#tienda">Tienda</a></li>
+                        <li id="footerNavTienda"><a href="#tienda">Tienda</a></li>
                         <li><a href="#blog">Blog</a></li>
                         <li><a href="#donar">Donar</a></li>
                     </ul>
@@ -381,9 +389,9 @@
             <div class="blog-modal-share">
                 <p>Compartir:</p>
                 <div class="share-buttons">
-                    <a href="#" class="share-btn facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="share-btn twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="share-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="share-btn facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="share-btn twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="share-btn whatsapp" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
@@ -501,6 +509,7 @@
                     <button class="btn btn-primary btn-block" onclick="handleLogin()">
                         <i class="fas fa-sign-in-alt"></i> Entrar
                     </button>
+                    <p style="text-align:center; margin-top:10px;"><a href="#" onclick="showForgotPassword(); return false;" style="font-size:0.85rem;">¿Olvidaste tu contraseña?</a></p>
                     <p class="auth-switch">¿No tienes cuenta? <a href="#" onclick="showAuthTab('register')">Regístrate</a></p>
                 </div>
                 
@@ -521,6 +530,17 @@
                         <label>Teléfono (opcional)</label>
                         <input type="tel" id="registerPhone" placeholder="600 123 456">
                     </div>
+                    <div class="form-group" style="background:#e8f5e9; border-radius:10px; padding:15px; margin-bottom:15px;">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" id="registerColaborador" onchange="toggleIbanField()">
+                            <strong>Quiero ser colaborador mensual (5€/mes)</strong>
+                        </label>
+                        <p style="font-size:0.85rem; color:var(--gray); margin-top:5px;">Te pasaremos un recibo mensual de 5€ mediante transferencia bancaria para apoyar la investigación de la ELA.</p>
+                    </div>
+                    <div class="form-group" id="ibanGroup" style="display:none;">
+                        <label>IBAN (para domiciliación)</label>
+                        <input type="text" id="registerIban" placeholder="ES00 0000 0000 0000 0000 0000">
+                    </div>
                     <button class="btn btn-primary btn-block" onclick="handleRegister()">
                         <i class="fas fa-user-plus"></i> Crear cuenta
                     </button>
@@ -530,12 +550,80 @@
         </div>
     </div>
 
-    <div class="modal" id="userOrdersModal">
-        <div class="modal-content" style="max-width:700px;">
-            <button class="modal-close" onclick="closeModal('userOrdersModal')">&times;</button>
+    <div class="modal" id="donationModal">
+        <div class="modal-content" style="max-width:500px; text-align:center;">
+            <button class="modal-close" onclick="closeDonationModal()">&times;</button>
             <div style="padding:20px;">
-                <h2 style="margin-bottom:20px;"><i class="fas fa-receipt"></i> Mis Pedidos</h2>
-                <div id="userOrdersList"></div>
+                <video id="donationVideo" onended="closeDonationModal()" style="width:100%; border-radius:12px; margin-bottom:20px;">
+                    <source src="/videos/gracias.mp4" type="video/mp4">
+                </video>
+                <h2 style="margin-bottom:10px;">¡Gracias por tu donación!</h2>
+                <p style="color:var(--gray); margin-bottom:20px;">Tu generosidad hace posible que sigamos luchando contra la ELA.</p>
+                <div style="background:#f8f9fa; border-radius:10px; padding:15px; margin-bottom:20px; text-align:left;">
+                    <p style="margin-bottom:8px;"><strong>Realiza tu donación por transferencia:</strong></p>
+                    <p style="margin-bottom:4px; font-size:0.9rem;"><strong>Titular:</strong> <span id="donationBankHolder">Neuronas con Chispa</span></p>
+                    <p style="margin-bottom:4px; font-size:0.9rem;"><strong>IBAN:</strong> <span id="donationBankIban">ES00 0000 0000 0000 0000 0000</span></p>
+                    <p style="font-size:0.9rem;"><strong>Concepto:</strong> Donación a Neuronas con Chispa</p>
+                </div>
+                <button class="btn btn-primary" onclick="closeDonationModal(); return false;">
+                    <i class="fas fa-check"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content" style="max-width:400px;">
+            <button class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</button>
+            <div style="padding:25px; text-align:center;">
+                <i class="fas fa-key" style="font-size:3rem; color:var(--primary); margin-bottom:20px;"></i>
+                <h2 style="margin-bottom:10px;">Recuperar contraseña</h2>
+                <p style="color:var(--gray); margin-bottom:20px;">Te enviaremos un código de recuperación a tu email.</p>
+                <div class="form-group">
+                    <input type="email" id="forgotEmail" placeholder="tu@email.com" required style="text-align:center;">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="handleForgotPassword()">
+                    <i class="fas fa-paper-plane"></i> Enviar código
+                </button>
+                <div id="forgotSent" style="display:none; margin-top:15px; padding:12px; background:#d4edda; border-radius:8px; color:#28a745;">
+                    <i class="fas fa-check-circle"></i> Si el email está registrado, recibirás un código.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="resetPasswordModal">
+        <div class="modal-content" style="max-width:400px;">
+            <button class="modal-close" onclick="closeModal('resetPasswordModal')">&times;</button>
+            <div style="padding:25px; text-align:center;">
+                <i class="fas fa-unlock-alt" style="font-size:3rem; color:var(--primary); margin-bottom:20px;"></i>
+                <h2 style="margin-bottom:10px;">Restablecer contraseña</h2>
+                <p style="color:var(--gray); margin-bottom:20px;">Introduce el código que recibiste y tu nueva contraseña.</p>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="resetEmail" required style="text-align:center;">
+                </div>
+                <div class="form-group">
+                    <label>Código de recuperación</label>
+                    <input type="text" id="resetToken" placeholder="Código" required style="text-align:center;">
+                </div>
+                <div class="form-group">
+                    <label>Nueva contraseña</label>
+                    <input type="password" id="resetPassword" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="handleResetPassword()">
+                    <i class="fas fa-save"></i> Cambiar contraseña
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="userDashboardModal">
+        <div class="modal-content" style="max-width:750px;">
+            <button class="modal-close" onclick="closeModal('userDashboardModal')">&times;</button>
+            <div style="padding:20px;">
+                <h2 style="margin-bottom:20px;"><i class="fas fa-user-circle"></i> Mi Panel</h2>
+                <div id="userDashboardContent"></div>
             </div>
         </div>
     </div>

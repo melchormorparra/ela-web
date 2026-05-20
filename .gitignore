@@ -1,0 +1,11 @@
+.vercel
+.env*.local
+.env-vercel
+node_modules/
+server/node_modules/
+Datos EmailJS.txt
+Datos_Supabase.txt
+public/comandos.txt
+public/web.pptm
+server/data.json
+*.log

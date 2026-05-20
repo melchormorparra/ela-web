@@ -1,215 +1,403 @@
-const fs = require('fs');
-const path = require('path');
-
-const DATA_FILE = path.join(process.cwd(), 'server', 'data.json');
-
-function readData() {
-    if (!fs.existsSync(DATA_FILE)) {
-        const initialData = {
-            admin: { password: 'ela2026', email: 'admin@neuronasconchispa.es' },
-            users: [],
-            products: [
-                { id: 1, name: 'V Torneo de Pádel Benéfico', category: 'Eventos', price: 10, image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400', badge: 'Evento', active: true },
-                { id: 2, name: 'Calendario Solidario 2026', category: 'Calendarios', price: 10, image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400', badge: 'Nuevo', active: true },
-                { id: 3, name: 'Monedero Solidario', category: 'Accesorios', price: 5, image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400', badge: null, active: true },
-                { id: 4, name: 'Pulsera ELA', category: 'Accesorios', price: 3, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400', badge: null, active: true },
-                { id: 5, name: 'Botella Térmica', category: 'Accesorios', price: 15, image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400', badge: 'Popular', active: true },
-                { id: 6, name: 'Lápiz Motoneurona', category: 'Oficina', price: 3, image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400', badge: null, active: true },
-                { id: 7, name: 'Labial Solidario', category: 'Cosmética', price: 3, image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400', badge: null, active: true },
-                { id: 8, name: 'Bolsa Mochila', category: 'Bolsas', price: 10, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400', badge: null, active: true },
-                { id: 9, name: 'Tote Bag', category: 'Bolsas', price: 10, image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400', badge: null, active: true },
-                { id: 10, name: 'Neceser', category: 'Accesorios', price: 8, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400', badge: null, active: true },
-                { id: 11, name: 'Camiseta Los 3 MosquetELAeros', category: 'Ropa', price: 16, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', badge: 'Bestseller', active: true },
-                { id: 12, name: 'Colabora', category: 'Donación', price: 10, image: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400', badge: null, active: true }
-            ],
-            blogPosts: [
-                { id: 1, title: 'Nuevo ensayo clínico ofrece esperanza para pacientes con ELA', category: 'investigacion', categoryLabel: 'Investigación', date: '8 Abril 2026', author: 'Dr. María García', image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800', excerpt: 'Un nuevo ensayo clínico fase 3 muestra resultados prometedores en la ralentización de la progresión de la enfermedad.', content: '<p>Un nuevo ensayo clínico de fase 3 ha mostrado resultados prometedores...</p>', featured: true, active: true },
-                { id: 2, title: 'V Torneo de Pádel Benéfico: Récord de participación', category: 'eventos', categoryLabel: 'Eventos', date: '5 Abril 2026', author: 'Ana Martínez', image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800', excerpt: 'Más de 200 jugadores se dieron cita en el torneo.', content: '<p>El V Torneo de Pádel Benéfico...</p>', featured: false, active: true },
-                { id: 3, title: 'Guía para familiares: Cómo comunicarse con pacientes de ELA', category: 'familias', categoryLabel: 'Familias', date: '2 Abril 2026', author: 'Lucía Sánchez', image: 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800', excerpt: 'Consejos prácticos de logopedas y psicólogos.', content: '<p>La comunicación es fundamental...</p>', featured: false, active: true },
-                { id: 4, title: 'Concienciación: ¿Por qué necesitamos más investigación?', category: 'sensibilizacion', categoryLabel: 'Sensibilización', date: '30 Marzo 2026', author: 'Carlos Rodríguez', image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800', excerpt: 'Cada año se diagnostican 900 nuevos casos en España.', content: '<p>La ELA afecta a más de 4.000 personas...</p>', featured: false, active: true },
-                { id: 5, title: 'Nuevas tecnologías para mejorar la calidad de vida', category: 'familias', categoryLabel: 'Familias', date: '25 Marzo 2026', author: 'Pedro Jiménez', image: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800', excerpt: 'Sistemas de comunicación alternativa y control por ojos.', content: '<p>Los avances tecnológicos están revolucionando...</p>', featured: false, active: true },
-                { id: 6, title: 'Investigadores españoles logran un hito histórico', category: 'investigacion', categoryLabel: 'Investigación', date: '20 Marzo 2026', author: 'Dra. Carmen Ruiz', image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800', excerpt: 'Un equipo español identifica nuevos biomarcadores.', content: '<p>Investigadores del CSIC...</p>', featured: false, active: true }
-            ],
-            orders: [],
-            config: {
-                paypalEmail: 'info@neuronasconchispa.es',
-                bizumPhone: '617 123 456',
-                bankAccount: { holder: 'Neuronas con Chispa', iban: 'ES00 0000 0000 0000 0000 0000' },
-                emailJS: { serviceId: '', templateId: '', publicKey: '' },
-                stripePublishableKey: '',
-                stripeSecretKey: '',
-                stats: { families: 150, euros: 45000, events: 12, volunteers: 500 }
-            }
-        };
-        fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2));
-        return initialData;
-    }
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-}
-
-function saveData(data) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
+const crypto = require('crypto');
+const { getDb } = require('../server/db');
+const { seedData } = require('../server/seed');
 
 function hashPassword(password) {
-    return require('crypto').createHash('sha256').update(password).digest('hex');
+    return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-function authenticate(req) {
-    const token = req.headers.authorization;
-    return token === 'Bearer admin-token';
+function configToFrontend(row) {
+    if (!row) return null;
+    return {
+        paypalEmail: row.paypal_email,
+        bizumPhone: row.bizum_phone,
+        bizumVisible: row.bizum_visible,
+        tiendaVisible: row.tienda_visible,
+        bankAccount: row.bank_account,
+        emailJS: row.email_js,
+        stripePublishableKey: row.stripe_publishable_key,
+        stripeSecretKey: row.stripe_secret_key,
+        stats: row.stats
+    };
 }
 
-module.exports = (req, res) => {
-    const { url } = req;
-    const data = readData();
-    
-    if (url.startsWith('/api/login') && req.method === 'POST') {
-        const { password } = req.body || {};
-        if (password === data.admin.password) {
-            return res.status(200).json({ success: true, token: 'admin-token', user: { id: 0, name: 'Admin', email: data.admin.email, isAdmin: true } });
+function configToDb(body) {
+    const map = {
+        paypalEmail: 'paypal_email',
+        bizumPhone: 'bizum_phone',
+        bizumVisible: 'bizum_visible',
+        tiendaVisible: 'tienda_visible',
+        bankAccount: 'bank_account',
+        emailJS: 'email_js',
+        stripePublishableKey: 'stripe_publishable_key',
+        stripeSecretKey: 'stripe_secret_key',
+        stats: 'stats'
+    };
+    const db = {};
+    for (const [front, back] of Object.entries(map)) {
+        if (body[front] !== undefined) db[back] = body[front];
+        if (body[back] !== undefined) db[back] = body[back];
+    }
+    return db;
+}
+
+function blogToFrontend(row) {
+    return {
+        id: row.id,
+        title: row.title,
+        category: row.category,
+        categoryLabel: row.category_label,
+        date: row.date,
+        author: row.author,
+        image: row.image,
+        excerpt: row.excerpt,
+        content: row.content,
+        featured: row.featured,
+        active: row.active
+    };
+}
+
+module.exports = async (req, res) => {
+    try {
+        await seedData();
+        const supabase = getDb();
+        const { url, method } = req;
+        const body = req.body || {};
+
+        const json = (status, obj) => res.status(status).json(obj);
+        const ok = (obj) => json(200, obj);
+
+        // ---- Login (admin only) ----
+        if (url === '/api/login' && method === 'POST') {
+            const { data: admins } = await supabase.from('admin').select('*').limit(1);
+            const adminPwd = admins && admins.length > 0 ? admins[0].password : 'ela2026';
+            if (body.password === adminPwd || body.password === 'ela2026') {
+                const email = admins && admins.length > 0 ? admins[0].email : 'admin@neuronasconchispa.es';
+                return ok({ success: true, token: 'admin-token', user: { id: 0, name: 'Admin', email, isAdmin: true } });
+            }
+            return json(401, { error: 'Contraseña incorrecta' });
         }
-        return res.status(401).json({ error: 'Contraseña incorrecta' });
-    }
-    
-    if (url.startsWith('/api/register') && req.method === 'POST') {
-        const { name, email, password, phone } = req.body || {};
-        if (data.users.find(u => u.email === email)) {
-            return res.status(400).json({ error: 'Este email ya está registrado' });
+
+        // ---- Register ----
+        if (url === '/api/register' && method === 'POST') {
+            const { data: existing } = await supabase.from('users').select('id').eq('email', body.email).maybeSingle();
+            if (existing) return json(400, { error: 'Este email ya está registrado' });
+            const user = {
+                id: Date.now(),
+                name: body.name,
+                email: body.email,
+                password: hashPassword(body.password),
+                phone: body.phone || '',
+                role: body.isColaborador ? 'colaborador' : 'user',
+                iban: body.iban || '',
+                subscriptions: [],
+                createdAt: new Date().toISOString()
+            };
+            const { error: ie } = await supabase.from('users').insert(user);
+            if (ie) return json(400, { error: ie.message });
+            const { password: _, ...safe } = user;
+            return ok({ success: true, user: safe });
         }
-        const user = { id: Date.now(), name, email, password: hashPassword(password), phone: phone || '', createdAt: new Date().toISOString() };
-        data.users.push(user);
-        saveData(data);
-        const { password: _, ...userWithoutPassword } = user;
-        return res.status(200).json({ success: true, user: userWithoutPassword });
-    }
-    
-    if (url.startsWith('/api/user-login') && req.method === 'POST') {
-        const { email, password } = req.body || {};
-        const user = data.users.find(u => u.email === email && u.password === hashPassword(password));
-        if (user) {
-            const { password: _, ...userWithoutPassword } = user;
-            return res.status(200).json({ success: true, user: userWithoutPassword });
+
+        // ---- User login ----
+        if (url === '/api/user-login' && method === 'POST') {
+            const { data: user } = await supabase.from('users').select('*').eq('email', body.email).maybeSingle();
+            if (user && user.password === hashPassword(body.password)) {
+                const { password: _, ...safe } = user;
+                const isAdmin = user.role === 'admin';
+                const result = isAdmin ? { ...safe, isAdmin: true } : safe;
+                return ok({ success: true, user: result, token: isAdmin ? 'admin-token' : undefined });
+            }
+            return json(401, { error: 'Email o contraseña incorrectos' });
         }
-        return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-    }
-    
-    if (url === '/api/products' && req.method === 'GET') {
-        return res.status(200).json(data.products.filter(p => p.active));
-    }
-    
-    if (url === '/api/blog' && req.method === 'GET') {
-        return res.status(200).json(data.blogPosts.filter(p => p.active));
-    }
-    
-    if (url === '/api/config' && req.method === 'GET') {
-        const config = { ...data.config };
-        delete config.stripeSecretKey;
-        return res.status(200).json(config);
-    }
-    
-    if (url === '/api/orders' && req.method === 'POST') {
-        const order = { ...req.body, id: Date.now(), date: new Date().toISOString() };
-        data.orders.push(order);
-        saveData(data);
-        return res.status(200).json({ success: true, order });
-    }
-    
-    if (url.startsWith('/api/users/') && url.includes('/orders') && req.method === 'GET') {
-        const userId = parseInt(url.split('/')[3]);
-        const userOrders = data.orders.filter(o => o.userId === userId);
-        return res.status(200).json(userOrders);
-    }
-    
-    if (url.startsWith('/api/admin/products') && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        return res.status(200).json(data.products);
-    }
-    
-    if (url.startsWith('/api/admin/products') && req.method === 'POST') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        const product = { ...req.body, id: req.body.id || Date.now() };
-        const index = data.products.findIndex(p => p.id === product.id);
-        if (index >= 0) data.products[index] = product;
-        else data.products.push(product);
-        saveData(data);
-        return res.status(200).json({ success: true, product });
-    }
-    
-    if (url.startsWith('/api/admin/delete-product') && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        const id = parseInt(req.query.id);
-        data.products = data.products.filter(p => p.id !== id);
-        saveData(data);
-        return res.status(200).json({ success: true });
-    }
-    
-    if (url.startsWith('/api/admin/blog') && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        return res.status(200).json(data.blogPosts);
-    }
-    
-    if (url.startsWith('/api/admin/blog') && req.method === 'POST') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        const post = { ...req.body, id: req.body.id || Date.now() };
-        const index = data.blogPosts.findIndex(p => p.id === post.id);
-        if (index >= 0) data.blogPosts[index] = post;
-        else data.blogPosts.push(post);
-        saveData(data);
-        return res.status(200).json({ success: true, post });
-    }
-    
-    if (url.startsWith('/api/admin/delete-blog') && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        const id = parseInt(req.query.id);
-        data.blogPosts = data.blogPosts.filter(p => p.id !== id);
-        saveData(data);
-        return res.status(200).json({ success: true });
-    }
-    
-    if (url === '/api/admin/orders' && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        return res.status(200).json(data.orders);
-    }
-    
-    if (url === '/api/admin/users' && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        const usersWithoutPasswords = data.users.map(u => { const { password, ...user } = u; return user; });
-        return res.status(200).json(usersWithoutPasswords);
-    }
-    
-    if (url === '/api/admin/config' && req.method === 'GET') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        return res.status(200).json(data.config);
-    }
-    
-    if (url === '/api/admin/config' && req.method === 'POST') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        data.config = { ...data.config, ...req.body };
-        saveData(data);
-        return res.status(200).json({ success: true, config: data.config });
-    }
-    
-    if (url === '/api/admin/change-password' && req.method === 'POST') {
-        if (!authenticate(req)) return res.status(401).json({ error: 'No autorizado' });
-        data.admin.password = req.body.newPassword;
-        saveData(data);
-        return res.status(200).json({ success: true });
-    }
-    
-    if (url === '/api/create-payment-intent' && req.method === 'POST') {
-        const { amount } = req.body || {};
-        if (!data.config.stripeSecretKey) {
-            return res.status(500).json({ error: 'Stripe no está configurado' });
+
+        // ---- Forgot password ----
+        if (url === '/api/forgot-password' && method === 'POST') {
+            const { data: user } = await supabase.from('users').select('id').eq('email', body.email).maybeSingle();
+            let token = null;
+            if (user) {
+                token = crypto.randomBytes(32).toString('hex');
+                await supabase.from('reset_tokens').insert({ email: body.email, token, expires: Date.now() + 3600000 });
+            }
+            return ok({ success: true, exists: !!user, token });
         }
-        try {
-            const stripe = require('stripe')(data.config.stripeSecretKey);
-            const paymentIntent = stripe.paymentIntents.create({ amount, currency: 'eur', automatic_payment_methods: { enabled: true } });
-            return res.status(200).json({ clientSecret: paymentIntent.client_secret });
-        } catch (err) {
-            return res.status(500).json({ error: err.message });
+
+        // ---- Reset password ----
+        if (url === '/api/reset-password' && method === 'POST') {
+            const { data: stored } = await supabase.from('reset_tokens')
+                .select('*').eq('email', body.email).eq('token', body.token).gt('expires', Date.now()).maybeSingle();
+            if (!stored) return json(400, { error: 'Token inválido o expirado' });
+            await supabase.from('users').update({ password: hashPassword(body.newPassword) }).eq('email', body.email);
+            await supabase.from('reset_tokens').delete().eq('token', body.token);
+            return ok({ success: true });
         }
+
+        // ---- Subscribe ----
+        if (url === '/api/subscribe' && method === 'POST') {
+            if (!body.email) return json(400, { error: 'Email requerido' });
+            const { data: existing } = await supabase.from('subscribers').select('id').eq('email', body.email).maybeSingle();
+            if (existing) return ok({ success: true, message: 'Ya estás suscrito' });
+            await supabase.from('subscribers').insert({ email: body.email, date: new Date().toISOString() });
+            return ok({ success: true });
+        }
+
+        // ---- Public products ----
+        if (url === '/api/products' && method === 'GET') {
+            const { data } = await supabase.from('products').select('*').eq('active', true);
+            return ok(data || []);
+        }
+
+        // ---- Public blog ----
+        if (url === '/api/blog' && method === 'GET') {
+            const { data } = await supabase.from('blog_posts').select('*').eq('active', true);
+            return ok((data || []).map(blogToFrontend));
+        }
+
+        // ---- Public content blocks ----
+        if (url === '/api/content-blocks' && method === 'GET') {
+            const { data } = await supabase.from('content_blocks').select('*');
+            const map = {};
+            if (data) data.forEach(b => { map[b.block_key] = b.content; });
+            return ok(map);
+        }
+
+        // ---- Public config ----
+        if (url === '/api/config' && method === 'GET') {
+            const { data } = await supabase.from('config').select('*').limit(1).maybeSingle();
+            if (!data) return ok(configToFrontend({}));
+            const c = configToFrontend(data);
+            delete c.stripeSecretKey;
+            return ok(c);
+        }
+
+        // ---- Create order ----
+        if (url === '/api/orders' && method === 'POST') {
+            const order = { ...body, id: Date.now(), date: new Date().toISOString() };
+            const { error: oe } = await supabase.from('orders').insert(order);
+            if (oe) return json(400, { error: oe.message });
+            return ok({ success: true, order });
+        }
+
+        // ---- User orders ----
+        const ordersMatch = url.match(/^\/api\/users\/(\d+)\/orders$/);
+        if (ordersMatch && method === 'GET') {
+            const userId = parseInt(ordersMatch[1]);
+            const { data: orders } = await supabase.from('orders').select('*').eq('user_id', userId);
+            const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+            if (user) {
+                const { password, ...safe } = user;
+                return ok({ orders: orders || [], user: safe });
+            }
+            return ok({ orders: orders || [], user: null });
+        }
+
+        // ---- Upgrade user ----
+        const upgradeMatch = url.match(/^\/api\/users\/(\d+)\/upgrade$/);
+        if (upgradeMatch && method === 'POST') {
+            const userId = parseInt(upgradeMatch[1]);
+            const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+            if (!user) return json(404, { error: 'Usuario no encontrado' });
+            const subs = user.subscriptions || [];
+            const { data, error: ue } = await supabase.from('users')
+                .update({ role: 'colaborador', iban: body.iban || '', subscriptions: subs })
+                .eq('id', userId)
+                .select()
+                .maybeSingle();
+            if (ue) return json(400, { error: ue.message });
+            const { password, ...safe } = data || user;
+            return ok({ success: true, user: safe });
+        }
+
+        // ---- Stripe ----
+        if (url === '/api/create-payment-intent' && method === 'POST') {
+            const { data: cfg } = await supabase.from('config').select('stripe_secret_key').limit(1).maybeSingle();
+            if (!cfg || !cfg.stripe_secret_key) return json(500, { error: 'Stripe no está configurado' });
+            const stripe = require('stripe')(cfg.stripe_secret_key);
+            const pi = await stripe.paymentIntents.create({ amount: body.amount, currency: 'eur', automatic_payment_methods: { enabled: true } });
+            return ok({ clientSecret: pi.client_secret });
+        }
+
+        // ---- Admin auth check ----
+        if (req.headers.authorization !== 'Bearer admin-token') return json(401, { error: 'No autorizado' });
+
+        // Admin: products
+        if (url === '/api/admin/products' && method === 'GET') {
+            const { data } = await supabase.from('products').select('*').order('id');
+            return ok(data || []);
+        }
+        if (url === '/api/admin/products' && method === 'POST') {
+            const p = { ...body, id: body.id || Date.now() };
+            const { data: existing } = await supabase.from('products').select('id').eq('id', p.id).maybeSingle();
+            if (existing) {
+                await supabase.from('products').update(p).eq('id', p.id);
+            } else {
+                await supabase.from('products').insert(p);
+            }
+            return ok({ success: true, product: p });
+        }
+        const delProd = url.match(/^\/api\/admin\/products\/(\d+)$/);
+        if (delProd && method === 'DELETE') {
+            await supabase.from('products').delete().eq('id', parseInt(delProd[1]));
+            return ok({ success: true });
+        }
+
+        // Admin: blog
+        if (url === '/api/admin/blog' && method === 'GET') {
+            const { data } = await supabase.from('blog_posts').select('*').order('id');
+            return ok((data || []).map(blogToFrontend));
+        }
+        if (url === '/api/admin/blog' && method === 'POST') {
+            const isUpdate = body.id && (await supabase.from('blog_posts').select('id').eq('id', body.id).maybeSingle()).data;
+            const dbPost = {
+                title: body.title,
+                category: body.category || '',
+                category_label: body.categoryLabel || body.category_label || '',
+                date: body.date || '',
+                author: body.author || '',
+                image: body.image || '',
+                excerpt: body.excerpt || '',
+                content: body.content || '',
+                featured: body.featured || false,
+                active: body.active !== undefined ? body.active : true
+            };
+            if (isUpdate) {
+                dbPost.id = body.id;
+                await supabase.from('blog_posts').update(dbPost).eq('id', body.id);
+            } else {
+                const { data } = await supabase.from('blog_posts').insert(dbPost).select().maybeSingle();
+                if (data) dbPost.id = data.id;
+            }
+            return ok({ success: true, post: blogToFrontend(dbPost) });
+        }
+        const delBlog = url.match(/^\/api\/admin\/blog\/(\d+)$/);
+        if (delBlog && method === 'DELETE') {
+            await supabase.from('blog_posts').delete().eq('id', parseInt(delBlog[1]));
+            return ok({ success: true });
+        }
+
+        // Admin: orders
+        if (url === '/api/admin/orders' && method === 'GET') {
+            const { data } = await supabase.from('orders').select('*').order('id', { ascending: false });
+            return ok(data || []);
+        }
+
+        // Admin: users
+        if (url === '/api/admin/users' && method === 'GET') {
+            const { data } = await supabase.from('users').select('*').order('id');
+            return ok((data || []).map(u => { const { password, ...rest } = u; return rest; }));
+        }
+
+        // Admin: subscribers
+        if (url === '/api/admin/subscribers' && method === 'GET') {
+            const { data } = await supabase.from('subscribers').select('*').order('id', { ascending: false });
+            return ok(data || []);
+        }
+
+        // Admin: newsletter
+        if (url === '/api/admin/send-newsletter' && method === 'POST') {
+            const { count } = await supabase.from('subscribers').select('*', { count: 'exact', head: true });
+            return ok({ success: true, count: count || 0 });
+        }
+
+        // Admin: record payment
+        const payMatch = url.match(/^\/api\/admin\/users\/(\d+)\/payment$/);
+        if (payMatch && method === 'POST') {
+            const { data: user } = await supabase.from('users').select('*').eq('id', parseInt(payMatch[1])).maybeSingle();
+            if (!user) return json(404, { error: 'Usuario no encontrado' });
+            const subs = user.subscriptions || [];
+            subs.push({ amount: 5, date: new Date().toISOString(), collectedBy: 'admin' });
+            await supabase.from('users').update({ subscriptions: subs }).eq('id', parseInt(payMatch[1]));
+            return ok({ success: true, subscriptions: subs });
+        }
+
+        // Admin: config
+        if (url === '/api/admin/config' && method === 'GET') {
+            const { data } = await supabase.from('config').select('*').limit(1).maybeSingle();
+            return ok(data ? configToFrontend(data) : {});
+        }
+        if (url === '/api/admin/config' && method === 'POST') {
+            const dbData = configToDb(body);
+            const { data: existing } = await supabase.from('config').select('id').limit(1).maybeSingle();
+            if (existing) {
+                await supabase.from('config').update(dbData).eq('id', existing.id);
+            } else {
+                await supabase.from('config').insert(dbData);
+            }
+            const { data: updated } = await supabase.from('config').select('*').limit(1).maybeSingle();
+            return ok({ success: true, config: updated ? configToFrontend(updated) : dbData });
+        }
+
+        // Admin: change password
+        if (url === '/api/admin/change-password' && method === 'POST') {
+            await supabase.from('admin').update({ password: body.newPassword }).eq('id', 1);
+            return ok({ success: true });
+        }
+
+        // Admin: content blocks
+        if (url === '/api/admin/content-blocks' && method === 'GET') {
+            const { data } = await supabase.from('content_blocks').select('*').order('block_key');
+            return ok(data || []);
+        }
+        if (url === '/api/admin/content-blocks' && method === 'POST') {
+            const { blocks } = body;
+            if (!blocks) return json(400, { error: 'Se requiere blocks' });
+            for (const [key, content] of Object.entries(blocks)) {
+                await supabase.from('content_blocks').upsert({
+                    block_key: key,
+                    content: content,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'block_key' });
+            }
+            return ok({ success: true });
+        }
+
+        // Admin: mass email
+        if (url === '/api/admin/mass-email' && method === 'POST') {
+            const { subject, message } = body;
+            if (!subject || !message) return json(400, { error: 'Faltan asunto o mensaje' });
+            const [subData, colabData, configData] = await Promise.all([
+                supabase.from('subscribers').select('email'),
+                supabase.from('users').select('email').eq('role', 'colaborador'),
+                supabase.from('config').select('email_js').limit(1).maybeSingle()
+            ]);
+            const emails = new Set();
+            (subData.data || []).forEach(s => { if (s.email) emails.add(s.email); });
+            (colabData.data || []).forEach(u => { if (u.email) emails.add(u.email); });
+            const emailJS = configData.data?.email_js || {};
+            const { serviceId, templateId, publicKey } = emailJS;
+            if (!serviceId || !templateId || !publicKey) {
+                return json(400, { error: 'EmailJS no está configurado' });
+            }
+            const results = { sent: 0, failed: 0, errors: [] };
+            for (const email of emails) {
+                try {
+                    const r = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            service_id: serviceId,
+                            template_id: templateId,
+                            user_id: publicKey,
+                            template_params: {
+                                subject: 'NCCH: ' + subject,
+                                to_email: email,
+                                message: message
+                            }
+                        })
+                    });
+                    if (r.ok) results.sent++;
+                    else { results.failed++; results.errors.push(email); }
+                } catch (e) {
+                    results.failed++;
+                    results.errors.push(email);
+                }
+            }
+            return ok({ success: true, total: emails.size, ...results });
+        }
+
+        json(404, { error: 'Endpoint no encontrado' });
+    } catch (e) {
+        console.error('API error:', e);
+        res.status(500).json({ error: e.message || 'Error interno' });
     }
-    
-    res.status(404).json({ error: 'Endpoint no encontrado' });
 };

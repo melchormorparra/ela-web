@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Neuronas con Chispa</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6c5ce7;
-            --primary-dark: #5a4bd1;
+            --primary: #1b2e6e;
+            --primary-dark: #152350;
             --success: #00b894;
             --danger: #e74c3c;
             --warning: #fdcb6e;
@@ -288,6 +289,43 @@
             color: var(--gray);
         }
         .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
+        .btn-warning { background: #fdcb6e; color: #2d3436; }
+        .palette-grid {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .palette-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 12px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: var(--white);
+            transition: border-color 0.2s;
+            min-width: 110px;
+        }
+        .palette-item:hover { border-color: var(--primary); }
+        .palette-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .palette-hex {
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .palette-item label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin: 0;
+        }
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; gap: 15px; align-items: flex-start; }
@@ -318,6 +356,10 @@
             <button onclick="showSection('config')"><i class="fas fa-cog"></i> Configuración</button>
             <button onclick="showSection('orders')"><i class="fas fa-receipt"></i> Pedidos</button>
             <button onclick="showSection('users')"><i class="fas fa-users"></i> Usuarios</button>
+            <button onclick="showSection('colaboradores')"><i class="fas fa-hand-holding-heart"></i> Colaboradores</button>
+            <button onclick="showSection('content')"><i class="fas fa-edit"></i> Contenido</button>
+            <button onclick="showSection('subscribers')"><i class="fas fa-envelope"></i> Suscriptores</button>
+            <button onclick="showSection('massemail')"><i class="fas fa-bullhorn"></i> Email Masivo</button>
             <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
         </nav>
 
@@ -368,6 +410,18 @@
                     <label>Teléfono de Bizum</label>
                     <input type="text" id="bizumPhone">
                 </div>
+                <div class="form-group">
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <input type="checkbox" id="bizumVisible">
+                        Mostrar Bizum en la página (para donaciones y pagos)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <input type="checkbox" id="tiendaVisible">
+                        Mostrar Tienda Solidaria en la página
+                    </label>
+                </div>
                 
                 <div class="section-header" style="margin-top: 30px;">
                     <h3>Datos para Transferencia Bancaria</h3>
@@ -417,6 +471,49 @@
                 
                 <button class="btn btn-success" onclick="saveConfig()"><i class="fas fa-save"></i> Guardar cambios</button>
 
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3>Paleta de Colores</h3>
+                </div>
+                <p style="color:var(--gray); font-size:0.85rem; margin-bottom:15px;">
+                    Personaliza los colores principales de la página. Haz clic en el cuadrado de color para cambiarlo.
+                </p>
+                <div class="palette-grid">
+                    <div class="palette-item" onclick="document.getElementById('paletteInputPrimary').click()">
+                        <div class="palette-swatch" id="paletteSwatchPrimary" style="background:#1104fc"></div>
+                        <span class="palette-hex" id="paletteHexPrimary">#1104fc</span>
+                        <input type="color" id="paletteInputPrimary" value="#1104fc" onchange="updatePaletteSwatch('Primary', this.value)" style="display:none">
+                        <label>Primario</label>
+                    </div>
+                    <div class="palette-item" onclick="document.getElementById('paletteInputPrimaryDark').click()">
+                        <div class="palette-swatch" id="paletteSwatchPrimaryDark" style="background:#0802c4"></div>
+                        <span class="palette-hex" id="paletteHexPrimaryDark">#0802c4</span>
+                        <input type="color" id="paletteInputPrimaryDark" value="#0802c4" onchange="updatePaletteSwatch('PrimaryDark', this.value)" style="display:none">
+                        <label>Primario oscuro</label>
+                    </div>
+                    <div class="palette-item" onclick="document.getElementById('paletteInputSecondary').click()">
+                        <div class="palette-swatch" id="paletteSwatchSecondary" style="background:#0401a8"></div>
+                        <span class="palette-hex" id="paletteHexSecondary">#0401a8</span>
+                        <input type="color" id="paletteInputSecondary" value="#0401a8" onchange="updatePaletteSwatch('Secondary', this.value)" style="display:none">
+                        <label>Secundario</label>
+                    </div>
+                    <div class="palette-item" onclick="document.getElementById('paletteInputAccent').click()">
+                        <div class="palette-swatch" id="paletteSwatchAccent" style="background:#00008c"></div>
+                        <span class="palette-hex" id="paletteHexAccent">#00008c</span>
+                        <input type="color" id="paletteInputAccent" value="#00008c" onchange="updatePaletteSwatch('Accent', this.value)" style="display:none">
+                        <label>Acento</label>
+                    </div>
+                    <div class="palette-item" onclick="document.getElementById('paletteInputDark').click()">
+                        <div class="palette-swatch" id="paletteSwatchDark" style="background:#333333"></div>
+                        <span class="palette-hex" id="paletteHexDark">#333333</span>
+                        <input type="color" id="paletteInputDark" value="#333333" onchange="updatePaletteSwatch('Dark', this.value)" style="display:none">
+                        <label>Oscuro (texto)</label>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn btn-primary" onclick="savePalette()"><i class="fas fa-palette"></i> Guardar paleta</button>
+                    <button class="btn btn-warning" onclick="setDefaultPalette()"><i class="fas fa-undo"></i> Paleta por defecto</button>
+                </div>
+
                 <div class="section-header" style="margin-top: 40px;">
                     <h2>Cambiar Contraseña</h2>
                 </div>
@@ -439,6 +536,50 @@
                     <h2>Usuarios Registrados</h2>
                 </div>
                 <div id="usersList"></div>
+            </section>
+
+            <section class="admin-section" id="colaboradoresSection">
+                <div class="section-header">
+                    <h2>Colaboradores Mensuales (5€/mes)</h2>
+                </div>
+                <p style="color:var(--gray); margin-bottom:15px;">Desde aquí puedes registrar los pagos mensuales de los colaboradores.</p>
+                <div id="colaboradoresList"></div>
+            </section>
+
+            <section class="admin-section" id="contentSection">
+                <div class="section-header">
+                    <h2>Contenido de la Página</h2>
+                </div>
+                <p style="color:var(--gray); margin-bottom:15px;">Edita el texto de las secciones de la página. Usa HTML básico para formato.</p>
+                <div id="contentBlocksList"></div>
+                <button class="btn btn-success" onclick="saveContentBlocks()" style="margin-top:20px;"><i class="fas fa-save"></i> Guardar cambios</button>
+            </section>
+
+            <section class="admin-section" id="subscribersSection">
+                <div class="section-header">
+                    <h2>Suscriptores del Boletín</h2>
+                </div>
+                <p style="color:var(--gray); margin-bottom:15px;">Usuarios suscritos al boletín de novedades.</p>
+                <div id="subscribersList"></div>
+            </section>
+
+            <section class="admin-section" id="massemailSection">
+                <div class="section-header">
+                    <h2>Email Masivo</h2>
+                </div>
+                <p style="color:var(--gray); margin-bottom:15px;">
+                    Envía un correo a todos los suscriptores y colaboradores registrados.
+                </p>
+                <div id="massEmailResult" style="display:none; padding:12px; border-radius:8px; margin-bottom:15px;"></div>
+                <div class="form-group">
+                    <label>Asunto del correo</label>
+                    <input type="text" id="massEmailSubject" placeholder="Ej: Novedades de Neuronas con Chispa">
+                </div>
+                <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea id="massEmailMessage" style="min-height:200px;" placeholder="Escribe aquí el mensaje..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="sendMassEmail()"><i class="fas fa-paper-plane"></i> Enviar a todos</button>
             </section>
         </div>
     </div>
@@ -474,8 +615,13 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>URL de la imagen</label>
-                <input type="url" id="productImage" placeholder="https://...">
+                <label>Imagen del producto</label>
+                <input type="file" id="productImageInput" accept="image/*" onchange="previewProductImage(event)">
+                <input type="hidden" id="productImage">
+                <div id="productImagePreview" style="margin-top:10px; max-width:150px; border-radius:8px; overflow:hidden; display:none;">
+                    <img id="productImagePreviewImg" style="width:100%; display:block;">
+                    <button type="button" onclick="clearProductImage()" style="margin-top:5px; font-size:0.8rem; color:var(--danger); background:none; border:none; cursor:pointer;"><i class="fas fa-times"></i> Quitar imagen</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Etiqueta (badge)</label>
@@ -516,8 +662,13 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>URL de imagen</label>
-                <input type="url" id="blogImage" placeholder="https://...">
+                <label>Imagen destacada</label>
+                <input type="file" id="blogImageInput" accept="image/*" onchange="previewBlogImage(event)">
+                <input type="hidden" id="blogImage">
+                <div id="blogImagePreview" style="margin-top:10px; max-width:200px; border-radius:8px; overflow:hidden; display:none;">
+                    <img id="blogImagePreviewImg" style="width:100%; display:block;">
+                    <button type="button" onclick="clearBlogImage()" style="margin-top:5px; font-size:0.8rem; color:var(--danger); background:none; border:none; cursor:pointer;"><i class="fas fa-times"></i> Quitar imagen</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Extracto (resumen breve)</label>
@@ -535,6 +686,10 @@
                 <input type="checkbox" id="blogActive" checked>
                 <label for="blogActive">Activo (visible en la web)</label>
             </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="blogNotify">
+                <label for="blogNotify">Notificar a los suscriptores por email</label>
+            </div>
             <button class="btn btn-success" onclick="saveBlog()"><i class="fas fa-save"></i> Guardar</button>
         </div>
     </div>
@@ -546,39 +701,37 @@
         let blogPosts = [];
         let orders = [];
         let users = [];
-
-        if (token) checkAuth();
+        let subscribers = [];
 
         function checkAuth() {
+            const userData = localStorage.getItem('elaUser');
+            if (!userData) { noAccess(); return; }
+            const user = JSON.parse(userData);
+            if (!user.isAdmin) { noAccess(); return; }
+            if (!token) { noAccess(); return; }
             fetch(`${API}/admin/products`, { headers: { 'Authorization': `Bearer ${token}` } })
-                .then(r => r.ok ? showAdmin() : logout())
-                .catch(() => logout());
+                .then(r => r.ok ? showAdmin() : noAccess())
+                .catch(() => noAccess());
         }
 
-        function login() {
-            const password = document.getElementById('passwordInput').value;
-            fetch(`${API}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
-            }).then(r => r.json())
-              .then(data => {
-                  if (data.success) {
-                      token = data.token;
-                      localStorage.setItem('adminToken', token);
-                      showAdmin();
-                  } else {
-                      document.getElementById('loginError').style.display = 'block';
-                  }
-              });
+        function noAccess() {
+            document.getElementById('loginContainer').innerHTML = `
+                <div class="login-box" style="text-align:center;">
+                    <i class="fas fa-lock" style="font-size:3rem; color:var(--danger); margin-bottom:20px;"></i>
+                    <h1>Acceso restringido</h1>
+                    <p style="color:var(--gray); margin-bottom:20px;">Debes iniciar sesión como administrador desde la página principal.</p>
+                    <a href="/" class="btn btn-primary" style="display:inline-block; padding:12px 24px; background:var(--primary); color:white; border-radius:8px; text-decoration:none;">Ir a la página principal</a>
+                </div>`;
+            document.getElementById('loginContainer').style.display = 'flex';
         }
 
         function logout() {
             token = null;
             localStorage.removeItem('adminToken');
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('adminContainer').style.display = 'none';
+            window.location.href = '/';
         }
+
+        checkAuth();
 
         function showAdmin() {
             document.getElementById('loginContainer').style.display = 'none';
@@ -592,16 +745,20 @@
                 fetch(`${API}/admin/blog`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
                 fetch(`${API}/admin/orders`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
                 fetch(`${API}/admin/config`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
-                fetch(`${API}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json())
-            ]).then(([p, b, o, c, u]) => {
+                fetch(`${API}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
+                fetch(`${API}/admin/subscribers`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json())
+            ]).then(([p, b, o, c, u, s]) => {
                 products = p;
                 blogPosts = b;
                 orders = o;
                 users = u;
+                subscribers = s;
                 renderProducts();
                 renderBlog();
                 renderOrders();
                 renderUsers();
+                renderCollaborators();
+                renderSubscribers();
                 loadConfig(c);
             });
         }
@@ -633,6 +790,8 @@
             document.getElementById('productCategory').value = 'Accesorios';
             document.getElementById('productPrice').value = '';
             document.getElementById('productImage').value = '';
+            document.getElementById('productImageInput').value = '';
+            document.getElementById('productImagePreview').style.display = 'none';
             document.getElementById('productBadge').value = '';
             document.getElementById('productActive').checked = true;
             if (id) editProduct(id);
@@ -648,6 +807,13 @@
             document.getElementById('productCategory').value = p.category;
             document.getElementById('productPrice').value = p.price;
             document.getElementById('productImage').value = p.image || '';
+            document.getElementById('productImageInput').value = '';
+            if (p.image && p.image.startsWith('data:')) {
+                document.getElementById('productImagePreviewImg').src = p.image;
+                document.getElementById('productImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('productImagePreview').style.display = 'none';
+            }
             document.getElementById('productBadge').value = p.badge || '';
             document.getElementById('productActive').checked = p.active !== false;
             document.getElementById('productModal').classList.add('active');
@@ -655,6 +821,24 @@
 
         function closeProductModal() {
             document.getElementById('productModal').classList.remove('active');
+        }
+
+        function previewProductImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('productImage').value = e.target.result;
+                document.getElementById('productImagePreviewImg').src = e.target.result;
+                document.getElementById('productImagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearProductImage() {
+            document.getElementById('productImage').value = '';
+            document.getElementById('productImageInput').value = '';
+            document.getElementById('productImagePreview').style.display = 'none';
         }
 
         function saveProduct() {
@@ -708,6 +892,8 @@
             document.getElementById('blogCategory').value = 'investigacion';
             document.getElementById('blogAuthor').value = '';
             document.getElementById('blogImage').value = '';
+            document.getElementById('blogImageInput').value = '';
+            document.getElementById('blogImagePreview').style.display = 'none';
             document.getElementById('blogExcerpt').value = '';
             document.getElementById('blogContent').value = '';
             document.getElementById('blogFeatured').checked = false;
@@ -724,6 +910,13 @@
             document.getElementById('blogCategory').value = p.category;
             document.getElementById('blogAuthor').value = p.author;
             document.getElementById('blogImage').value = p.image || '';
+            document.getElementById('blogImageInput').value = '';
+            if (p.image && p.image.startsWith('data:')) {
+                document.getElementById('blogImagePreviewImg').src = p.image;
+                document.getElementById('blogImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('blogImagePreview').style.display = 'none';
+            }
             document.getElementById('blogExcerpt').value = p.excerpt || '';
             document.getElementById('blogContent').value = p.content || '';
             document.getElementById('blogFeatured').checked = p.featured || false;
@@ -733,6 +926,24 @@
 
         function closeBlogModal() {
             document.getElementById('blogModal').classList.remove('active');
+        }
+
+        function previewBlogImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('blogImage').value = e.target.result;
+                document.getElementById('blogImagePreviewImg').src = e.target.result;
+                document.getElementById('blogImagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearBlogImage() {
+            document.getElementById('blogImage').value = '';
+            document.getElementById('blogImageInput').value = '';
+            document.getElementById('blogImagePreview').style.display = 'none';
         }
 
         function saveBlog() {
@@ -752,11 +963,35 @@
                 featured: document.getElementById('blogFeatured').checked,
                 active: document.getElementById('blogActive').checked
             };
+            const notify = document.getElementById('blogNotify').checked;
             fetch(`${API}/admin/blog`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(post)
-            }).then(() => { closeBlogModal(); loadData(); });
+            }).then(() => { 
+                closeBlogModal(); 
+                loadData();
+                if (notify) {
+                    fetch(`${API}/admin/config`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()).then(config => {
+                        fetch(`${API}/admin/subscribers`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()).then(subscribers => {
+                            const serviceId = config.emailJS?.serviceId;
+                            const templateId = config.emailJS?.templateId;
+                            const publicKey = config.emailJS?.publicKey;
+                            if (serviceId && templateId && publicKey && subscribers.length > 0) {
+                                emailjs.init(publicKey);
+                                subscribers.forEach(sub => {
+                                    emailjs.send(serviceId, templateId, {
+                                        subject: 'NCCH: Nuevo artículo en el blog',
+                                        to_email: sub.email,
+                                        message: `Nuevo artículo: ${post.title}\n\n${post.excerpt || ''}\n\nLéelo completo en: ${window.location.origin}/#blog`
+                                    }).catch(err => console.error('EmailJS error:', err));
+                                });
+                                alert(`Notificación enviada a ${subscribers.length} suscriptores`);
+                            }
+                        });
+                    });
+                }
+            });
         }
 
         function deleteBlog(id) {
@@ -772,6 +1007,8 @@
             document.getElementById('statVolunteers').value = c.stats?.volunteers || 0;
             document.getElementById('paypalEmail').value = c.paypalEmail || '';
             document.getElementById('bizumPhone').value = c.bizumPhone || '';
+            document.getElementById('bizumVisible').checked = c.bizumVisible === true;
+            document.getElementById('tiendaVisible').checked = c.tiendaVisible === true;
             document.getElementById('bankHolder').value = c.bankAccount?.holder || '';
             document.getElementById('bankIban').value = c.bankAccount?.iban || '';
             document.getElementById('emailServiceId').value = c.emailJS?.serviceId || '';
@@ -779,6 +1016,67 @@
             document.getElementById('emailPublicKey').value = c.emailJS?.publicKey || '';
             document.getElementById('stripePublishableKey').value = c.stripePublishableKey || '';
             document.getElementById('stripeSecretKey').value = c.stripeSecretKey || '';
+            loadPalette();
+        }
+
+        function updatePaletteSwatch(name, value) {
+            document.getElementById('paletteSwatch' + name).style.background = value;
+            document.getElementById('paletteHex' + name).textContent = value;
+        }
+
+        function getPalette() {
+            return {
+                primary: document.getElementById('paletteInputPrimary').value,
+                primaryDark: document.getElementById('paletteInputPrimaryDark').value,
+                secondary: document.getElementById('paletteInputSecondary').value,
+                accent: document.getElementById('paletteInputAccent').value,
+                dark: document.getElementById('paletteInputDark').value
+            };
+        }
+
+        function setPaletteValues(p) {
+            if (p.primary) { document.getElementById('paletteInputPrimary').value = p.primary; updatePaletteSwatch('Primary', p.primary); }
+            if (p.primaryDark) { document.getElementById('paletteInputPrimaryDark').value = p.primaryDark; updatePaletteSwatch('PrimaryDark', p.primaryDark); }
+            if (p.secondary) { document.getElementById('paletteInputSecondary').value = p.secondary; updatePaletteSwatch('Secondary', p.secondary); }
+            if (p.accent) { document.getElementById('paletteInputAccent').value = p.accent; updatePaletteSwatch('Accent', p.accent); }
+            if (p.dark) { document.getElementById('paletteInputDark').value = p.dark; updatePaletteSwatch('Dark', p.dark); }
+        }
+
+        function loadPalette() {
+            fetch(`${API}/admin/content-blocks`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(blocks => {
+                    const block = blocks.find(b => b.block_key === 'palette');
+                    if (block && block.content) {
+                        try {
+                            const p = JSON.parse(block.content);
+                            setPaletteValues(p);
+                        } catch(e) {}
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function savePalette() {
+            const palette = getPalette();
+            fetch(`${API}/admin/content-blocks`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blocks: { palette: JSON.stringify(palette) } })
+            }).then(r => r.json()).then(d => {
+                if (d.success) alert('Paleta guardada correctamente');
+                else alert('Error al guardar la paleta');
+            }).catch(() => alert('Error al conectar con el servidor'));
+        }
+
+        function setDefaultPalette() {
+            setPaletteValues({
+                primary: '#1b2e6e',
+                primaryDark: '#152350',
+                secondary: '#00d9f5',
+                accent: '#f2a87b',
+                dark: '#333333'
+            });
         }
 
         function saveConfig() {
@@ -791,6 +1089,8 @@
                 },
                 paypalEmail: document.getElementById('paypalEmail').value,
                 bizumPhone: document.getElementById('bizumPhone').value,
+                bizumVisible: document.getElementById('bizumVisible').checked,
+                tiendaVisible: document.getElementById('tiendaVisible').checked,
                 bankAccount: {
                     holder: document.getElementById('bankHolder').value,
                     iban: document.getElementById('bankIban').value
@@ -820,6 +1120,94 @@
             }).then(() => { alert('Contraseña cambiada'); document.getElementById('newPassword').value = ''; });
         }
 
+        function sendMassEmail() {
+            const subject = document.getElementById('massEmailSubject').value;
+            const message = document.getElementById('massEmailMessage').value;
+            if (!subject || !message) return alert('Completa el asunto y el mensaje');
+            if (!confirm('¿Enviar este correo a todos los suscriptores y colaboradores?')) return;
+            const btn = document.querySelector('#massemailSection .btn-primary');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
+            btn.disabled = true;
+            const result = document.getElementById('massEmailResult');
+            result.style.display = 'none';
+            // Fetch config for emailjs keys, and fetch all subscriber/collaborator emails
+            Promise.all([
+                fetch(`${API}/admin/config`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
+                fetch(`${API}/admin/subscribers`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
+                fetch(`${API}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json())
+            ]).then(([config, subscribers, users]) => {
+                const emailJS = config.emailJS || {};
+                const { serviceId, templateId, publicKey } = emailJS;
+                if (!serviceId || !templateId || !publicKey) {
+                    result.style.display = 'block';
+                    result.style.background = '#f8d7da';
+                    result.style.color = '#721c24';
+                    result.innerHTML = '<i class="fas fa-exclamation-circle"></i> EmailJS no está configurado. Ve a Configuración y completa los datos de EmailJS.';
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a todos';
+                    btn.disabled = false;
+                    return;
+                }
+                const emails = new Set();
+                subscribers.forEach(s => { if (s.email) emails.add(s.email); });
+                users.forEach(u => { if (u.email) emails.add(u.email); });
+                if (emails.size === 0) {
+                    result.style.display = 'block';
+                    result.style.background = '#fff3cd';
+                    result.style.color = '#856404';
+                    result.innerHTML = '<i class="fas fa-info-circle"></i> No hay suscriptores ni colaboradores para enviar.';
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a todos';
+                    btn.disabled = false;
+                    return;
+                }
+                emailjs.init(publicKey);
+                const emailList = Array.from(emails);
+                let sent = 0, failed = 0, errors = [];
+                result.style.display = 'block';
+                result.style.background = '#fff3cd';
+                result.style.color = '#856404';
+                result.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Enviando a ${emailList.length} destinatarios...`;
+                const sendNext = (i) => {
+                    if (i >= emailList.length) {
+                        result.style.background = '#d4edda';
+                        result.style.color = '#155724';
+                        result.innerHTML = `<i class="fas fa-check-circle"></i> Enviado a ${sent} de ${emailList.length} destinatarios.${failed > 0 ? ` ${failed} fallos.` : ''}`;
+                        if (errors.length > 0) {
+                            result.innerHTML += '<br><small style="opacity:0.8;">Errores: ' + errors.join(', ') + '</small>';
+                        }
+                        document.getElementById('massEmailSubject').value = '';
+                        document.getElementById('massEmailMessage').value = '';
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a todos';
+                        btn.disabled = false;
+                        return;
+                    }
+                    emailjs.send(serviceId, templateId, {
+                        subject: 'NCCH: ' + subject,
+                        email: emailList[i],
+                        name: emailList[i].split('@')[0],
+                        message: message
+                    }).then(() => {
+                        sent++;
+                        result.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Enviando... ${sent + failed}/${emailList.length}`;
+                        sendNext(i + 1);
+                    }).catch((err) => {
+                        failed++;
+                        errors.push(emailList[i]);
+                        console.error('EmailJS error for', emailList[i], err);
+                        result.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Enviando... ${sent + failed}/${emailList.length}`;
+                        sendNext(i + 1);
+                    });
+                };
+                sendNext(0);
+            }).catch(() => {
+                result.style.display = 'block';
+                result.style.background = '#f8d7da';
+                result.style.color = '#721c24';
+                result.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error al obtener datos del servidor.';
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a todos';
+                btn.disabled = false;
+            });
+        }
+
         function renderOrders() {
             const list = document.getElementById('ordersList');
             if (orders.length === 0) {
@@ -835,7 +1223,97 @@
                 list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No hay usuarios registrados.</p></div>';
                 return;
             }
-            list.innerHTML = `<table class="orders-table"><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Fecha registro</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone || '-'}</td><td>${new Date(u.createdAt).toLocaleDateString('es-ES')}</td></tr>`).join('')}</tbody></table>`;
+            list.innerHTML = `<table class="orders-table"><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Tipo</th><th>IBAN</th><th>Fecha registro</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone || '-'}</td><td>${u.role === 'colaborador' ? '<span style="color:#2e7d32;font-weight:bold;">Colaborador</span>' : 'Usuario'}</td><td>${u.iban || '-'}</td><td>${new Date(u.createdAt).toLocaleDateString('es-ES')}</td></tr>`).join('')}</tbody></table>`;
+        }
+
+        function renderCollaborators() {
+            const list = document.getElementById('colaboradoresList');
+            const collaborators = users.filter(u => u.role === 'colaborador');
+            if (collaborators.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>No hay colaboradores registrados.</p></div>';
+                return;
+            }
+            list.innerHTML = `<table class="orders-table"><thead><tr><th>Nombre</th><th>Email</th><th>IBAN</th><th>Cuota</th><th>Último pago</th><th>Acción</th></tr></thead><tbody>${collaborators.map(u => {
+                const subs = u.subscriptions || [];
+                const lastPayment = subs.length > 0 ? new Date(subs[subs.length - 1].date).toLocaleDateString('es-ES') : 'Nunca';
+                return `<tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.iban || '-'}</td>
+                    <td>5€/mes</td>
+                    <td>${lastPayment}</td>
+                    <td><button class="btn btn-sm btn-primary" onclick="recordPayment(${u.id})">Registrar pago</button></td>
+                </tr>`;
+            }).join('')}</tbody></table>`;
+        }
+
+        function recordPayment(userId) {
+            if (!confirm('¿Registrar pago mensual de 5€ para este colaborador?')) return;
+            fetch(`${API}/admin/users/${userId}/payment`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const user = users.find(u => u.id === userId);
+                    if (user) user.subscriptions = data.subscriptions;
+                    renderCollaborators();
+                    alert('Pago registrado correctamente');
+                } else {
+                    alert('Error al registrar el pago');
+                }
+            }).catch(() => alert('Error al conectar con el servidor'));
+        }
+
+        function renderSubscribers() {
+            const list = document.getElementById('subscribersList');
+            if (subscribers.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-envelope"></i><p>No hay suscriptores todavía.</p></div>';
+                return;
+            }
+            list.innerHTML = `<table class="orders-table"><thead><tr><th>Email</th><th>Fecha</th></tr></thead><tbody>${subscribers.map(s => `<tr><td>${s.email}</td><td>${new Date(s.date).toLocaleDateString('es-ES')}</td></tr>`).join('')}</tbody></table>`;
+        }
+
+        function renderContentBlocks(blocks) {
+            const list = document.getElementById('contentBlocksList');
+            const sections = {
+                hero: { label: 'Hero (Portada)', keys: ['hero_title', 'hero_tagline', 'hero_text'] },
+                quienes_somos: { label: 'Quiénes Somos', keys: ['quienes_somos_titulo', 'quienes_somos_p1', 'quienes_somos_p2'] },
+                que_es_ela: { label: '¿Qué es la ELA?', keys: ['que_es_ela_titulo', 'que_es_ela_texto', 'que_es_ela_lista', 'ela_fact_1', 'ela_fact_2', 'ela_fact_3'] },
+                tienda: { label: 'Tienda', keys: ['tienda_titulo', 'tienda_subtitulo'] },
+                donar: { label: 'Donar', keys: ['donar_titulo', 'donar_subtitulo', 'donar_impacto_5', 'colaborador_titulo', 'colaborador_texto', 'colaborador_impacto'] },
+                contacto: { label: 'Contacto', keys: ['contacto_titulo', 'contacto_direccion', 'contacto_telefono', 'contacto_email_valor'] },
+                redes: { label: 'Redes Sociales', keys: ['facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'] },
+                blog: { label: 'Blog', keys: ['blog_titulo', 'blog_subtitulo'] }
+            };
+            list.innerHTML = Object.entries(sections).map(([secId, sec]) => `
+                <div style="margin-bottom:25px; background:#f8f9fa; border-radius:10px; padding:15px;">
+                    <h3 style="margin-bottom:15px; color:var(--primary);">${sec.label}</h3>
+                    ${sec.keys.map(key => {
+                        const block = blocks.find(b => b.block_key === key);
+                        return `
+                            <div class="form-group">
+                                <label><strong>${block ? block.title : key}</strong></label>
+                                <textarea data-key="${key}" style="min-height:${key.includes('texto') || key.includes('_p') || key.includes('lista') ? '80' : '40'}px;" 
+                                    placeholder="Contenido de ${key}">${(block ? block.content : '')}</textarea>
+                            </div>`;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+
+        function saveContentBlocks() {
+            const blocks = {};
+            document.querySelectorAll('#contentBlocksList textarea[data-key]').forEach(ta => {
+                blocks[ta.dataset.key] = ta.value;
+            });
+            fetch(`${API}/admin/content-blocks`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blocks })
+            }).then(r => r.json()).then(d => {
+                if (d.success) alert('Contenido guardado correctamente');
+                else alert('Error: ' + (d.error || 'desconocido'));
+            }).catch(() => alert('Error al conectar con el servidor'));
         }
 
         function showSection(name) {
@@ -843,7 +1321,12 @@
             document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(name + 'Section').classList.add('active');
             event.target.classList.add('active');
+            if (name === 'content') {
+                fetch(`${API}/admin/content-blocks`, { headers: { 'Authorization': `Bearer ${token}` } })
+                    .then(r => r.json()).then(renderContentBlocks);
+            }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </body>
 </html>

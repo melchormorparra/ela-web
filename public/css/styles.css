@@ -1,9 +1,9 @@
 :root {
-    --primary: #6c5ce7;
-    --primary-dark: #5a4bd1;
-    --secondary: #00cec9;
-    --accent: #fd79a8;
-    --dark: #2d3436;
+    --primary: #1b2e6e;
+    --primary-dark: #152350;
+    --secondary: #00d9f5;
+    --accent: #f2a87b;
+    --dark: #333333;
     --light: #f8f9fa;
     --gray: #636e72;
     --white: #ffffff;
@@ -128,6 +128,27 @@ img {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--primary);
+}
+
+.icono-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.hero {
+}
+
+.hero-logo {
+    width: 160px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+.hero-content {
+    text-align: center;
 }
 
 .logo i {
@@ -296,6 +317,172 @@ img {
     color: #004085;
 }
 
+/* User Dashboard */
+.dash-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dash-card {
+    background: var(--light);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dash-card-full {
+    grid-column: 1 / -1;
+}
+
+.dash-card-header {
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+}
+
+.dash-card-body {
+    padding: 16px 18px;
+}
+
+.dash-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.dash-profile-grid div {
+    padding: 6px 0;
+}
+
+.dash-collab-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dash-stat-box {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 90px;
+    flex: 1;
+}
+
+.dash-stat-number {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.dash-stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 4px;
+}
+
+.dash-payment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dash-payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border: 1px solid #e8e8e8;
+}
+
+.dash-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dash-order-item {
+    background: white;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+.dash-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.dash-order-amount {
+    color: var(--primary);
+    font-size: 1.05rem;
+}
+
+.dash-order-body {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.dash-order-date {
+    white-space: nowrap;
+}
+
+.dash-order-items {
+    flex: 1;
+}
+
+.dash-order-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dash-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.dash-input:focus {
+    border-color: var(--primary);
+}
+.btn-success {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.btn-success:hover {
+    background: #218838;
+}
+
 .nav-toggle {
     display: none;
     background: none;
@@ -306,7 +493,7 @@ img {
 
 .hero {
     min-height: 100vh;
-    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 50%, #5a4bd1 100%);
+    background: linear-gradient(135deg, #1b2e6e 0%, #243b8a 30%, #00d9f5 70%, #f2a87b 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -418,6 +605,10 @@ img {
 
 .section {
     padding: 80px 0;
+}
+
+#blog, #sobre-nosotros, #contacto {
+    background: #d0e1fd;
 }
 
 .bg-light {
@@ -667,6 +858,7 @@ img {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
+    justify-content: center;
 }
 
 .donation-card {
@@ -676,6 +868,9 @@ img {
     padding: 35px 25px;
     text-align: center;
     position: relative;
+    max-width: 350px;
+    justify-self: center;
+    width: 100%;
 }
 
 .donation-card.featured {
@@ -1312,11 +1507,74 @@ img {
     }
 }
 
-.blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+.blog-carousel {
+    position: relative;
+    margin: 0 50px 40px;
+}
+
+.blog-carousel-inner {
+    display: flex;
     gap: 30px;
-    margin-bottom: 40px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+}
+
+.blog-carousel-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.blog-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid #e0e0e0;
+    color: var(--primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+    opacity: 0.9;
+}
+
+.blog-carousel-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    opacity: 1;
+}
+
+.blog-carousel-btn.prev {
+    left: -24px;
+}
+
+.blog-carousel-btn.next {
+    right: -24px;
+}
+
+.blog-carousel-btn:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.blog-card {
+    min-width: 350px;
+    max-width: 350px;
+    flex-shrink: 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
 }
 
 .blog-card {
@@ -1337,12 +1595,13 @@ img {
     height: 200px;
     overflow: hidden;
     position: relative;
+    background: #f0f0f0;
 }
 
 .blog-card-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.5s;
 }
 
@@ -1458,12 +1717,13 @@ img {
 .featured-post-image {
     height: 100%;
     min-height: 350px;
+    background: #f0f0f0;
 }
 
 .featured-post-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .featured-post-content {
@@ -1602,12 +1862,13 @@ img {
 .blog-modal-image {
     width: 100%;
     height: 350px;
+    background: #f0f0f0;
 }
 
 .blog-modal-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .blog-modal-body {
