@@ -130,7 +130,7 @@ function applyContentBlocks() {
     }
     // Apply donar/colaborador content
     if (contentBlocks.donar_impacto_5) {
-        document.getElementById('donationMessage').innerHTML = contentBlocks.donar_impacto_5;
+        document.getElementById('donationMessage').innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.donar_impacto_5;
     }
     if (contentBlocks.colaborador_titulo) {
         const el = document.querySelector('.donation-card.featured h3');
@@ -142,7 +142,7 @@ function applyContentBlocks() {
     }
     if (contentBlocks.colaborador_impacto) {
         const el = document.querySelector('.donation-card.featured .donation-impact');
-        if (el) el.innerHTML = contentBlocks.colaborador_impacto;
+        if (el) el.innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.colaborador_impacto;
     }
     // Social links
     const socialMap = [
@@ -182,20 +182,6 @@ function applyContentBlocks() {
         } catch(e) {}
     }
 
-    // Donation impact messages
-    if (contentBlocks.donar_impacto_5) {
-        document.getElementById('donationMessage').innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.donar_impacto_5;
-    }
-    if (contentBlocks.colaborador_titulo) {
-        document.querySelector('#donar .donation-card.featured h3').textContent = contentBlocks.colaborador_titulo;
-    }
-    if (contentBlocks.colaborador_texto) {
-        document.querySelector('#donar .donation-card.featured p').textContent = contentBlocks.colaborador_texto;
-    }
-    if (contentBlocks.colaborador_impacto) {
-        const cols = document.querySelectorAll('#donar .donation-card.featured .donation-impact');
-        if (cols.length > 0) cols[0].innerHTML = '<i class="fas fa-info-circle"></i> ' + contentBlocks.colaborador_impacto;
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
