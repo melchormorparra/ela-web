@@ -191,6 +191,38 @@ module.exports = async (req, res) => {
             return ok({ orders: orders || [], user: null });
         }
 
+        // ---- Delete account ----
+        const deleteMatch = url.match(/^\/api\/users\/(\d+)\/delete-account$/);
+        if (deleteMatch && method === 'POST') {
+            const userId = parseInt(deleteMatch[1]);
+            const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+            if (!user) return json(404, { error: 'Usuario no encontrado' });
+            if (user.email !== body.email) return json(400, { error: 'Email no coincide' });
+            await supabase.from('users').delete().eq('id', userId);
+            await supabase.from('orders').delete().eq('user_id', userId);
+            await supabase.from('subscribers').delete().eq('email', body.email);
+            return ok({ success: true });
+        }
+
+        // ---- Export user data ----
+        const exportMatch = url.match(/^\/api\/users\/(\d+)\/export$/);
+        if (exportMatch && method === 'GET') {
+            const userId = parseInt(exportMatch[1]);
+            const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+            if (!user) return json(404, { error: 'Usuario no encontrado' });
+            const { data: orders } = await supabase.from('orders').select('*').eq('user_id', userId);
+            const { data: subs } = await supabase.from('subscribers').select('*').eq('email', user.email);
+            const { password, ...safeUser } = user;
+            return ok({ user: safeUser, orders: orders || [], subscriptions: subs || [] });
+        }
+
+        // ---- Unsubscribe ----
+        if (url === '/api/subscribe' && method === 'DELETE') {
+            if (!body.email) return json(400, { error: 'Email requerido' });
+            await supabase.from('subscribers').delete().eq('email', body.email);
+            return ok({ success: true });
+        }
+
         // ---- Upgrade user ----
         const upgradeMatch = url.match(/^\/api\/users\/(\d+)\/upgrade$/);
         if (upgradeMatch && method === 'POST') {

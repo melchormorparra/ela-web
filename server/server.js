@@ -252,6 +252,47 @@ app.post('/api/create-payment-intent', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ---- Delete account ----
+app.post('/api/users/:id/delete-account', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const userId = parseInt(req.params.id);
+        const { email } = req.body;
+        const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        if (user.email !== email) return res.status(400).json({ error: 'Email no coincide' });
+        await supabase.from('users').delete().eq('id', userId);
+        await supabase.from('orders').delete().eq('user_id', userId);
+        await supabase.from('subscribers').delete().eq('email', email);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ---- Export user data ----
+app.get('/api/users/:id/export', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const userId = parseInt(req.params.id);
+        const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        const { data: orders } = await supabase.from('orders').select('*').eq('user_id', userId);
+        const { data: subs } = await supabase.from('subscribers').select('*').eq('email', user.email);
+        const { password, ...safeUser } = user;
+        res.json({ user: safeUser, orders: orders || [], subscriptions: subs || [] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ---- Unsubscribe ----
+app.delete('/api/subscribe', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email requerido' });
+        const supabase = getDb();
+        await supabase.from('subscribers').delete().eq('email', email);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ---- Upgrade user to collaborator ----
 app.post('/api/users/:id/upgrade', async (req, res) => {
     try {

@@ -897,7 +897,8 @@ async function handleLogin() {
         
         if (data.success) {
             currentUser = data.user;
-            localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            const safeUser = { id: currentUser.id, name: currentUser.name, email: currentUser.email, phone: currentUser.phone, role: currentUser.role, isAdmin: currentUser.isAdmin, createdAt: currentUser.createdAt };
+            localStorage.setItem('elaUser', JSON.stringify(safeUser));
             if (data.token) localStorage.setItem('adminToken', data.token);
             closeModal('authModal');
             updateUserUI();
@@ -1023,7 +1024,8 @@ async function handleRegister() {
         
         if (data.success) {
             currentUser = data.user;
-            localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            const safeUser = { id: currentUser.id, name: currentUser.name, email: currentUser.email, phone: currentUser.phone, role: currentUser.role, createdAt: currentUser.createdAt };
+            localStorage.setItem('elaUser', JSON.stringify(safeUser));
             document.getElementById('registerName').value = '';
             document.getElementById('registerEmail').value = '';
             document.getElementById('registerPassword').value = '';
@@ -1137,7 +1139,8 @@ async function upgradeToColaborador() {
         const data = await res.json();
         if (data.success) {
             currentUser = data.user;
-            localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            const safeUser = { id: currentUser.id, name: currentUser.name, email: currentUser.email, phone: currentUser.phone, role: currentUser.role, createdAt: currentUser.createdAt };
+            localStorage.setItem('elaUser', JSON.stringify(safeUser));
             
             // Send confirmation email to user
             if (emailJSConfig.serviceId && emailJSConfig.templateId) {
@@ -1211,6 +1214,25 @@ async function showUserDashboard() {
                 </div>
             </div>`;
         
+        // --- Data & Privacy ---
+        html += `
+        <div class="dash-card dash-card-full">
+            <div class="dash-card-header" style="color:var(--primary);">
+                <i class="fas fa-shield-alt"></i> Privacidad y Datos
+            </div>
+            <div class="dash-card-body">
+                <p style="font-size:0.85rem; color:var(--gray); margin-bottom:15px;">Puedes descargar todos tus datos personales o eliminar tu cuenta y todos tus datos asociados.</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="exportUserData()" style="font-size:0.85rem;">
+                        <i class="fas fa-download"></i> Descargar mis datos
+                    </button>
+                    <button class="btn" style="background:#dc3545; color:white; font-size:0.85rem;" onclick="deleteUserAccount()">
+                        <i class="fas fa-trash"></i> Eliminar mi cuenta
+                    </button>
+                </div>
+            </div>
+        </div>`;
+
         // --- Collaborator section / upgrade prompt ---
         if (userInfo.role === 'colaborador') {
             const subs = userInfo.subscriptions || [];
@@ -1296,8 +1318,66 @@ async function showUserDashboard() {
     }
 }
 
+async function exportUserData() {
+    if (!currentUser) return;
+    try {
+        const res = await fetch(`${API_URL}/users/${currentUser.id}/export`);
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mis-datos-neuronas-con-chispa-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showNotification('Datos descargados correctamente');
+    } catch (err) {
+        console.error('Export error:', err);
+        alert('Error al descargar tus datos');
+    }
+}
+
+async function deleteUserAccount() {
+    if (!currentUser) return;
+    if (!confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible y eliminará todos tus datos personales.')) return;
+    if (!confirm('Esta acción eliminará permanentemente tu cuenta, tus datos de perfil, historial de pedidos y más. ¿Continuar?')) return;
+    try {
+        const res = await fetch(`${API_URL}/users/${currentUser.id}/delete-account`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUser.email })
+        });
+        const data = await res.json();
+        if (data.success) {
+            localStorage.removeItem('elaUser');
+            localStorage.removeItem('elaCart');
+            currentUser = null;
+            closeModal('userDashboardModal');
+            updateUserUI();
+            showNotification('Tu cuenta ha sido eliminada correctamente.');
+        } else {
+            alert(data.error || 'Error al eliminar la cuenta');
+        }
+    } catch (err) {
+        console.error('Delete account error:', err);
+        alert('Error al eliminar la cuenta');
+    }
+}
+
 document.getElementById('logoLink')?.addEventListener('click', function(e) {
     const video = document.getElementById('donationVideo');
     if (video) { video.pause(); video.currentTime = 0; }
     document.getElementById('donationModal')?.classList.remove('active');
 });
+
+// Cookie consent
+function acceptCookies() {
+    localStorage.setItem('cookieConsent', 'accepted');
+    document.getElementById('cookieBanner').style.display = 'none';
+}
+
+(function() {
+    if (!localStorage.getItem('cookieConsent')) {
+        document.getElementById('cookieBanner').style.display = 'block';
+    }
+})();

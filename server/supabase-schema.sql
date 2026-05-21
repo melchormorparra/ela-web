@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS reset_tokens (
   expires BIGINT NOT NULL
 );
 
+-- Consent records (LOPD/GDPR)
+CREATE TABLE IF NOT EXISTS consent_records (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  consent_type TEXT NOT NULL,
+  privacy_version TEXT DEFAULT '2026-05',
+  ip_address TEXT DEFAULT '',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- ============================================================
 -- SEED DATA (run once)
 -- ============================================================

@@ -177,6 +177,10 @@
                     <form class="newsletter-form" id="newsletterForm">
                         <input type="email" placeholder="Tu email" required>
                         <button type="submit" class="btn btn-primary">Suscribirme</button>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:normal; font-size:0.8rem; margin-top:10px; color:#666;">
+                            <input type="checkbox" id="newsletterConsent" required>
+                            Acepto recibir comunicaciones y la <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a>
+                        </label>
                     </form>
                 </div>
             </div>
@@ -289,6 +293,12 @@
                             <label for="message">Mensaje</label>
                             <textarea id="message" name="message" rows="5" required></textarea>
                         </div>
+                        <div class="form-group">
+                            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:normal; font-size:0.9rem;">
+                                <input type="checkbox" id="contactConsent" required style="margin-top:3px;">
+                                He leído y acepto la <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a>
+                            </label>
+                        </div>
                         <button type="submit" class="btn btn-primary btn-block">Enviar mensaje</button>
                     </form>
                 </div>
@@ -317,9 +327,9 @@
                 <div class="footer-links">
                     <h4>Legal</h4>
                     <ul>
-                        <li><a href="#">Aviso Legal</a></li>
-                        <li><a href="#">Política de Privacidad</a></li>
-                        <li><a href="#">Cookies</a></li>
+                        <li><a href="/aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="/politica-de-privacidad.html">Política de Privacidad</a></li>
+                        <li><a href="/politica-de-cookies.html">Cookies</a></li>
                     </ul>
                 </div>
             </div>
@@ -480,6 +490,7 @@
                 <p style="color:var(--gray); margin-bottom:25px;">Para enviarte la confirmación de tu pedido, introduce tu email:</p>
                 <div class="form-group">
                     <input type="email" id="customerEmail" placeholder="tu@email.com" required style="text-align:center; font-size:1.1rem;">
+                    <p style="font-size:0.75rem; color:#999; margin-top:8px;">Tu email se usará solo para enviarte la confirmación del pedido. Consulta nuestra <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a>.</p>
                 </div>
                 <button class="btn btn-primary btn-block" onclick="confirmOrder()">
                     <i class="fas fa-paper-plane"></i> Confirmar pedido
@@ -540,6 +551,16 @@
                     <div class="form-group" id="ibanGroup" style="display:none;">
                         <label>IBAN (para domiciliación)</label>
                         <input type="text" id="registerIban" placeholder="ES00 0000 0000 0000 0000 0000">
+                    </div>
+                    <div class="form-group" style="background:#f0f7ff; border-radius:10px; padding:12px 15px; margin-bottom:12px;">
+                        <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:normal; font-size:0.85rem;">
+                            <input type="checkbox" id="registerAgeConsent" required style="margin-top:3px;">
+                            Soy mayor de 14 años o tengo consentimiento parental
+                        </label>
+                        <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:normal; font-size:0.85rem; margin-top:8px;">
+                            <input type="checkbox" id="registerPrivacyConsent" required style="margin-top:3px;">
+                            He leído y acepto el <a href="/aviso-legal.html" target="_blank">Aviso Legal</a> y la <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a>
+                        </label>
                     </div>
                     <button class="btn btn-primary btn-block" onclick="handleRegister()">
                         <i class="fas fa-user-plus"></i> Crear cuenta
@@ -630,6 +651,15 @@
 
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1b2e6e; color:white; padding:15px 20px; z-index:10000; box-shadow:0 -4px 20px rgba(0,0,0,0.2); font-size:0.9rem;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+            <p style="flex:1; margin:0;">Usamos cookies técnicas y de terceros para el funcionamiento del sitio. Puedes aceptarlas o configurarlas en tu navegador. <a href="/politica-de-cookies.html" style="color:#00d9f5; text-decoration:underline;">Más información</a></p>
+            <div style="display:flex; gap:10px; flex-shrink:0;">
+                <button onclick="acceptCookies()" style="background:#00d9f5; color:#1b2e6e; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; font-weight:600;">Aceptar cookies</button>
+                <button onclick="document.getElementById('cookieBanner').style.display='none'" style="background:transparent; color:white; border:1px solid rgba(255,255,255,0.3); padding:8px 20px; border-radius:6px; cursor:pointer;">Rechazar</button>
+            </div>
+        </div>
+    </div>
     <script src="/js/app.js"></script>
 </body>
 </html>
