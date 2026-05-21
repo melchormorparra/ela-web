@@ -99,13 +99,7 @@ function applyContentBlocks() {
         if (contentBlocks[key]) {
             const el = document.querySelector(selector);
             if (el) {
-                if (key === 'que_es_ela_texto') {
-                    el.innerHTML = contentBlocks[key];
-                } else if (key === 'que_es_ela_lista') {
-                    el.innerHTML = contentBlocks[key];
-                } else {
-                    el.textContent = contentBlocks[key];
-                }
+                el.innerHTML = contentBlocks[key];
             }
         }
     }
