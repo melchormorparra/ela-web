@@ -122,11 +122,27 @@ function applyContentBlocks() {
         document.querySelector('#contacto .contact-item:nth-child(1) p').innerHTML = contentBlocks.contacto_direccion;
     }
     if (contentBlocks.contacto_telefono) {
-        document.querySelector('#contacto .contact-item:nth-child(2) p').textContent = contentBlocks.contacto_telefono;
+        document.querySelector('#contacto .contact-item:nth-child(2) p').innerHTML = contentBlocks.contacto_telefono;
     }
     if (contentBlocks.contacto_email_valor) {
-        document.querySelector('#contacto .contact-item:nth-child(3) p').textContent = contentBlocks.contacto_email_valor;
-        document.getElementById('contactEmail').textContent = contentBlocks.contacto_email_valor;
+        document.querySelector('#contacto .contact-item:nth-child(3) p').innerHTML = contentBlocks.contacto_email_valor;
+        document.getElementById('contactEmail').innerHTML = contentBlocks.contacto_email_valor;
+    }
+    // Apply donar/colaborador content
+    if (contentBlocks.donar_impacto_5) {
+        document.getElementById('donationMessage').innerHTML = contentBlocks.donar_impacto_5;
+    }
+    if (contentBlocks.colaborador_titulo) {
+        const el = document.querySelector('.donation-card.featured h3');
+        if (el) el.innerHTML = contentBlocks.colaborador_titulo;
+    }
+    if (contentBlocks.colaborador_texto) {
+        const el = document.querySelector('.donation-card.featured > p');
+        if (el) el.innerHTML = contentBlocks.colaborador_texto;
+    }
+    if (contentBlocks.colaborador_impacto) {
+        const el = document.querySelector('.donation-card.featured .donation-impact');
+        if (el) el.innerHTML = contentBlocks.colaborador_impacto;
     }
     // Social links
     const socialMap = [
