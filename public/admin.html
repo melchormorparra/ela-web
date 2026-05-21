@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <style>
         :root {
             --primary: #1b2e6e;
@@ -290,6 +291,12 @@
         }
         .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
         .btn-warning { background: #fdcb6e; color: #2d3436; }
+        #blogEditor { margin-bottom: 0; }
+        .content-editor-wrapper { border: 2px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .content-editor-wrapper .ql-toolbar { border: none; border-bottom: 1px solid #e0e0e0; border-radius: 0; background: #f8f9fa; }
+        .content-editor-wrapper .ql-container { border: none; font-size: 0.95rem; }
+        .content-editor-wrapper .ql-editor { min-height: 70px; max-height: 200px; overflow-y: auto; font-size: 0.95rem; line-height: 1.5; }
+        .content-editor-wrapper .ql-editor.ql-blank::before { font-style: normal; color: #bbb; }
         .palette-grid {
             display: flex;
             gap: 15px;
@@ -514,6 +521,25 @@
                     <button class="btn btn-warning" onclick="setDefaultPalette()"><i class="fas fa-undo"></i> Paleta por defecto</button>
                 </div>
 
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3>Fondo del Header</h3>
+                </div>
+                <p style="color:var(--gray); font-size:0.85rem; margin-bottom:15px;">
+                    Sube una imagen de fondo para el header de la página. Aparecerá detrás del contenido del hero.
+                </p>
+                <div class="form-group">
+                    <input type="file" id="headerBgInput" accept="image/*" onchange="previewHeaderBg(event)">
+                    <input type="hidden" id="headerBgData">
+                    <div id="headerBgPreview" style="margin-top:10px; max-width:400px; border-radius:8px; overflow:hidden; display:none;">
+                        <img id="headerBgPreviewImg" style="width:100%; display:block;">
+                        <button type="button" onclick="clearHeaderBg()" style="margin-top:5px; font-size:0.85rem; background:none; border:none; cursor:pointer; color:var(--danger);"><i class="fas fa-times"></i> Quitar fondo</button>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn btn-primary" onclick="saveHeaderBg()"><i class="fas fa-image"></i> Guardar fondo del header</button>
+                    <button class="btn btn-warning" onclick="resetHeaderBg()"><i class="fas fa-undo"></i> Fondo por defecto</button>
+                </div>
+
                 <div class="section-header" style="margin-top: 40px;">
                     <h2>Cambiar Contraseña</h2>
                 </div>
@@ -675,8 +701,9 @@
                 <textarea id="blogExcerpt"></textarea>
             </div>
             <div class="form-group">
-                <label>Contenido HTML</label>
-                <textarea id="blogContent" style="min-height:150px;"></textarea>
+                <label>Contenido</label>
+                <div id="blogEditor" style="min-height:250px; height:300px;"></div>
+                <input type="hidden" id="blogContent">
             </div>
             <div class="form-group checkbox-group">
                 <input type="checkbox" id="blogFeatured">
@@ -886,6 +913,7 @@
         }
 
         function openBlogModal() {
+            initBlogEditor();
             document.getElementById('blogModalTitle').textContent = 'Nuevo Artículo';
             document.getElementById('blogId').value = '';
             document.getElementById('blogTitle').value = '';
@@ -895,13 +923,14 @@
             document.getElementById('blogImageInput').value = '';
             document.getElementById('blogImagePreview').style.display = 'none';
             document.getElementById('blogExcerpt').value = '';
-            document.getElementById('blogContent').value = '';
+            blogQuill.root.innerHTML = '';
             document.getElementById('blogFeatured').checked = false;
             document.getElementById('blogActive').checked = true;
             document.getElementById('blogModal').classList.add('active');
         }
 
         function editBlog(id) {
+            initBlogEditor();
             const p = blogPosts.find(x => x.id === id);
             if (!p) return;
             document.getElementById('blogModalTitle').textContent = 'Editar Artículo';
@@ -918,7 +947,7 @@
                 document.getElementById('blogImagePreview').style.display = 'none';
             }
             document.getElementById('blogExcerpt').value = p.excerpt || '';
-            document.getElementById('blogContent').value = p.content || '';
+            blogQuill.root.innerHTML = p.content || '';
             document.getElementById('blogFeatured').checked = p.featured || false;
             document.getElementById('blogActive').checked = p.active !== false;
             document.getElementById('blogModal').classList.add('active');
@@ -958,7 +987,7 @@
                 author: document.getElementById('blogAuthor').value,
                 image: document.getElementById('blogImage').value,
                 excerpt: document.getElementById('blogExcerpt').value,
-                content: document.getElementById('blogContent').value,
+                content: blogQuill ? blogQuill.root.innerHTML : '',
                 date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
                 featured: document.getElementById('blogFeatured').checked,
                 active: document.getElementById('blogActive').checked
@@ -1017,6 +1046,7 @@
             document.getElementById('stripePublishableKey').value = c.stripePublishableKey || '';
             document.getElementById('stripeSecretKey').value = c.stripeSecretKey || '';
             loadPalette();
+            loadHeaderBg();
         }
 
         function updatePaletteSwatch(name, value) {
@@ -1077,6 +1107,66 @@
                 accent: '#f2a87b',
                 dark: '#333333'
             });
+        }
+
+        function previewHeaderBg(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('headerBgData').value = e.target.result;
+                document.getElementById('headerBgPreviewImg').src = e.target.result;
+                document.getElementById('headerBgPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearHeaderBg() {
+            document.getElementById('headerBgData').value = '';
+            document.getElementById('headerBgInput').value = '';
+            document.getElementById('headerBgPreview').style.display = 'none';
+        }
+
+        function saveHeaderBg() {
+            const data = document.getElementById('headerBgData').value;
+            fetch(`${API}/admin/content-blocks`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blocks: { header_bg: data } })
+            }).then(r => r.json()).then(d => {
+                if (d.success) alert('Fondo del header guardado');
+                else alert('Error al guardar');
+            }).catch(() => alert('Error al conectar con el servidor'));
+        }
+
+        function resetHeaderBg() {
+            if (!confirm('¿Restablecer el fondo del header al gradiente por defecto?')) return;
+            fetch(`${API}/admin/content-blocks`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blocks: { header_bg: '' } })
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    clearHeaderBg();
+                    alert('Fondo restablecido. Recarga la página pública para ver el cambio.');
+                } else {
+                    alert('Error al restablecer');
+                }
+            }).catch(() => alert('Error al conectar con el servidor'));
+        }
+
+        function loadHeaderBg() {
+            fetch(`${API}/admin/content-blocks`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(blocks => {
+                    const block = blocks.find(b => b.block_key === 'header_bg');
+                    if (block && block.content) {
+                        document.getElementById('headerBgData').value = block.content;
+                        document.getElementById('headerBgPreviewImg').src = block.content;
+                        document.getElementById('headerBgPreview').style.display = 'block';
+                    }
+                })
+                .catch(() => {});
         }
 
         function saveConfig() {
@@ -1183,7 +1273,8 @@
                     emailjs.send(serviceId, templateId, {
                         subject: 'NCCH: ' + subject,
                         email: emailList[i],
-                        name: emailList[i].split('@')[0],
+                        from_name: 'Neuronas con Chispa',
+                        name: 'Neuronas con Chispa',
                         message: message
                     }).then(() => {
                         sent++;
@@ -1275,6 +1366,7 @@
 
         function renderContentBlocks(blocks) {
             const list = document.getElementById('contentBlocksList');
+            const richKeys = ['hero_title','hero_tagline','hero_text','quienes_somos_titulo','quienes_somos_p1','quienes_somos_p2','que_es_ela_titulo','que_es_ela_texto','que_es_ela_lista','tienda_titulo','tienda_subtitulo','donar_titulo','donar_subtitulo','donar_impacto_5','colaborador_titulo','colaborador_texto','colaborador_impacto','contacto_titulo','contacto_direccion','contacto_telefono','contacto_email_valor','blog_titulo','blog_subtitulo'];
             const sections = {
                 hero: { label: 'Hero (Portada)', keys: ['hero_title', 'hero_tagline', 'hero_text'] },
                 quienes_somos: { label: 'Quiénes Somos', keys: ['quienes_somos_titulo', 'quienes_somos_p1', 'quienes_somos_p2'] },
@@ -1290,19 +1382,58 @@
                     <h3 style="margin-bottom:15px; color:var(--primary);">${sec.label}</h3>
                     ${sec.keys.map(key => {
                         const block = blocks.find(b => b.block_key === key);
-                        return `
-                            <div class="form-group">
-                                <label><strong>${block ? block.title : key}</strong></label>
-                                <textarea data-key="${key}" style="min-height:${key.includes('texto') || key.includes('_p') || key.includes('lista') ? '80' : '40'}px;" 
-                                    placeholder="Contenido de ${key}">${(block ? block.content : '')}</textarea>
-                            </div>`;
+                        if (richKeys.includes(key)) {
+                            return `
+                                <div class="form-group">
+                                    <label><strong>${block ? block.title : key}</strong></label>
+                                    <div class="content-editor-wrapper">
+                                        <div class="content-editor-toolbar" id="toolbar-${key}">
+                                            <button class="ql-bold" title="Negrita"></button>
+                                            <button class="ql-italic" title="Cursiva"></button>
+                                            <button class="ql-underline" title="Subrayado"></button>
+                                            <button class="ql-list" value="bullet" title="Lista"></button>
+                                            <button class="ql-list" value="ordered" title="Lista numerada"></button>
+                                            <button class="ql-link" title="Enlace"></button>
+                                        </div>
+                                        <div class="content-editor" id="content-editor-${key}" 
+                                            data-key="${key}" style="min-height:80px;">${(block ? block.content : '')}</div>
+                                    </div>
+                                </div>`;
+                        } else {
+                            return `
+                                <div class="form-group">
+                                    <label><strong>${block ? block.title : key}</strong></label>
+                                    <textarea data-key="${key}" style="min-height:${key.includes('fact') ? '40' : '40'}px; font-family:monospace; font-size:0.85rem;" 
+                                        placeholder="Contenido de ${key}">${(block ? block.content : '')}</textarea>
+                                </div>`;
+                        }
                     }).join('')}
                 </div>
             `).join('');
+            // Initialize Quill editors for rich text blocks
+            contentQuills = {};
+            richKeys.forEach(key => {
+                const el = document.getElementById('content-editor-' + key);
+                if (el) {
+                    const quill = new Quill(el, {
+                        theme: 'snow',
+                        modules: { toolbar: '#toolbar-' + key },
+                        placeholder: 'Escribe aquí...'
+                    });
+                    contentQuills[key] = quill;
+                }
+            });
         }
+
+        let contentQuills = {};
 
         function saveContentBlocks() {
             const blocks = {};
+            // Get values from Quill editors
+            Object.entries(contentQuills).forEach(([key, quill]) => {
+                blocks[key] = quill.root.innerHTML;
+            });
+            // Get values from plain textareas
             document.querySelectorAll('#contentBlocksList textarea[data-key]').forEach(ta => {
                 blocks[ta.dataset.key] = ta.value;
             });
@@ -1314,6 +1445,28 @@
                 if (d.success) alert('Contenido guardado correctamente');
                 else alert('Error: ' + (d.error || 'desconocido'));
             }).catch(() => alert('Error al conectar con el servidor'));
+        }
+
+        let blogQuill = null;
+
+        function initBlogEditor() {
+            if (!blogQuill) {
+                blogQuill = new Quill('#blogEditor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'align': [] }],
+                            ['link', 'image'],
+                            ['clean']
+                        ]
+                    },
+                    placeholder: 'Escribe aquí el contenido del artículo...'
+                });
+            }
         }
 
         function showSection(name) {
@@ -1328,5 +1481,6 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 </body>
 </html>

@@ -47,14 +47,17 @@ async function seedData() {
         if (be) console.error('Seed blog error:', be.message);
     }
 
-    const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
-    if (userCount === 0) {
-        console.log('Seeding admin user...');
-        const { error: ue } = await supabase.from('users').insert([
-            { id: 0, name: 'Administrador', email: 'admin@neuronasconchispa.es', password: hashPassword('ela2026'), phone: '', role: 'admin', iban: '', subscriptions: [], createdAt: new Date().toISOString() }
-        ]);
-        if (ue) console.error('Seed admin error:', ue.message);
-    }
+    // Upsert admin table record (email/password for login)
+    const { error: ae } = await supabase.from('admin').upsert([
+        { id: 1, password: 'ela2026', email: 'neuronasconchispa@gmail.com' }
+    ], { onConflict: 'id' });
+    if (ae) console.error('Seed admin table error:', ae.message);
+
+    // Upsert admin user in users table
+    const { error: ue } = await supabase.from('users').upsert([
+        { id: 0, name: 'Administrador', email: 'neuronasconchispa@gmail.com', password: hashPassword('ela2026'), phone: '', role: 'admin', iban: '', subscriptions: [], createdAt: new Date().toISOString() }
+    ], { onConflict: 'id' });
+    if (ue) console.error('Seed admin error:', ue.message);
 
     const { count: configCount } = await supabase.from('config').select('*', { count: 'exact', head: true });
     if (configCount === 0) {

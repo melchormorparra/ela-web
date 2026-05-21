@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS admin (
   id SERIAL PRIMARY KEY,
   password TEXT NOT NULL DEFAULT 'ela2026',
-  email TEXT NOT NULL DEFAULT 'admin@neuronasconchispa.es'
+  email TEXT NOT NULL DEFAULT 'neuronasconchispa@gmail.com'
 );
 
 -- Users
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS reset_tokens (
 -- ============================================================
 
 -- Admin
-INSERT INTO admin (password, email) VALUES ('ela2026', 'admin@neuronasconchispa.es')
+INSERT INTO admin (password, email) VALUES ('ela2026', 'neuronasconchispa@gmail.com')
 ON CONFLICT (id) DO NOTHING;
 
 -- Products
@@ -152,30 +152,30 @@ CREATE TABLE IF NOT EXISTS content_blocks (
 );
 
 INSERT INTO content_blocks (block_key, title, content) VALUES
-('hero_title', 'Título del Hero', 'Neuronas con Chispa'),
-('hero_tagline', 'Subtítulo del Hero', 'Asociación para la investigación de la ELA'),
-('hero_text', 'Texto del Hero', 'Juntos podemos hacer la diferencia. Cada donación nos acerca a un futuro sin ELA.'),
-('quienes_somos_titulo', 'Título Quiénes Somos', 'Quiénes Somos'),
-('quienes_somos_p1', 'Quiénes Somos párrafo 1', 'Neuronas con Chispa es una asociación sin ánimo de lucro dedicada a mejorar la calidad de vida de las personas afectadas por la Esclerosis Lateral Amiotrófica (ELA) y sus familias.'),
-('quienes_somos_p2', 'Quiénes Somos párrafo 2', 'Nuestro objetivo principal es fomentar la investigación científica para encontrar una cura definitiva, mientras acompañamos y apoyamos a los afectados en su día a día.'),
-('que_es_ela_titulo', 'Título ¿Qué es la ELA?', '¿Qué es la ELA?'),
-('que_es_ela_texto', 'Texto ¿Qué es la ELA?', '<p>La <strong>Esclerosis Lateral Amiotrófica (ELA)</strong> es una enfermedad neurodegenerativa que afecta a las neuronas motoras del cerebro y de la médula espinal.</p><p>Esto provoca que las neuronas dejen de funcionar correctamente y, con el tiempo, mueren. Como resultado, los músculos se debilitan gradualmente, afectando a:</p>'),
-('que_es_ela_lista', 'Lista síntomas ELA', '<li><i class=\"fas fa-check\"></i> La capacidad de caminar, hablar y moverte</li><li><i class=\"fas fa-check\"></i> La respiración y deglución</li><li><i class=\"fas fa-check\"></i> La comunicación verbal y gestual</li>'),
-('ela_fact_1', 'Hecho ELA 1', '{\"number\":\"4.000+\",\"label\":\"Personas con ELA en España\"}'),
-('ela_fact_2', 'Hecho ELA 2', '{\"number\":\"900\",\"label\":\"Nuevos casos al año\"}'),
-('ela_fact_3', 'Hecho ELA 3', '{\"number\":\"35.000-60.000€\",\"label\":\"Coste anual por paciente\"}'),
-('tienda_titulo', 'Título Tienda', 'Tienda Solidaria'),
-('tienda_subtitulo', 'Subtítulo Tienda', 'Cada compra ayuda a financiar investigación y apoyo a familias'),
-('donar_titulo', 'Título Donar', 'Haz tu Donación'),
-('donar_subtitulo', 'Subtítulo Donar', 'Tu aportación marca la diferencia'),
-('donar_impacto_5', 'Mensaje impacto 5€', '5€ = Ayudas a mantener nuestra web y redes sociales'),
-('colaborador_titulo', 'Título Colaborador', 'Hazte Colaborador'),
-('colaborador_texto', 'Texto Colaborador', 'Conviértete en colaborador mensual y apoya la investigación de la ELA.'),
-('colaborador_impacto', 'Impacto Colaborador', '5€/mes = Ayuda constante para la investigación'),
-('contacto_titulo', 'Título Contacto', 'Contacto'),
-('contacto_direccion', 'Dirección', 'C/ Ejemplo, 123<br>29001 Málaga, España'),
-('contacto_telefono', 'Teléfono', '+34 612 345 678'),
+('hero_title', 'Tï¿½tulo del Hero', 'Neuronas con Chispa'),
+('hero_tagline', 'Subtï¿½tulo del Hero', 'Asociaciï¿½n para la investigaciï¿½n de la ELA'),
+('hero_text', 'Texto del Hero', 'Juntos podemos hacer la diferencia. Cada donaciï¿½n nos acerca a un futuro sin ELA.'),
+('quienes_somos_titulo', 'Tï¿½tulo Quiï¿½nes Somos', 'Quiï¿½nes Somos'),
+('quienes_somos_p1', 'Quiï¿½nes Somos pï¿½rrafo 1', 'Neuronas con Chispa es una asociaciï¿½n sin ï¿½nimo de lucro dedicada a mejorar la calidad de vida de las personas afectadas por la Esclerosis Lateral Amiotrï¿½fica (ELA) y sus familias.'),
+('quienes_somos_p2', 'Quiï¿½nes Somos pï¿½rrafo 2', 'Nuestro objetivo principal es fomentar la investigaciï¿½n cientï¿½fica para encontrar una cura definitiva, mientras acompaï¿½amos y apoyamos a los afectados en su dï¿½a a dï¿½a.'),
+('que_es_ela_titulo', 'Tï¿½tulo ï¿½Quï¿½ es la ELA?', 'ï¿½Quï¿½ es la ELA?'),
+('que_es_ela_texto', 'Texto ï¿½Quï¿½ es la ELA?', '<p>La <strong>Esclerosis Lateral Amiotrï¿½fica (ELA)</strong> es una enfermedad neurodegenerativa que afecta a las neuronas motoras del cerebro y de la mï¿½dula espinal.</p><p>Esto provoca que las neuronas dejen de funcionar correctamente y, con el tiempo, mueren. Como resultado, los mï¿½sculos se debilitan gradualmente, afectando a:</p>'),
+('que_es_ela_lista', 'Lista sï¿½ntomas ELA', '<li><i class=\"fas fa-check\"></i> La capacidad de caminar, hablar y moverte</li><li><i class=\"fas fa-check\"></i> La respiraciï¿½n y degluciï¿½n</li><li><i class=\"fas fa-check\"></i> La comunicaciï¿½n verbal y gestual</li>'),
+('ela_fact_1', 'Hecho ELA 1', '{\"number\":\"4.000+\",\"label\":\"Personas con ELA en Espaï¿½a\"}'),
+('ela_fact_2', 'Hecho ELA 2', '{\"number\":\"900\",\"label\":\"Nuevos casos al aï¿½o\"}'),
+('ela_fact_3', 'Hecho ELA 3', '{\"number\":\"35.000-60.000ï¿½\",\"label\":\"Coste anual por paciente\"}'),
+('tienda_titulo', 'Tï¿½tulo Tienda', 'Tienda Solidaria'),
+('tienda_subtitulo', 'Subtï¿½tulo Tienda', 'Cada compra ayuda a financiar investigaciï¿½n y apoyo a familias'),
+('donar_titulo', 'Tï¿½tulo Donar', 'Haz tu Donaciï¿½n'),
+('donar_subtitulo', 'Subtï¿½tulo Donar', 'Tu aportaciï¿½n marca la diferencia'),
+('donar_impacto_5', 'Mensaje impacto 5ï¿½', '5ï¿½ = Ayudas a mantener nuestra web y redes sociales'),
+('colaborador_titulo', 'Tï¿½tulo Colaborador', 'Hazte Colaborador'),
+('colaborador_texto', 'Texto Colaborador', 'Conviï¿½rtete en colaborador mensual y apoya la investigaciï¿½n de la ELA.'),
+('colaborador_impacto', 'Impacto Colaborador', '5ï¿½/mes = Ayuda constante para la investigaciï¿½n'),
+('contacto_titulo', 'Tï¿½tulo Contacto', 'Contacto'),
+('contacto_direccion', 'Direcciï¿½n', 'C/ Ejemplo, 123<br>29001 Mï¿½laga, Espaï¿½a'),
+('contacto_telefono', 'Telï¿½fono', '+34 612 345 678'),
 ('contacto_email_valor', 'Email contacto', 'info@neuronasconchispa.es'),
-('blog_titulo', 'Título Blog', 'Blog y Noticias'),
-('blog_subtitulo', 'Subtítulo Blog', 'Últimas novedades sobre la ELA y nuestra asociación')
+('blog_titulo', 'Tï¿½tulo Blog', 'Blog y Noticias'),
+('blog_subtitulo', 'Subtï¿½tulo Blog', 'ï¿½ltimas novedades sobre la ELA y nuestra asociaciï¿½n')
 ON CONFLICT (block_key) DO NOTHING;

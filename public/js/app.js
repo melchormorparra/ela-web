@@ -149,6 +149,16 @@ function applyContentBlocks() {
         }
     });
 
+    // Apply header background
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        if (contentBlocks.header_bg && contentBlocks.header_bg.startsWith('data:')) {
+            hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + contentBlocks.header_bg + ') center/cover no-repeat';
+        } else {
+            hero.style.background = '';
+        }
+    }
+
     // Apply palette colors
     if (contentBlocks.palette) {
         try {
@@ -858,6 +868,18 @@ function showAuthTab(tab) {
     document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     event.target.classList.add('active');
+    if (tab === 'login') {
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    } else {
+        document.getElementById('registerName').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('registerPhone').value = '';
+        document.getElementById('registerColaborador').checked = false;
+        document.getElementById('registerIban').value = '';
+        document.getElementById('ibanGroup').style.display = 'none';
+    }
 }
 
 async function handleLogin() {
@@ -1006,6 +1028,13 @@ async function handleRegister() {
         if (data.success) {
             currentUser = data.user;
             localStorage.setItem('elaUser', JSON.stringify(currentUser));
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerPhone').value = '';
+            document.getElementById('registerColaborador').checked = false;
+            document.getElementById('registerIban').value = '';
+            document.getElementById('ibanGroup').style.display = 'none';
             closeModal('authModal');
             updateUserUI();
             showNotification('Cuenta creada. ¡Bienvenido, ' + currentUser.name + '!');

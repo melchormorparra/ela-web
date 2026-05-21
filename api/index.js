@@ -72,7 +72,7 @@ module.exports = async (req, res) => {
             const { data: admins } = await supabase.from('admin').select('*').limit(1);
             const adminPwd = admins && admins.length > 0 ? admins[0].password : 'ela2026';
             if (body.password === adminPwd || body.password === 'ela2026') {
-                const email = admins && admins.length > 0 ? admins[0].email : 'admin@neuronasconchispa.es';
+                const email = admins && admins.length > 0 ? admins[0].email : 'neuronasconchispa@gmail.com';
                 return ok({ success: true, token: 'admin-token', user: { id: 0, name: 'Admin', email, isAdmin: true } });
             }
             return json(401, { error: 'Contraseña incorrecta' });
@@ -342,11 +342,15 @@ module.exports = async (req, res) => {
             const { blocks } = body;
             if (!blocks) return json(400, { error: 'Se requiere blocks' });
             for (const [key, content] of Object.entries(blocks)) {
-                await supabase.from('content_blocks').upsert({
-                    block_key: key,
-                    content: content,
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'block_key' });
+                if (content === '' || content === null) {
+                    await supabase.from('content_blocks').delete().eq('block_key', key);
+                } else {
+                    await supabase.from('content_blocks').upsert({
+                        block_key: key,
+                        content: content,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'block_key' });
+                }
             }
             return ok({ success: true });
         }

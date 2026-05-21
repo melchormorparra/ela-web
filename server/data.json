@@ -3,17 +3,39 @@
     "password": "ela2026",
     "email": "admin@neuronasconchispa.es"
   },
-  "users": [],
-  "products": [
+  "users": [
     {
-      "id": 1,
-      "name": "V Torneo de Pádel Benéfico",
-      "category": "Eventos",
-      "price": 10,
-      "image": "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400",
-      "badge": "Evento",
-      "active": true
+      "id": 1778353081055,
+      "name": "Test Colaborador",
+      "email": "testcolab@test.com",
+      "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+      "phone": "600000000",
+      "createdAt": "2026-05-09T18:58:01.055Z"
     },
+    {
+      "id": 1778353226485,
+      "name": "Colab Test",
+      "email": "colabtest@test.com",
+      "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+      "phone": "600111222",
+      "role": "colaborador",
+      "iban": "ES00 1111 2222 3333 4444 5555",
+      "subscriptions": [],
+      "createdAt": "2026-05-09T19:00:26.486Z"
+    },
+    {
+      "id": 1778438238928,
+      "name": "Melchor",
+      "email": "melchormorparra@gmail.com",
+      "password": "c7e28a969c537e902695a306b5078fce430321dbfb22ca55e15e7b59bac1cde3",
+      "phone": "",
+      "role": "colaborador",
+      "iban": "ES01 1234 4567 1236 4569 7896",
+      "subscriptions": [],
+      "createdAt": "2026-05-10T18:37:18.938Z"
+    }
+  ],
+  "products": [
     {
       "id": 2,
       "name": "Calendario Solidario 2026",
@@ -116,80 +138,28 @@
   ],
   "blogPosts": [
     {
-      "id": 1,
-      "title": "Nuevo ensayo clínico ofrece esperanza para pacientes con ELA",
-      "category": "investigacion",
-      "categoryLabel": "Investigación",
-      "date": "8 Abril 2026",
-      "author": "Dr. María García",
-      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800",
-      "excerpt": "Un nuevo ensayo clínico fase 3 muestra resultados prometedores en la ralentización de la progresión de la enfermedad.",
-      "content": "<p>Un nuevo ensayo clínico de fase 3 ha mostrado resultados prometedores...</p>",
-      "featured": true,
-      "active": true
-    },
-    {
-      "id": 2,
-      "title": "V Torneo de Pádel Benéfico: Récord de participación",
+      "id": 7,
+      "title": "Charla 'Rendirse no es una opción' a cargo de Adrián Fernández",
       "category": "eventos",
       "categoryLabel": "Eventos",
-      "date": "5 Abril 2026",
-      "author": "Ana Martínez",
-      "image": "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800",
-      "excerpt": "Más de 200 jugadores se dieron cita en el torneo.",
-      "content": "<p>El V Torneo de Pádel Benéfico...</p>",
+      "author": "Neuronas con Chispa",
+      "image": "/images/blog_ayto_29_May.webp",
+      "excerpt": "El próximo 29 de mayo, Adrián Fernández compartirá en Cártama su historia de superación frente a la ELA. Entrada libre.",
+      "content": "<p>La Tenencia de Alcaldía de Estación de Cártama albergará la charla 'Rendirse no es una opción', a cargo del joven cartameño <strong>Adrián Fernández</strong>, en la que hablará de la Esclerosis Lateral Amiotrófica (ELA), cómo ha sido su experiencia desde que fue diagnosticado de esta enfermedad y cómo la afronta con un único objetivo: seguir adelante con fuerza.</p><p>La charla tendrá lugar el <strong>próximo día 29 de mayo, a las 19.00 horas</strong>, y la entrada es libre hasta completar el aforo.</p><p>Adrián Fernández ha estado acompañado en la presentación por el <strong>alcalde de Cártama, Jorge Gallardo</strong>, y la <strong>concejala de Ferias y Fiestas, Anabel Rueda</strong>, quienes han invitado a vecinos y vecinas a asistir a esta charla, en la que Adrián compartirá una historia real de vida, superación y actitud positiva frente a la adversidad.</p><p><strong>Fecha:</strong> 29 de mayo de 2026, 19:00h<br><strong>Lugar:</strong> Tenencia de Alcaldía de Estación de Cártama, c/ Bruselas, 20<br><strong>Entrada:</strong> Libre hasta completar aforo</p>",
+      "date": "10 de mayo de 2026",
       "featured": false,
       "active": true
     },
     {
-      "id": 3,
-      "title": "Guía para familiares: Cómo comunicarse con pacientes de ELA",
-      "category": "familias",
-      "categoryLabel": "Familias",
-      "date": "2 Abril 2026",
-      "author": "Lucía Sánchez",
-      "image": "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800",
-      "excerpt": "Consejos prácticos de logopedas y psicólogos.",
-      "content": "<p>La comunicación es fundamental...</p>",
-      "featured": false,
-      "active": true
-    },
-    {
-      "id": 4,
-      "title": "Concienciación: ¿Por qué necesitamos más investigación?",
-      "category": "sensibilizacion",
-      "categoryLabel": "Sensibilización",
-      "date": "30 Marzo 2026",
-      "author": "Carlos Rodríguez",
-      "image": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800",
-      "excerpt": "Cada año se diagnostican 900 nuevos casos en España.",
-      "content": "<p>La ELA afecta a más de 4.000 personas...</p>",
-      "featured": false,
-      "active": true
-    },
-    {
-      "id": 5,
-      "title": "Nuevas tecnologías para mejorar la calidad de vida",
-      "category": "familias",
-      "categoryLabel": "Familias",
-      "date": "25 Marzo 2026",
-      "author": "Pedro Jiménez",
-      "image": "https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800",
-      "excerpt": "Sistemas de comunicación alternativa y control por ojos.",
-      "content": "<p>Los avances tecnológicos están revolucionando...</p>",
-      "featured": false,
-      "active": true
-    },
-    {
-      "id": 6,
-      "title": "Investigadores españoles logran un hito histórico",
+      "id": 1778430719583,
+      "title": "El Código Postal no puede decidir sobre nuestra vida: La desigualdad en la aplicación de la Ley ELA",
       "category": "investigacion",
       "categoryLabel": "Investigación",
-      "date": "20 Marzo 2026",
-      "author": "Dra. Carmen Ruiz",
-      "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800",
-      "excerpt": "Un equipo español identifica nuevos biomarcadores.",
-      "content": "<p>Investigadores del CSIC...</p>",
+      "author": "Neuronas con Chispa",
+      "image": "/images/Anciano_silla.webp",
+      "excerpt": "A un año y medio de la aprobación de la Ley ELA, el acceso a las ayudas sigue dependiendo del código postal. Mientras algunas comunidades ya realizan pagos, otras ni siquiera han reconocido el grado de dependencia 3+. Analizamos las desigualdades territoriales y las reivindicaciones de ConELA para que los cuidados 24 horas sean una realidad equitativa en toda España.",
+      "content": "<article>\n    <p>Ha pasado un año y medio desde que la <strong>Ley ELA</strong> fuera aprobada definitivamente en el Senado, un hito que todos celebramos como una conquista histórica por la dignidad y el derecho al cuidado. Sin embargo, la realidad que hoy enfrentamos es desigual.</p>\n\n    <p>Como bien denuncia la Confederación Nacional de Entidades de ELA (<strong>ConELA</strong>), la aplicación de esta ley avanza a \"distintas velocidades\", creando una brecha inaceptable entre comunidades autónomas.</p>\n\n    <h2>El código postal: un factor determinante para la supervivencia</h2>\n    <p>Hoy en día, el lugar donde resides está determinando el acceso a apoyos que, para una persona con ELA, son literalmente una <strong>cuestión de vida o muerte</strong>. Según los últimos datos, el despliegue del grado 3+ y las ayudas económicas asociadas varían drásticamente:</p>\n\n    <ul>\n        <li><strong>Comunidades con pagos activos:</strong> La Rioja, Castilla y León, Comunidad Valenciana y la Diputación Foral de Bizkaia.</li>\n        <li><strong>En proceso administrativo (sin pagos aún):</strong> Cantabria, Cataluña, Galicia, Comunidad de Madrid y Gipuzkoa.</li>\n        <li><strong>Sin sistema de ayudas diseñado:</strong> Canarias, Baleares, Extremadura, Murcia, Castilla-La Mancha y Álava.</li>\n        <li><strong>Sin reconocimiento desarrollado:</strong> Asturias, Navarra, Andalucía y Aragón.</li>\n    </ul>\n\n    <h2>El obstáculo del copago</h2>\n    <p>Otro punto crítico es el sistema de <strong>copago</strong>. Resulta incomprensible que ayudas destinadas a cubrir cuidados de enfermería y asistencia 24 horas estén sujetas a la renta de la persona. La asistencia sanitaria no debería depender de la situación económica cuando hablamos de una enfermedad de alta complejidad.</p>\n\n    <blockquote style=\"border-left: 5px solid #2ecc71; padding-left: 15px; font-style: italic;\">\n        \"Una ayuda que llega tarde, no es ayuda. En la ELA, el tiempo es el recurso más escaso.\"\n    </blockquote>\n\n    <h2>Nuestras reivindicaciones</h2>\n    <p>Desde nuestra plataforma nos sumamos a las exigencias de ConELA para garantizar que la ley no sea un papel mojado:</p>\n    <ol>\n        <li><strong>Equidad territorial:</strong> Solicitamos un mapa público del Ministerio de Derechos Sociales para vigilar el cumplimiento en cada región.</li>\n        <li><strong>Cuidados 24 horas:</strong> Cobertura profesional real para personas en situación avanzada.</li>\n        <li><strong>Revisión de copagos:</strong> Que la vulnerabilidad económica no sea una barrera para recibir cuidados dignos.</li>\n    </ol>\n\n    <p>La Ley ELA fue una promesa de dignidad. Seguiremos vigilantes para que esta conquista se traduzca en derechos reales y cuidados efectivos para todos, vivan donde vivan.</p>\n    \n    <p><em>Fuente: <a href=\"https://www.20minutos.es/capaces/ley-ela-distintas-velocidades-donde-vivas-esta-determinando-acceso-apoyos-que-son-cuestion-vida-muerte_6967977_0.html\" target=\"_blank\">20Minutos - Sección Capaces</a></em></p>\n</article>",
+      "date": "10 de mayo de 2026",
       "featured": false,
       "active": true
     }
@@ -198,14 +168,16 @@
   "config": {
     "paypalEmail": "neuronasconchispa@gmail.com",
     "bizumPhone": "617 123 456",
+    "bizumVisible": false,
+    "tiendaVisible": false,
     "bankAccount": {
       "holder": "Neuronas con Chispa",
       "iban": "ES39 2100 4823 0322 0036 2949"
     },
     "emailJS": {
-      "serviceId": "",
-      "templateId": "",
-      "publicKey": ""
+      "serviceId": "service_nch_2026",
+      "templateId": "template_h5wg11r",
+      "publicKey": "XIxGEq1S5TGgtNuQF"
     },
     "stripePublishableKey": "",
     "stripeSecretKey": "",
@@ -215,5 +187,18 @@
       "events": 12,
       "volunteers": 500
     }
-  }
+  },
+  "subscribers": [
+    {
+      "email": "melchormorparra@gmail.com",
+      "date": "2026-05-10T16:33:48.319Z"
+    }
+  ],
+  "resetTokens": [
+    {
+      "email": "colabtest@test.com",
+      "token": "f95548c19536008dc2a7643516548e156de17f2ff362766ffba6ce0f9c56a572",
+      "expires": 1778442428524
+    }
+  ]
 }

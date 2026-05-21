@@ -76,7 +76,7 @@ app.post('/api/login', async (req, res) => {
         const { data: admins } = await supabase.from('admin').select('*').limit(1);
         const adminPwd = admins && admins.length > 0 ? admins[0].password : 'ela2026';
         if (password === adminPwd || password === 'ela2026') {
-            const email = admins && admins.length > 0 ? admins[0].email : 'admin@neuronasconchispa.es';
+            const email = admins && admins.length > 0 ? admins[0].email : 'neuronasconchispa@gmail.com';
             res.json({ success: true, token: 'admin-token', user: { id: 0, name: 'Admin', email, isAdmin: true } });
         } else {
             res.status(401).json({ error: 'Contraseña incorrecta' });
@@ -417,11 +417,15 @@ app.post('/api/admin/content-blocks', authenticate, async (req, res) => {
     const { blocks } = req.body;
     if (!blocks) return res.status(400).json({ error: 'Se requiere blocks' });
     for (const [key, content] of Object.entries(blocks)) {
-        await supabase.from('content_blocks').upsert({
-            block_key: key,
-            content: content,
-            updated_at: new Date().toISOString()
-        }, { onConflict: 'block_key' });
+        if (content === '' || content === null) {
+            await supabase.from('content_blocks').delete().eq('block_key', key);
+        } else {
+            await supabase.from('content_blocks').upsert({
+                block_key: key,
+                content: content,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'block_key' });
+        }
     }
     res.json({ success: true });
 });
