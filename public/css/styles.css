@@ -1128,11 +1128,28 @@ img {
     background: var(--white);
     box-shadow: -5px 0 20px rgba(0,0,0,0.2);
     z-index: 2000;
-    transition: right 0.3s ease;
+    display: none;
 }
 
 .cart-modal.active {
+    display: block;
     right: 0;
+    animation: slideCartIn 0.3s ease forwards;
+}
+
+@keyframes slideCartIn {
+    from { right: -400px; }
+    to { right: 0; }
+}
+
+.cart-modal.closing {
+    display: block;
+    animation: slideCartOut 0.3s ease forwards;
+}
+
+@keyframes slideCartOut {
+    from { right: 0; }
+    to { right: -400px; }
 }
 
 .cart-content {

@@ -49,7 +49,7 @@ async function fetchData() {
         document.getElementById('heroTiendaBtn')?.style.setProperty('display', tiendaDisplay);
         document.getElementById('tienda')?.style.setProperty('display', tiendaDisplay);
         document.getElementById('cartBtn')?.style.setProperty('display', tiendaDisplay);
-        if (!tiendaVisible) document.getElementById('cartModal')?.classList.remove('active');
+        if (!tiendaVisible) closeCart();
         
         if (emailJSConfig.publicKey) {
             emailjs.init(emailJSConfig.publicKey);
@@ -297,14 +297,16 @@ document.getElementById('cartBtn').addEventListener('click', () => {
     document.getElementById('cartModal').classList.add('active');
 });
 
-document.getElementById('cartClose').addEventListener('click', () => {
-    document.getElementById('cartModal').classList.remove('active');
-});
+function closeCart() {
+    const el = document.getElementById('cartModal');
+    el.classList.remove('active');
+    el.classList.remove('closing');
+}
+
+document.getElementById('cartClose').addEventListener('click', closeCart);
 
 document.getElementById('cartModal').addEventListener('click', (e) => {
-    if (e.target.id === 'cartModal') {
-        document.getElementById('cartModal').classList.remove('active');
-    }
+    if (e.target.id === 'cartModal') closeCart();
 });
 
 document.getElementById('paypalBtn').addEventListener('click', handlePayPal);
@@ -333,15 +335,8 @@ async function handlePayPal() {
     currentOrder = createCurrentOrder('paypal');
     await saveOrder(currentOrder);
     window.open(paypalUrl, '_blank');
-    document.getElementById('cartModal').classList.remove('active');
+    closeCart();
     showModal('emailModal');
-}
-
-function handleCard() {
-    if (cart.length === 0) return;
-    document.getElementById('cardTotal').textContent = getCartTotal().toFixed(2) + '€';
-    document.getElementById('cartModal').classList.remove('active');
-    showModal('cardModal');
 }
 
 function handleTransfer() {
@@ -350,7 +345,7 @@ function handleTransfer() {
     document.getElementById('transferHolder').textContent = bankAccount.holder;
     document.getElementById('transferIban').textContent = bankAccount.iban;
     document.getElementById('transferRef').textContent = 'Tienda-' + Date.now().toString().slice(-8);
-    document.getElementById('cartModal').classList.remove('active');
+    closeCart();
     showModal('transferModal');
 }
 
@@ -360,7 +355,7 @@ function handleBizum() {
     alert(`Para pagar con Bizum:\n\n1. Abre tu app de banco\n2. Envía ${total.toFixed(2)}€ al número: ${bizumPhone}\n3. Indica "Tienda Solidaria" en el concepto\n\nRecibirás un email de confirmación.`);
     currentOrder = createCurrentOrder('bizum');
     saveOrder(currentOrder);
-    document.getElementById('cartModal').classList.remove('active');
+    closeCart();
     showModal('emailModal');
 }
 
@@ -371,7 +366,7 @@ function handleCard() {
         return;
     }
     document.getElementById('cardTotal').textContent = getCartTotal().toFixed(2) + '€';
-    document.getElementById('cartModal').classList.remove('active');
+    closeCart();
     showModal('cardModal');
     initStripe();
 }
