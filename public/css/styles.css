@@ -1507,6 +1507,30 @@ img {
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .hero {
+        padding: 100px 15px 60px;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero .tagline {
+        font-size: 1rem;
+    }
+    
+    .hero-text {
+        font-size: 1rem;
+    }
+    
+    .hero-logo {
+        width: 120px;
+    }
+    
     .hero-btns {
         flex-direction: column;
     }
@@ -1521,6 +1545,144 @@ img {
     
     .amount-btn {
         width: 100%;
+    }
+    
+    .section-title {
+        font-size: 1.7rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .stats-grid {
+        padding: 20px;
+        gap: 20px;
+    }
+    
+    .product-image {
+        height: 180px;
+    }
+    
+    .product-info {
+        padding: 15px;
+    }
+    
+    .product-price {
+        font-size: 1.2rem;
+    }
+    
+    .donation-card {
+        padding: 25px 15px;
+    }
+    
+    .donation-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .donation-card > p {
+        font-size: 0.9rem;
+    }
+    
+    .contact-form {
+        padding: 20px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    
+    .cart-header,
+    .cart-items,
+    .cart-footer {
+        padding: 15px;
+    }
+    
+    .cart-item {
+        gap: 10px;
+    }
+    
+    .cart-item-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+    
+    .newsletter-box {
+        padding: 25px 20px;
+    }
+    
+    .newsletter-box h3 {
+        font-size: 1.2rem;
+    }
+    
+    .newsletter-form input {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+    
+    .newsletter-form button {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .featured-post-image {
+        min-height: 200px;
+    }
+    
+    .featured-post-content {
+        padding: 20px;
+    }
+    
+    .featured-post-title {
+        font-size: 1.3rem;
+    }
+    
+    .blog-carousel {
+        margin: 0 0 30px;
+    }
+    
+    .blog-card {
+        min-width: 260px;
+        max-width: 260px;
+    }
+    
+    .blog-carousel-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .blog-carousel-btn.prev {
+        left: -12px;
+    }
+    
+    .blog-carousel-btn.next {
+        right: -12px;
+    }
+    
+    .icono-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .footer-content {
+        gap: 30px;
     }
 }
 
