@@ -57,6 +57,22 @@ function blogToFrontend(row) {
     };
 }
 
+function isValidIBAN(iban) {
+    if (!iban) return false;
+    const cleaned = iban.replace(/\s/g, '').toUpperCase();
+    if (cleaned.length !== 24 || !cleaned.startsWith('ES')) return false;
+    const reordered = cleaned.slice(4) + cleaned.slice(0, 4);
+    const numeric = reordered.split('').map(c => {
+        const code = c.charCodeAt(0);
+        return code >= 65 ? code - 55 : c;
+    }).join('');
+    let remainder = 0;
+    for (let i = 0; i < numeric.length; i++) {
+        remainder = (remainder * 10 + parseInt(numeric[i])) % 97;
+    }
+    return remainder === 1;
+}
+
 module.exports = async (req, res) => {
     try {
         await seedData();
@@ -82,6 +98,9 @@ module.exports = async (req, res) => {
         if (url === '/api/register' && method === 'POST') {
             const { data: existing } = await supabase.from('users').select('id').eq('email', body.email).maybeSingle();
             if (existing) return json(400, { error: 'Este email ya está registrado' });
+            if (body.isColaborador && !isValidIBAN(body.iban)) {
+                return json(400, { error: 'El IBAN introducido no es válido' });
+            }
             const user = {
                 id: Date.now(),
                 name: body.name,

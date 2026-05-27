@@ -85,12 +85,32 @@ app.post('/api/login', async (req, res) => {
 });
 
 // ---- Register ----
+function isValidIBAN(iban) {
+    if (!iban) return false;
+    const cleaned = iban.replace(/\s/g, '').toUpperCase();
+    if (cleaned.length !== 24 || !cleaned.startsWith('ES')) return false;
+    const reordered = cleaned.slice(4) + cleaned.slice(0, 4);
+    const numeric = reordered.split('').map(c => {
+        const code = c.charCodeAt(0);
+        return code >= 65 ? code - 55 : c;
+    }).join('');
+    let remainder = 0;
+    for (let i = 0; i < numeric.length; i++) {
+        remainder = (remainder * 10 + parseInt(numeric[i])) % 97;
+    }
+    return remainder === 1;
+}
+
 app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password, phone, isColaborador, iban } = req.body;
         const supabase = getDb();
         const { data: existing } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
         if (existing) return res.status(400).json({ error: 'Este email ya está registrado' });
+
+        if (isColaborador && !isValidIBAN(iban)) {
+            return res.status(400).json({ error: 'El IBAN introducido no es válido' });
+        }
 
         const user = {
             id: Date.now(),

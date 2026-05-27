@@ -986,6 +986,23 @@ function toggleIbanField() {
         document.getElementById('registerColaborador').checked ? 'block' : 'none';
 }
 
+// --- IBAN validation ---
+function isValidIBAN(iban) {
+    if (!iban) return false;
+    const cleaned = iban.replace(/\s/g, '').toUpperCase();
+    if (cleaned.length !== 24 || !cleaned.startsWith('ES')) return false;
+    const reordered = cleaned.slice(4) + cleaned.slice(0, 4);
+    const numeric = reordered.split('').map(c => {
+        const code = c.charCodeAt(0);
+        return code >= 65 ? code - 55 : c;
+    }).join('');
+    let remainder = 0;
+    for (let i = 0; i < numeric.length; i++) {
+        remainder = (remainder * 10 + parseInt(numeric[i])) % 97;
+    }
+    return remainder === 1;
+}
+
 async function handleRegister() {
     const name = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
@@ -1006,6 +1023,11 @@ async function handleRegister() {
     
     if (isColaborador && !iban) {
         alert('Introduce tu IBAN para ser colaborador mensual');
+        return;
+    }
+    
+    if (isColaborador && !isValidIBAN(iban)) {
+        alert('El IBAN introducido no es válido. Comprueba que está correcto (debe empezar por ES y tener 24 caracteres).');
         return;
     }
     
