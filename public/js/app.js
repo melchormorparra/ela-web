@@ -481,6 +481,8 @@ async function confirmOrder() {
         try {
             await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                 subject: 'NCCH: Confirmación de pedido',
+                from_name: 'Neuronas con Chispa',
+                reply_to: 'neuronasconchispa@gmail.com',
                 to_email: email,
                 to_name: currentUser?.name || currentOrder.items[0]?.name || 'Cliente',
                 order_total: currentOrder.total.toFixed(2) + '€',
@@ -685,6 +687,8 @@ function initForms() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Consulta - ' + (data.subject || 'Sin asunto'),
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: data.email || 'neuronasconchispa@gmail.com',
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Consulta de contacto:\n\nNombre: ${data.name || 'No especificado'}\nEmail: ${data.email || 'No especificado'}\nAsunto: ${data.subject || 'No especificado'}\nMensaje: ${data.message || 'No especificado'}`
                     });
@@ -710,6 +714,8 @@ function initForms() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Nuevo suscriptor boletín',
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: email,
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Nuevo suscriptor al boletín:\n\nEmail: ${email}`
                     });
@@ -942,6 +948,8 @@ async function handleForgotPassword() {
             try {
                 await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                     subject: 'NCCH: Código de recuperación de contraseña',
+                    from_name: 'Neuronas con Chispa',
+                    reply_to: 'neuronasconchispa@gmail.com',
                     to_email: email,
                     message: `Tu código de recuperación es: ${data.token}\n\nEste código expira en 1 hora.\n\nSi no has solicitado este cambio, ignora este mensaje.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
                 });
@@ -1074,6 +1082,8 @@ async function handleRegister() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Bienvenido a Neuronas con Chispa',
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: 'neuronasconchispa@gmail.com',
                         to_email: email,
                         to_name: name,
                         message: `Hola ${name},\n\nGracias por registrarte en Neuronas con Chispa.\n\nTu cuenta ha sido creada correctamente. Ya puedes iniciar sesión con tu email y contraseña.\n\n${isColaborador ? 'Te damos la bienvenida como colaborador mensual. Tu apoyo de 5€/mes nos ayuda a seguir investigando la ELA.\n\n' : ''}Juntos podemos hacer la diferencia.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
@@ -1088,6 +1098,7 @@ async function handleRegister() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Nuevo colaborador',
+                        from_name: 'Neuronas con Chispa',
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Nuevo colaborador mensual:\n\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
                     });
@@ -1179,6 +1190,8 @@ async function upgradeToColaborador() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Bienvenido como colaborador',
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: 'neuronasconchispa@gmail.com',
                         to_email: currentUser.email,
                         to_name: currentUser.name,
                         message: `Hola ${currentUser.name},\n\n¡Gracias por hacerte colaborador mensual de Neuronas con Chispa!\n\nTu contribución de 5€/mes nos ayuda a seguir investigando la ELA y apoyando a las familias.\n\nIBAN para domiciliación: ${iban}\n\nJuntos podemos hacer la diferencia.\n\nUn saludo,\nEl equipo de Neuronas con Chispa`
@@ -1193,6 +1206,7 @@ async function upgradeToColaborador() {
                 try {
                     await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
                         subject: 'NCCH: Nuevo colaborador (upgrade)',
+                        from_name: 'Neuronas con Chispa',
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Un usuario se ha convertido en colaborador:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
                     });

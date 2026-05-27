@@ -1011,6 +1011,7 @@
                                 subscribers.forEach(sub => {
                                     emailjs.send(serviceId, templateId, {
                                         subject: 'NCCH: Nuevo artículo en el blog',
+                                        from_name: 'Neuronas con Chispa',
                                         to_email: sub.email,
                                         message: `Nuevo artículo: ${post.title}\n\n${post.excerpt || ''}\n\nLéelo completo en: ${window.location.origin}/#blog`
                                     }).catch(err => console.error('EmailJS error:', err));
