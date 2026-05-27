@@ -182,10 +182,17 @@ module.exports = async (req, res) => {
 
         // ---- Public config ----
         if (url === '/api/config' && method === 'GET') {
-            const { data } = await supabase.from('config').select('*').limit(1).maybeSingle();
+            const [configResult, countResult] = await Promise.all([
+                supabase.from('config').select('*').limit(1).maybeSingle(),
+                supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador')
+            ]);
+            const { data } = configResult;
             if (!data) return ok(configToFrontend({}));
             const c = configToFrontend(data);
             delete c.stripeSecretKey;
+            if (c.stats) {
+                c.stats.volunteers = countResult.count || 0;
+            }
             return ok(c);
         }
 

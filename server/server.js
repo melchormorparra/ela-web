@@ -224,10 +224,17 @@ app.get('/api/content-blocks', async (req, res) => {
 app.get('/api/config', async (req, res) => {
     try {
         const supabase = getDb();
-        const { data } = await supabase.from('config').select('*').limit(1).maybeSingle();
+        const [configResult, countResult] = await Promise.all([
+            supabase.from('config').select('*').limit(1).maybeSingle(),
+            supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador')
+        ]);
+        const { data } = configResult;
         if (!data) return res.json(configToFrontend({}));
         const c = configToFrontend(data);
         delete c.stripeSecretKey;
+        if (c.stats) {
+            c.stats.volunteers = countResult.count || 0;
+        }
         res.json(c);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
