@@ -562,14 +562,26 @@ function handleDonation(amount) {
     const customInput = document.getElementById('customDonation');
     const customAmount = customInput ? parseFloat(customInput.value) : 0;
     const finalAmount = customAmount > 0 ? customAmount : amount;
-    
-    // Update bank details in modal
-    const holderEl = document.getElementById('donationBankHolder');
-    const ibanEl = document.getElementById('donationBankIban');
-    if (holderEl) holderEl.textContent = bankAccount.holder;
-    if (ibanEl) ibanEl.textContent = bankAccount.iban;
-    
-    // Show donation modal with video
+    showThankYouModal('donation');
+}
+
+function showThankYouModal(type) {
+    const titleEl = document.getElementById('thankYouTitle');
+    const subtextEl = document.getElementById('thankYouSubtext');
+    const bankInfoEl = document.getElementById('thankYouBankInfo');
+    if (type === 'colaborador') {
+        if (titleEl) titleEl.textContent = '¡Gracias por hacerte colaborador!';
+        if (subtextEl) subtextEl.textContent = 'Tu apoyo mensual de 5€ nos ayuda a seguir investigando la ELA. Bienvenido a la familia.';
+        if (bankInfoEl) bankInfoEl.style.display = 'none';
+    } else {
+        const holderEl = document.getElementById('donationBankHolder');
+        const ibanEl = document.getElementById('donationBankIban');
+        if (holderEl) holderEl.textContent = bankAccount.holder;
+        if (ibanEl) ibanEl.textContent = bankAccount.iban;
+        if (titleEl) titleEl.textContent = '¡Gracias por tu donación!';
+        if (subtextEl) subtextEl.textContent = 'Tu generosidad hace posible que sigamos luchando contra la ELA.';
+        if (bankInfoEl) bankInfoEl.style.display = '';
+    }
     const video = document.getElementById('donationVideo');
     if (video) { video.currentTime = 0; video.play(); }
     showModal('donationModal');
@@ -1052,6 +1064,9 @@ async function handleRegister() {
             document.getElementById('ibanGroup').style.display = 'none';
             closeModal('authModal');
             updateUserUI();
+            if (isColaborador) {
+                setTimeout(() => showThankYouModal('colaborador'), 300);
+            }
             showNotification('Cuenta creada. ¡Bienvenido, ' + currentUser.name + '!');
             
             // Send welcome email to user
