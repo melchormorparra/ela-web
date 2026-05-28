@@ -606,6 +606,11 @@
                     <textarea id="massEmailMessage" style="min-height:200px;" placeholder="Escribe aquí el mensaje..."></textarea>
                 </div>
                 <button class="btn btn-primary" onclick="sendMassEmail()"><i class="fas fa-paper-plane"></i> Enviar a todos</button>
+                <hr style="margin:25px 0; border-color:#e0e0e0;">
+                <h3 style="margin-bottom:10px;">Remesa mensual de colaboradores</h3>
+                <p style="color:var(--gray); margin-bottom:15px;">Envía a nrodriguezabogados@gmail.com el listado de colaboradores con sus IBAN para la gestión de cobros.</p>
+                <div id="remesaResult" style="display:none; padding:12px; border-radius:8px; margin-bottom:15px;"></div>
+                <button class="btn btn-primary" onclick="sendRemesa()"><i class="fas fa-file-invoice"></i> Enviar remesa ahora</button>
             </section>
         </div>
     </div>
@@ -1298,6 +1303,39 @@
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar a todos';
                 btn.disabled = false;
             });
+        }
+
+        function sendRemesa() {
+            if (!confirm('¿Enviar remesa mensual de colaboradores a nrodriguezabogados@gmail.com?')) return;
+            const btn = document.querySelector('#massemailSection .btn-primary:last-child');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
+            const result = document.getElementById('remesaResult');
+            result.style.display = 'none';
+            fetch('/api/send-remesa', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-cron-secret': '1' }, body: '{}' })
+                .then(r => r.json())
+                .then(data => {
+                    result.style.display = 'block';
+                    if (data.success) {
+                        result.style.background = '#d4edda';
+                        result.style.color = '#155724';
+                        result.innerHTML = `<i class="fas fa-check-circle"></i> Remesa enviada correctamente (${data.total} colaboradores).`;
+                    } else {
+                        result.style.background = '#f8d7da';
+                        result.style.color = '#721c24';
+                        result.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.error || 'Error al enviar remesa');
+                    }
+                    btn.innerHTML = '<i class="fas fa-file-invoice"></i> Enviar remesa ahora';
+                    btn.disabled = false;
+                })
+                .catch(() => {
+                    result.style.display = 'block';
+                    result.style.background = '#f8d7da';
+                    result.style.color = '#721c24';
+                    result.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error de conexión.';
+                    btn.innerHTML = '<i class="fas fa-file-invoice"></i> Enviar remesa ahora';
+                    btn.disabled = false;
+                });
         }
 
         function renderOrders() {

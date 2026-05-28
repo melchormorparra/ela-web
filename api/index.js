@@ -457,6 +457,50 @@ module.exports = async (req, res) => {
             return ok({ success: true, total: emails.size, ...results });
         }
 
+        // ---- Send monthly remesa ----
+        if (url === '/api/send-remesa' && method === 'POST') {
+            if (!req.headers['x-vercel-cron'] && !req.headers['x-cron-secret']) {
+                return json(403, { error: 'Acceso no autorizado' });
+            }
+            const { data: collaborators } = await supabase.from('users').select('*').eq('role', 'colaborador');
+            if (!collaborators || collaborators.length === 0) {
+                return ok({ success: true, message: 'No hay colaboradores activos' });
+            }
+            const configData = await supabase.from('config').select('email_js').limit(1).maybeSingle();
+            const emailJS = configData.data?.email_js || {};
+            const { serviceId, templateId, publicKey } = emailJS;
+            if (!serviceId || !templateId || !publicKey) {
+                return json(400, { error: 'EmailJS no está configurado' });
+            }
+            const now = new Date();
+            const month = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+            let table = '';
+            collaborators.forEach((c, i) => {
+                table += `${i + 1}. ${c.name}\n   IBAN: ${c.iban || 'No disponible'}\n   Importe: 5.00€\n   Email: ${c.email}\n   Teléfono: ${c.phone || 'No disponible'}\n\n`;
+            });
+            const total = (collaborators.length * 5).toFixed(2) + '€';
+            const message = `REMESA MENSUAL - Neuronas con Chispa\nMes: ${month}\nTotal colaboradores: ${collaborators.length}\nImporte total: ${total}\n\n---\n\n${table}---\n\nEste correo se ha generado automáticamente el ${now.toLocaleDateString('es-ES')}.`;
+            const r = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service_id: serviceId,
+                    template_id: templateId,
+                    user_id: publicKey,
+                    template_params: {
+                        subject: `NCCH: Remesa mensual - ${month}`,
+                        to_email: 'nrodriguezabogados@gmail.com',
+                        message: message
+                    }
+                })
+            });
+            if (!r.ok) {
+                const errText = await r.text();
+                return json(500, { error: 'Error al enviar email: ' + errText });
+            }
+            return ok({ success: true, total: collaborators.length });
+        }
+
         json(404, { error: 'Endpoint no encontrado' });
     } catch (e) {
         console.error('API error:', e);

@@ -9,5 +9,11 @@
     { "src": "/admin.html", "dest": "/public/admin.html" },
     { "src": "/admin", "dest": "/public/admin.html" },
     { "src": "/(.*)", "dest": "/public/$1" }
+  ],
+  "crons": [
+    {
+      "path": "/api/send-remesa",
+      "schedule": "0 8 1 * *"
+    }
   ]
 }

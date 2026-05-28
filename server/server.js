@@ -547,5 +547,51 @@ app.post('/api/admin/mass-email', authenticate, async (req, res) => {
     }
 });
 
+// ---- Send monthly remesa ----
+app.post('/api/send-remesa', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const { data: collaborators } = await supabase.from('users').select('*').eq('role', 'colaborador');
+        if (!collaborators || collaborators.length === 0) {
+            return res.json({ success: true, message: 'No hay colaboradores activos' });
+        }
+        const configData = await supabase.from('config').select('email_js').limit(1).maybeSingle();
+        const emailJS = configData.data?.email_js || {};
+        const { serviceId, templateId, publicKey } = emailJS;
+        if (!serviceId || !templateId || !publicKey) {
+            return res.status(400).json({ error: 'EmailJS no está configurado' });
+        }
+        const now = new Date();
+        const month = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+        let table = '';
+        collaborators.forEach((c, i) => {
+            table += `${i + 1}. ${c.name}\n   IBAN: ${c.iban || 'No disponible'}\n   Importe: 5.00€\n   Email: ${c.email}\n   Teléfono: ${c.phone || 'No disponible'}\n\n`;
+        });
+        const total = (collaborators.length * 5).toFixed(2) + '€';
+        const message = `REMESA MENSUAL - Neuronas con Chispa\nMes: ${month}\nTotal colaboradores: ${collaborators.length}\nImporte total: ${total}\n\n---\n\n${table}---\n\nEste correo se ha generado automáticamente el ${now.toLocaleDateString('es-ES')}.`;
+        const r = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                service_id: serviceId,
+                template_id: templateId,
+                user_id: publicKey,
+                template_params: {
+                    subject: `NCCH: Remesa mensual - ${month}`,
+                    to_email: 'nrodriguezabogados@gmail.com',
+                    message: message
+                }
+            })
+        });
+        if (!r.ok) {
+            const errText = await r.text();
+            return res.status(500).json({ error: 'Error al enviar email: ' + errText });
+        }
+        res.json({ success: true, total: collaborators.length });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
