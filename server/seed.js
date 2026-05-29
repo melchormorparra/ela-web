@@ -78,11 +78,13 @@ async function seedData() {
         if (ce) console.error('Seed config error:', ce.message);
     }
 
-    // Seed page_views if not present
-    const { data: existingViews } = await supabase.from('page_views').select('id').limit(1).maybeSingle();
-    if (!existingViews) {
-        await supabase.from('page_views').insert({ count: 500, start_date: '2026-05-28T12:00:00Z' });
-        console.log('Seeded page_views with 500 (retroactive from 2026-05-28)');
+    // Seed page_views count in config.stats (retroactive from 2026-05-28)
+    const { data: cfg } = await supabase.from('config').select('stats').limit(1).maybeSingle();
+    if (cfg && cfg.stats && cfg.stats.page_views === undefined) {
+        cfg.stats.page_views = 500;
+        cfg.stats.start_date = '2026-05-28T12:00:00Z';
+        await supabase.from('config').update({ stats: cfg.stats }).eq('id', 1);
+        console.log('Seeded page_views = 500 in config.stats (retroactive from 2026-05-28)');
     }
 
     // Always upsert any missing content blocks (won't overwrite existing content)

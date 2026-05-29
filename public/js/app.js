@@ -1477,12 +1477,17 @@ async function fetchCounts() {
             statsItems[3].querySelector('.stat-number').dataset.count = collabCount;
         }
 
-        // Page views count
-        const viewsRes = await fetch(`${SUPABASE_URL}/rest/v1/page_views?select=count&limit=1`, {
-            headers: SUPABASE_HEADERS
-        });
-        const viewsData = await viewsRes.json();
-        let viewCount = viewsData[0]?.count || 0;
+        // Page views count (from config.stats)
+        let viewCount = 0;
+        try {
+            const viewsRes = await fetch(`${SUPABASE_URL}/rest/v1/config?select=stats&limit=1`, {
+                headers: SUPABASE_HEADERS
+            });
+            const viewsData = await viewsRes.json();
+            if (Array.isArray(viewsData) && viewsData[0]?.stats) {
+                viewCount = viewsData[0].stats.page_views || 0;
+            }
+        } catch (e) {} // stats field may not have page_views yet
 
         // If not yet counted this session, increment optimistically
         if (!sessionStorage.getItem('visitCounted')) {

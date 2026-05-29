@@ -180,20 +180,17 @@ module.exports = async (req, res) => {
             return ok(map);
         }
 
-        // ---- Page views ----
+        // ---- Page views (stored in config.stats) ----
         if (url === '/api/page-views' && method === 'GET') {
-            const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
-            return ok({ count: data?.count || 0, startDate: data?.start_date || null });
+            const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
+            return ok({ count: data?.stats?.page_views || 0, startDate: data?.stats?.start_date || null });
         }
         if (url === '/api/page-views/increment' && method === 'POST') {
-            const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
-            const newCount = (data?.count || 0) + 1;
-            if (data) {
-                await supabase.from('page_views').update({ count: newCount }).eq('id', data.id);
-            } else {
-                await supabase.from('page_views').insert({ count: newCount, start_date: new Date().toISOString() });
-            }
-            return ok({ count: newCount });
+            const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
+            const stats = data?.stats || {};
+            stats.page_views = (stats.page_views || 0) + 1;
+            await supabase.from('config').update({ stats }).eq('id', data?.id || 1);
+            return ok({ count: stats.page_views });
         }
 
         // ---- Public config ----

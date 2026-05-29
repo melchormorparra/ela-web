@@ -220,26 +220,23 @@ app.get('/api/content-blocks', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ---- Page views ----
+// ---- Page views (stored in config.stats) ----
 app.get('/api/page-views', async (req, res) => {
     try {
         const supabase = getDb();
-        const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
-        res.json({ count: data?.count || 0, startDate: data?.start_date || null });
+        const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
+        res.json({ count: data?.stats?.page_views || 0, startDate: data?.stats?.start_date || null });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/page-views/increment', async (req, res) => {
     try {
         const supabase = getDb();
-        const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
-        const newCount = (data?.count || 0) + 1;
-        if (data) {
-            await supabase.from('page_views').update({ count: newCount }).eq('id', data.id);
-        } else {
-            await supabase.from('page_views').insert({ count: newCount, start_date: new Date().toISOString() });
-        }
-        res.json({ count: newCount });
+        const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
+        const stats = data?.stats || {};
+        stats.page_views = (stats.page_views || 0) + 1;
+        await supabase.from('config').update({ stats }).eq('id', data?.id || 1);
+        res.json({ count: stats.page_views });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

@@ -103,13 +103,6 @@ CREATE TABLE IF NOT EXISTS consent_records (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Page views counter (retroactive from 2026-05-28 12:00)
-CREATE TABLE IF NOT EXISTS page_views (
-  id SERIAL PRIMARY KEY,
-  count BIGINT DEFAULT 0,
-  start_date TIMESTAMP DEFAULT NOW()
-);
-
 -- ============================================================
 -- SEED DATA (run once)
 -- ============================================================
@@ -196,7 +189,3 @@ INSERT INTO content_blocks (block_key, title, content) VALUES
 ('blog_titulo', 'T�tulo Blog', 'Blog y Noticias'),
 ('blog_subtitulo', 'Subt�tulo Blog', '�ltimas novedades sobre la ELA y nuestra asociaci�n')
 ON CONFLICT (block_key) DO NOTHING;
-
--- Page views seed (retroactive from 2026-05-28 12:00)
-INSERT INTO page_views (count, start_date) VALUES (500, '2026-05-28T12:00:00Z')
-ON CONFLICT (id) DO NOTHING;
