@@ -137,6 +137,20 @@ img {
   vertical-align: middle;
 }
 
+.visit-counter {
+    font-size: 0.75rem;
+    color: var(--gray);
+    text-align: center;
+    margin-top: -8px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.visit-counter i {
+    font-size: 0.65rem;
+    margin-right: 3px;
+}
+
 .hero {
 }
 
@@ -1685,6 +1699,11 @@ img {
     .icono-logo {
         width: 70px;
         height: 70px;
+    }
+    
+    .visit-counter {
+        font-size: 0.6rem;
+        white-space: normal;
     }
     
     .footer-content {

@@ -180,6 +180,22 @@ module.exports = async (req, res) => {
             return ok(map);
         }
 
+        // ---- Page views ----
+        if (url === '/api/page-views' && method === 'GET') {
+            const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
+            return ok({ count: data?.count || 0, startDate: data?.start_date || null });
+        }
+        if (url === '/api/page-views/increment' && method === 'POST') {
+            const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
+            const newCount = (data?.count || 0) + 1;
+            if (data) {
+                await supabase.from('page_views').update({ count: newCount }).eq('id', data.id);
+            } else {
+                await supabase.from('page_views').insert({ count: newCount, start_date: new Date().toISOString() });
+            }
+            return ok({ count: newCount });
+        }
+
         // ---- Public config ----
         if (url === '/api/config' && method === 'GET') {
             const [configResult, countResult] = await Promise.all([
@@ -258,6 +274,21 @@ module.exports = async (req, res) => {
             const subs = user.subscriptions || [];
             const { data, error: ue } = await supabase.from('users')
                 .update({ role: 'colaborador', iban: body.iban || '', subscriptions: subs })
+                .eq('id', userId)
+                .select()
+                .maybeSingle();
+            if (ue) return json(400, { error: ue.message });
+            const { password, ...safe } = data || user;
+            return ok({ success: true, user: safe });
+        }
+
+        const cancelMatch = url.match(/^\/api\/users\/(\d+)\/cancel-subscription$/);
+        if (cancelMatch && method === 'POST') {
+            const userId = parseInt(cancelMatch[1]);
+            const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+            if (!user) return json(404, { error: 'Usuario no encontrado' });
+            const { data, error: ue } = await supabase.from('users')
+                .update({ role: 'user', iban: '' })
                 .eq('id', userId)
                 .select()
                 .maybeSingle();

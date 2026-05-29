@@ -189,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initForms();
     initBlogFilters();
+    initVisitCounter();
 });
 
 function renderProducts() {
@@ -1226,6 +1227,46 @@ async function upgradeToColaborador() {
     }
 }
 
+async function cancelSubscription() {
+    if (!currentUser) return;
+    if (!confirm('¿Estás seguro de que quieres anular tu suscripción como colaborador mensual? Este cambio no se puede deshacer automáticamente desde aquí.')) return;
+    try {
+        const res = await fetch(`${API_URL}/users/${currentUser.id}/cancel-subscription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            currentUser = data.user;
+            const safeUser = { id: currentUser.id, name: currentUser.name, email: currentUser.email, phone: currentUser.phone, role: currentUser.role, createdAt: currentUser.createdAt };
+            localStorage.setItem('elaUser', JSON.stringify(safeUser));
+
+            // Notify admin
+            if (emailJSConfig.serviceId && emailJSConfig.templateId) {
+                try {
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Colaborador anula suscripción',
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: 'neuronasconchispa@gmail.com',
+                        to_email: 'neuronasconchispa@gmail.com',
+                        message: `Un colaborador ha anulado su suscripción:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}`
+                    });
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                }
+            }
+
+            showNotification('Tu suscripción ha sido anulada. Seguirás siendo usuario registrado en nuestra web.');
+            closeModal('userDashboardModal');
+        } else {
+            alert(data.error || 'Error al anular la suscripción');
+        }
+    } catch (err) {
+        console.error('Cancel subscription error:', err);
+        alert('Error al conectar con el servidor');
+    }
+}
+
 async function showUserDashboard() {
     if (!currentUser) return;
     
@@ -1316,6 +1357,9 @@ async function showUserDashboard() {
                             ? '<span style="color:var(--success);">Al corriente</span> - Último cobro: ' + new Date(lastPayment.date).toLocaleDateString('es-ES')
                             : '<span style="color:var(--warning);">Pendiente de primer cobro</span>'}</p>
                         ${subs.length > 0 ? `<p style="margin-top:5px;"><strong>Próximo cobro estimado:</strong> ${new Date(new Date(lastPayment.date).getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>` : ''}
+                        <button class="btn" style="background:#dc3545; color:white; font-size:0.85rem; margin-top:12px;" onclick="cancelSubscription()">
+                            <i class="fas fa-ban"></i> Anular suscripción
+                        </button>
                     </div>`;
             
             // Payment history
@@ -1415,6 +1459,25 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
     if (video) { video.pause(); video.currentTime = 0; }
     document.getElementById('donationModal')?.classList.remove('active');
 });
+
+// Visit counter
+async function initVisitCounter() {
+    try {
+        const res = await fetch(`${API_URL}/page-views`);
+        const data = await res.json();
+        const el = document.getElementById('visitCount');
+        if (el) el.textContent = data.count?.toLocaleString('es-ES') || '0';
+
+        if (!sessionStorage.getItem('visitCounted')) {
+            sessionStorage.setItem('visitCounted', '1');
+            await fetch(`${API_URL}/page-views/increment`, { method: 'POST' });
+            const el2 = document.getElementById('visitCount');
+            if (el2) el2.textContent = ((data.count || 0) + 1).toLocaleString('es-ES');
+        }
+    } catch (err) {
+        console.error('Visit counter error:', err);
+    }
+}
 
 // Cookie consent
 function acceptCookies() {

@@ -220,6 +220,29 @@ app.get('/api/content-blocks', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ---- Page views ----
+app.get('/api/page-views', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
+        res.json({ count: data?.count || 0, startDate: data?.start_date || null });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/page-views/increment', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const { data } = await supabase.from('page_views').select('*').limit(1).maybeSingle();
+        const newCount = (data?.count || 0) + 1;
+        if (data) {
+            await supabase.from('page_views').update({ count: newCount }).eq('id', data.id);
+        } else {
+            await supabase.from('page_views').insert({ count: newCount, start_date: new Date().toISOString() });
+        }
+        res.json({ count: newCount });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ---- Public config ----
 app.get('/api/config', async (req, res) => {
     try {
@@ -332,6 +355,23 @@ app.post('/api/users/:id/upgrade', async (req, res) => {
         const subs = user.subscriptions || [];
         const { data, error } = await supabase.from('users')
             .update({ role: 'colaborador', iban: iban || '', subscriptions: subs })
+            .eq('id', userId)
+            .select()
+            .maybeSingle();
+        if (error) return res.status(400).json({ error: error.message });
+        const { password, ...safe } = data || user;
+        res.json({ success: true, user: safe });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/users/:id/cancel-subscription', async (req, res) => {
+    try {
+        const supabase = getDb();
+        const userId = parseInt(req.params.id);
+        const { data: user } = await supabase.from('users').select('*').eq('id', userId).maybeSingle();
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        const { data, error } = await supabase.from('users')
+            .update({ role: 'user', iban: '' })
             .eq('id', userId)
             .select()
             .maybeSingle();
