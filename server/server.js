@@ -247,9 +247,10 @@ app.post('/api/page-views/increment', async (req, res) => {
 app.get('/api/config', async (req, res) => {
     try {
         const supabase = getDb();
-        const [configResult, countResult] = await Promise.all([
+        const [configResult, countResult, viewsResult] = await Promise.all([
             supabase.from('config').select('*').limit(1).maybeSingle(),
-            supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador')
+            supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador'),
+            supabase.from('page_views').select('count').limit(1).maybeSingle()
         ]);
         const { data } = configResult;
         if (!data) return res.json(configToFrontend({}));
@@ -258,6 +259,7 @@ app.get('/api/config', async (req, res) => {
         if (c.stats) {
             c.stats.volunteers = countResult.count || 0;
         }
+        c.pageViews = viewsResult?.count || 0;
         res.json(c);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });

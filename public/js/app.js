@@ -63,6 +63,10 @@ async function fetchData() {
                 item.querySelector('.stat-number').dataset.count = counts[index];
             });
         }
+
+        // Visit counter from config (no extra request)
+        const visitEl = document.getElementById('visitCount');
+        if (visitEl) visitEl.textContent = (config.pageViews || 0).toLocaleString('es-ES');
         
         renderProducts();
         renderBlog();
@@ -1460,22 +1464,11 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
     document.getElementById('donationModal')?.classList.remove('active');
 });
 
-// Visit counter
-async function initVisitCounter() {
-    try {
-        const res = await fetch(`${API_URL}/page-views`);
-        const data = await res.json();
-        const el = document.getElementById('visitCount');
-        if (el) el.textContent = data.count?.toLocaleString('es-ES') || '0';
-
-        if (!sessionStorage.getItem('visitCounted')) {
-            sessionStorage.setItem('visitCounted', '1');
-            await fetch(`${API_URL}/page-views/increment`, { method: 'POST' });
-            const el2 = document.getElementById('visitCount');
-            if (el2) el2.textContent = ((data.count || 0) + 1).toLocaleString('es-ES');
-        }
-    } catch (err) {
-        console.error('Visit counter error:', err);
+// Visit counter (fire-and-forget increment only — count already in config)
+function initVisitCounter() {
+    if (!sessionStorage.getItem('visitCounted')) {
+        sessionStorage.setItem('visitCounted', '1');
+        fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
     }
 }
 
