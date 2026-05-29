@@ -12,6 +12,10 @@ let currentUser = JSON.parse(localStorage.getItem('elaUser')) || null;
 
 const API_URL = '/api';
 
+const SUPABASE_URL = 'https://ljlicipifdiirstjbgmc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqbGljaXBpZmRpaXJzdGpiZ21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzExOTQsImV4cCI6MjA5NDAwNzE5NH0.PAFYYAXbc8SsvUooHkAnCVIPiRpz3GTI4LeYS0ZKGiQ';
+const SUPABASE_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+
 let contentBlocks = {};
 
 async function fetchData() {
@@ -59,14 +63,10 @@ async function fetchData() {
         
         if (config.stats) {
             document.querySelectorAll('#statsGrid .stat-item').forEach((item, index) => {
-                const counts = [config.stats.families, config.stats.euros, config.stats.events, config.stats.volunteers];
+                const counts = [config.stats.families, config.stats.euros, config.stats.events, config.stats.volunteers || 0];
                 item.querySelector('.stat-number').dataset.count = counts[index];
             });
         }
-
-        // Visit counter from config (no extra request)
-        const visitEl = document.getElementById('visitCount');
-        if (visitEl) visitEl.textContent = (config.pageViews || 0).toLocaleString('es-ES');
         
         renderProducts();
         renderBlog();
@@ -190,10 +190,10 @@ function applyContentBlocks() {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchData();
+    fetchCounts();
     initNavigation();
     initForms();
     initBlogFilters();
-    initVisitCounter();
 });
 
 function renderProducts() {
@@ -1464,11 +1464,38 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
     document.getElementById('donationModal')?.classList.remove('active');
 });
 
-// Visit counter (fire-and-forget increment only — count already in config)
-function initVisitCounter() {
-    if (!sessionStorage.getItem('visitCounted')) {
-        sessionStorage.setItem('visitCounted', '1');
-        fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
+// Fetch counts directly from Supabase (bypasses Vercel cold start)
+async function fetchCounts() {
+    try {
+        // Collaborator count
+        const collabRes = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&head=true`, {
+            headers: SUPABASE_HEADERS
+        });
+        const collabCount = parseInt(collabRes.headers.get('x-total-count') || '0', 10);
+        const statsItems = document.querySelectorAll('#statsGrid .stat-item');
+        if (statsItems[3]) {
+            statsItems[3].querySelector('.stat-number').dataset.count = collabCount;
+        }
+
+        // Page views count
+        const viewsRes = await fetch(`${SUPABASE_URL}/rest/v1/page_views?select=count&limit=1`, {
+            headers: SUPABASE_HEADERS
+        });
+        const viewsData = await viewsRes.json();
+        let viewCount = viewsData[0]?.count || 0;
+
+        // If not yet counted this session, increment optimistically
+        if (!sessionStorage.getItem('visitCounted')) {
+            sessionStorage.setItem('visitCounted', '1');
+            viewCount++;
+            // Fire-and-forget: increment via our API (handles the read-update atomically)
+            fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
+        }
+
+        const visitEl = document.getElementById('visitCount');
+        if (visitEl) visitEl.textContent = viewCount.toLocaleString('es-ES');
+    } catch (err) {
+        console.error('Counts fetch error:', err);
     }
 }
 
