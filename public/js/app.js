@@ -79,6 +79,7 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
+        fetchCounts();
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -218,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.textContent = parseInt(cached).toLocaleString('es-ES');
     }
     fetchData();
-    fetchCounts();
     initNavigation();
     initForms();
     initBlogFilters();
@@ -675,7 +675,7 @@ function initAnimations() {
     const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && !entry.target.classList.contains('animate-in')) {
                 entry.target.classList.add('animate-in');
                 if (entry.target.classList.contains('stat-item')) {
                     animateCounter(entry.target.querySelector('.stat-number'));
