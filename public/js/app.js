@@ -1493,13 +1493,19 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
 // Fetch collaborator count directly from Supabase (bypasses Vercel cold start)
 async function fetchCounts() {
     try {
-        const collabRes = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&head=true`, {
-            headers: SUPABASE_HEADERS
+        const collabRes = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador`, {
+            headers: { ...SUPABASE_HEADERS, Prefer: 'count=exact' }
         });
-        const collabCount = parseInt(collabRes.headers.get('x-total-count') || '0', 10);
+        let collabCount = parseInt(collabRes.headers.get('x-total-count') || '0', 10);
+        if (!collabCount) {
+            const data = await collabRes.json();
+            collabCount = Array.isArray(data) ? data.length : 0;
+        }
         const statsItems = document.querySelectorAll('#statsGrid .stat-item');
         if (statsItems[3]) {
-            statsItems[3].querySelector('.stat-number').dataset.count = collabCount;
+            const el = statsItems[3].querySelector('.stat-number');
+            el.dataset.count = collabCount;
+            el.textContent = collabCount;
         }
         if (!sessionStorage.getItem('visitCounted')) {
             sessionStorage.setItem('visitCounted', '1');
