@@ -183,9 +183,15 @@ img {
     color: var(--primary);
 }
 
-.nav-subitem a {
+.nav-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-subs a {
     font-size: 0.85rem;
     font-weight: 400;
+    white-space: nowrap;
 }
 
 .cart-btn {
