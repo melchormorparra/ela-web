@@ -960,6 +960,24 @@ function showAuthTab(tab) {
     }
 }
 
+function openRegisterAsColaborador() {
+    showModal('authModal');
+    showAuthTab('register');
+    document.getElementById('registerColaborador').checked = true;
+    document.getElementById('ibanGroup').style.display = 'block';
+}
+
+function shareWebsite() {
+    const url = window.location.href;
+    if (navigator.share) {
+        navigator.share({ title: 'Neuronas con Chispa', text: 'Asociación para la investigación de la ELA', url: url });
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Enlace copiado al portapapeles');
+        });
+    }
+}
+
 async function handleLogin() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
