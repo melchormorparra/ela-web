@@ -12,9 +12,6 @@ let currentUser = JSON.parse(localStorage.getItem('elaUser')) || null;
 
 const API_URL = '/api';
 
-const SUPABASE_URL = 'https://ljlicipifdiirstjbgmc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqbGljaXBpZmRpaXJzdGpiZ21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzExOTQsImV4cCI6MjA5NDAwNzE5NH0.PAFYYAXbc8SsvUooHkAnCVIPiRpz3GTI4LeYS0ZKGiQ';
-const SUPABASE_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
 
 let contentBlocks = {};
 
@@ -69,6 +66,12 @@ async function fetchData() {
                 }
             });
         }
+        const collabItem = document.querySelectorAll('#statsGrid .stat-item')[3];
+        if (collabItem) {
+            const el = collabItem.querySelector('.stat-number');
+            el.dataset.count = config.collaboratorCount || 0;
+            el.textContent = (config.collaboratorCount || 0).toLocaleString('es-ES');
+        }
 
         // Page views from config response (single source of truth)
         const pageViews = config.pageViews || 0;
@@ -79,7 +82,6 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
-        fetchCounts();
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -222,6 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initForms();
     initBlogFilters();
+    if (!sessionStorage.getItem('visitCounted')) {
+        sessionStorage.setItem('visitCounted', '1');
+        fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
+    }
 });
 
 function renderProducts() {
@@ -1491,34 +1497,6 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
     if (video) { video.pause(); video.currentTime = 0; }
     document.getElementById('donationModal')?.classList.remove('active');
 });
-
-// Fetch collaborator count directly from Supabase (bypasses Vercel cold start)
-async function fetchCounts() {
-    try {
-        const collabRes = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador`, {
-            headers: { ...SUPABASE_HEADERS, Prefer: 'count=exact' }
-        });
-        let collabCount = parseInt(collabRes.headers.get('x-total-count') || '0', 10);
-        if (!collabCount) {
-            const data = await collabRes.json();
-            collabCount = Array.isArray(data) ? data.length : 0;
-        }
-        const statsItems = document.querySelectorAll('#statsGrid .stat-item');
-        if (statsItems[3]) {
-            const el = statsItems[3].querySelector('.stat-number');
-            el.dataset.count = collabCount;
-            el.textContent = collabCount.toLocaleString();
-            statsItems[3].classList.add('animate-in');
-            statsItems[3].classList.remove('animate-ready');
-        }
-        if (!sessionStorage.getItem('visitCounted')) {
-            sessionStorage.setItem('visitCounted', '1');
-            fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
-        }
-    } catch (err) {
-        console.error('Counts fetch error:', err);
-    }
-}
 
 // Cookie consent
 function acceptCookies() {

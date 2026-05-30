@@ -253,6 +253,8 @@ app.get('/api/config', async (req, res) => {
         const c = configToFrontend(data);
         delete c.stripeSecretKey;
         c.pageViews = data?.stats?.page_views || 0;
+        const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
+        c.collaboratorCount = collabCount || 0;
         res.json(c);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
