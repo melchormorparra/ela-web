@@ -232,10 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initForms();
     initBlogFilters();
-    if (!sessionStorage.getItem('visitCounted')) {
-        sessionStorage.setItem('visitCounted', '1');
-        fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
-    }
+    // Visit counter is now incremented server-side by /api/config
     // Fast collaborator count from Supabase direct (bypasses Vercel cold start)
     (async () => {
         try {

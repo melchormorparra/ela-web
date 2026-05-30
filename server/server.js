@@ -252,7 +252,11 @@ app.get('/api/config', async (req, res) => {
         if (!data) return res.json(configToFrontend({}));
         const c = configToFrontend(data);
         delete c.stripeSecretKey;
-        c.pageViews = data?.stats?.page_views || 0;
+        let stats = data.stats || {};
+        const pv = (stats.page_views || 0) + 1;
+        stats.page_views = pv;
+        await supabase.from('config').update({ stats }).eq('id', data.id);
+        c.pageViews = pv;
         const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
         c.collaboratorCount = collabCount || 0;
         res.json(c);
