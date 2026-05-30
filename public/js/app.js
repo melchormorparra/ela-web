@@ -1133,10 +1133,13 @@ async function handleRegister() {
             document.getElementById('registerIban').value = '';
             document.getElementById('ibanGroup').style.display = 'none';
             closeModal('authModal');
-            updateUserUI();
             if (isColaborador) {
+                alert('Colaborador registrado correctamente');
                 setTimeout(() => showThankYouModal('colaborador'), 300);
+            } else {
+                alert('Usuario registrado correctamente');
             }
+            updateUserUI();
             showNotification('Cuenta creada. ¡Bienvenido, ' + currentUser.name + '!');
             
             // Send welcome email to user
