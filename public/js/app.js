@@ -12,6 +12,10 @@ let currentUser = JSON.parse(localStorage.getItem('elaUser')) || null;
 
 const API_URL = '/api';
 
+const SUPABASE_URL = 'https://ljlicipifdiirstjbgmc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqbGljaXBpZmRpaXJzdGpiZ21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzExOTQsImV4cCI6MjA5NDAwNzE5NH0.PAFYYAXbc8SsvUooHkAnCVIPiRpz3GTI4LeYS0ZKGiQ';
+const SUPABASE_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+
 
 let contentBlocks = {};
 
@@ -66,9 +70,10 @@ async function fetchData() {
         }
         const collabEl = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
         if (collabEl) {
-            const v = config.collaboratorCount || 0;
-            collabEl.textContent = v.toLocaleString('es-ES');
-            sessionStorage.setItem('collabCount', v);
+            collabEl.dataset.count = config.collaboratorCount || 0;
+            if (collabEl.textContent === '0' && collabEl.dataset.animating !== '1') {
+                animateCounter(collabEl);
+            }
         }
 
         // Page views from config response (single source of truth)
@@ -80,6 +85,11 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
+        const collabStat = document.querySelector('#statsGrid .stat-item:last-child');
+        if (collabStat) {
+            collabStat.classList.add('animate-in');
+            collabStat.classList.remove('animate-ready');
+        }
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -212,19 +222,11 @@ function applyContentBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Show cached values immediately (from sessionStorage)
+    // Show cached page views immediately (from sessionStorage)
     const cachedPv = sessionStorage.getItem('pageViews');
     if (cachedPv) {
         const el = document.getElementById('visitCount');
         if (el) el.textContent = parseInt(cachedPv).toLocaleString('es-ES');
-    }
-    const cachedCollab = sessionStorage.getItem('collabCount');
-    if (cachedCollab) {
-        const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
-        if (el) {
-            el.dataset.count = cachedCollab;
-            el.textContent = parseInt(cachedCollab).toLocaleString('es-ES');
-        }
     }
     fetchData();
     initNavigation();
@@ -234,6 +236,21 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('visitCounted', '1');
         fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
     }
+    // Fast collaborator count from Supabase direct (bypasses Vercel cold start)
+    (async () => {
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&limit=0`, {
+                headers: { ...SUPABASE_HEADERS, Prefer: 'count=exact' }
+            });
+            let count = parseInt(res.headers.get('x-total-count') || '0', 10);
+            if (!count) { const d = await res.json(); count = Array.isArray(d) ? d.length : 0; }
+            const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
+            if (el && el.textContent === '0') {
+                el.dataset.count = count;
+                animateCounter(el);
+            }
+        } catch (e) { console.error('Supabase count error:', e); }
+    })();
 });
 
 function renderProducts() {
@@ -705,16 +722,17 @@ function initAnimations() {
 }
 
 function animateCounter(element) {
+    if (element.dataset.animating === '1') return;
+    element.dataset.animating = '1';
     const target = parseInt(element.dataset.count);
-    const curText = parseInt(element.textContent.replace(/[.,\s]/g, ''));
-    if (curText === target) return;
-    const duration = 2000;
+    const duration = 600;
     const step = target / (duration / 16);
     let current = 0;
     const timer = setInterval(() => {
         current += step;
         if (current >= target) {
             element.textContent = target.toLocaleString();
+            element.dataset.animating = '0';
             clearInterval(timer);
         } else {
             element.textContent = Math.floor(current).toLocaleString();
