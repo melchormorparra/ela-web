@@ -62,9 +62,11 @@ async function fetchData() {
         updateUserUI();
         
         if (config.stats) {
+            const counts = [config.stats.families, config.stats.euros, config.stats.events];
             document.querySelectorAll('#statsGrid .stat-item').forEach((item, index) => {
-                const counts = [config.stats.families, config.stats.euros, config.stats.events, config.stats.volunteers || 0];
-                item.querySelector('.stat-number').dataset.count = counts[index];
+                if (index < 3) {
+                    item.querySelector('.stat-number').dataset.count = counts[index];
+                }
             });
         }
 
