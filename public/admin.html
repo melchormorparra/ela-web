@@ -1404,10 +1404,13 @@
 
         function renderContentBlocks(blocks) {
             const list = document.getElementById('contentBlocksList');
-            const richKeys = ['hero_title','hero_tagline','hero_text','quienes_somos_titulo','quienes_somos_p1','quienes_somos_p2','que_es_ela_titulo','que_es_ela_texto','que_es_ela_lista','tienda_titulo','tienda_subtitulo','donar_titulo','donar_subtitulo','donar_impacto_5','colaborador_titulo','colaborador_texto','colaborador_impacto','contacto_titulo','contacto_direccion','contacto_telefono','contacto_email_valor','blog_titulo','blog_subtitulo'];
+            const richKeys = ['hero_title','hero_tagline','hero_text','quienes_somos_titulo','quienes_somos_p1','quienes_somos_p2','conocenos_titulo','conocenos_subtitulo','conocenos_texto','mision_titulo','mision_texto','como_ayudar_titulo','como_ayudar_texto','que_es_ela_titulo','que_es_ela_texto','que_es_ela_lista','tienda_titulo','tienda_subtitulo','donar_titulo','donar_subtitulo','donar_impacto_5','colaborador_titulo','colaborador_texto','colaborador_impacto','contacto_titulo','contacto_direccion','contacto_telefono','contacto_email_valor','blog_titulo','blog_subtitulo'];
             const sections = {
                 hero: { label: 'Hero (Portada)', keys: ['hero_title', 'hero_tagline', 'hero_text'] },
                 quienes_somos: { label: 'Quiénes Somos', keys: ['quienes_somos_titulo', 'quienes_somos_p1', 'quienes_somos_p2'] },
+                conocenos: { label: 'Conócenos', keys: ['conocenos_titulo', 'conocenos_subtitulo', 'conocenos_texto'] },
+                mision: { label: 'Nuestra Misión', keys: ['mision_titulo', 'mision_texto'] },
+                como_ayudar: { label: 'Cómo Puedes Ayudar', keys: ['como_ayudar_titulo', 'como_ayudar_texto'] },
                 que_es_ela: { label: '¿Qué es la ELA?', keys: ['que_es_ela_titulo', 'que_es_ela_texto', 'que_es_ela_lista', 'ela_fact_1', 'ela_fact_2', 'ela_fact_3'] },
                 tienda: { label: 'Tienda', keys: ['tienda_titulo', 'tienda_subtitulo'] },
                 donar: { label: 'Donar', keys: ['donar_titulo', 'donar_subtitulo', 'donar_impacto_5', 'colaborador_titulo', 'colaborador_texto', 'colaborador_impacto'] },
