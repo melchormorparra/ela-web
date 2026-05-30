@@ -82,6 +82,11 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
+        const collabStat = document.querySelectorAll('#statsGrid .stat-item')[3];
+        if (collabStat) {
+            collabStat.classList.add('animate-in');
+            collabStat.classList.remove('animate-ready');
+        }
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
