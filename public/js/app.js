@@ -59,19 +59,16 @@ async function fetchData() {
         updateUserUI();
         
         if (config.stats) {
-            const counts = [config.stats.families, config.stats.euros, config.stats.events];
+            const counts = [config.stats.families, config.stats.euros, config.stats.events, config.collaboratorCount || 0];
             document.querySelectorAll('#statsGrid .stat-item').forEach((item, index) => {
-                if (index < 3) {
-                    item.querySelector('.stat-number').dataset.count = counts[index];
-                }
+                item.querySelector('.stat-number').dataset.count = counts[index];
             });
         }
-        const collabItem = document.getElementById('collabStat');
-        if (collabItem) {
-            const el = collabItem.querySelector('.stat-number');
-            el.dataset.count = config.collaboratorCount || 0;
-            el.textContent = (config.collaboratorCount || 0).toLocaleString('es-ES');
-            collabItem.style.opacity = '1';
+        const collabEl = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
+        if (collabEl) {
+            const v = config.collaboratorCount || 0;
+            collabEl.textContent = v.toLocaleString('es-ES');
+            sessionStorage.setItem('collabCount', v);
         }
 
         // Page views from config response (single source of truth)
@@ -83,12 +80,6 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
-        const collabStat = document.getElementById('collabStat');
-        if (collabStat) {
-            collabStat.classList.add('animate-in');
-            collabStat.classList.remove('animate-ready');
-            collabStat.style.opacity = '';
-        }
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -221,11 +212,19 @@ function applyContentBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Show cached page views immediately (from sessionStorage)
-    const cached = sessionStorage.getItem('pageViews');
-    if (cached) {
+    // Show cached values immediately (from sessionStorage)
+    const cachedPv = sessionStorage.getItem('pageViews');
+    if (cachedPv) {
         const el = document.getElementById('visitCount');
-        if (el) el.textContent = parseInt(cached).toLocaleString('es-ES');
+        if (el) el.textContent = parseInt(cachedPv).toLocaleString('es-ES');
+    }
+    const cachedCollab = sessionStorage.getItem('collabCount');
+    if (cachedCollab) {
+        const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
+        if (el) {
+            el.dataset.count = cachedCollab;
+            el.textContent = parseInt(cachedCollab).toLocaleString('es-ES');
+        }
     }
     fetchData();
     initNavigation();
@@ -707,6 +706,8 @@ function initAnimations() {
 
 function animateCounter(element) {
     const target = parseInt(element.dataset.count);
+    const curText = parseInt(element.textContent.replace(/[.,\s]/g, ''));
+    if (curText === target) return;
     const duration = 2000;
     const step = target / (duration / 16);
     let current = 0;
