@@ -183,6 +183,11 @@ img {
     color: var(--primary);
 }
 
+.nav-subitem a {
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
 .cart-btn {
     position: relative;
     background: none;
