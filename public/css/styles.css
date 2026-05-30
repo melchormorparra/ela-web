@@ -26,6 +26,7 @@ body {
     color: var(--dark);
     line-height: 1.6;
     background: var(--white);
+    padding-bottom: 70px;
 }
 
 .container {
@@ -1141,22 +1142,42 @@ img {
     color: var(--white);
 }
 
-.footer-buttons {
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     gap: 15px;
-    padding: 25px 0 20px;
+    padding: 12px 20px;
+    background: var(--primary);
+    z-index: 999;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
 }
 
-.footer-buttons .btn {
-    padding: 12px 28px;
-    font-size: 1rem;
+.bottom-bar .btn {
+    padding: 10px 24px;
+    font-size: 0.95rem;
     border-radius: 8px;
     cursor: pointer;
     transition: opacity 0.3s;
+    flex: 0 1 auto;
 }
 
-.footer-buttons .btn:hover {
+.bottom-bar .btn-primary {
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+}
+
+.bottom-bar .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.bottom-bar .btn:hover {
     opacity: 0.85;
 }
 
@@ -1745,14 +1766,14 @@ img {
         gap: 30px;
     }
 
-    .footer-buttons {
-        flex-direction: column;
-        align-items: center;
+    .bottom-bar {
+        padding: 10px 15px;
+        gap: 10px;
     }
 
-    .footer-buttons .btn {
-        width: 100%;
-        max-width: 280px;
+    .bottom-bar .btn {
+        font-size: 0.85rem;
+        padding: 8px 16px;
     }
 }
 
