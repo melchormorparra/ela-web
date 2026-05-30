@@ -66,11 +66,12 @@ async function fetchData() {
                 }
             });
         }
-        const collabItem = document.querySelectorAll('#statsGrid .stat-item')[3];
+        const collabItem = document.getElementById('collabStat');
         if (collabItem) {
             const el = collabItem.querySelector('.stat-number');
             el.dataset.count = config.collaboratorCount || 0;
             el.textContent = (config.collaboratorCount || 0).toLocaleString('es-ES');
+            collabItem.style.opacity = '1';
         }
 
         // Page views from config response (single source of truth)
@@ -82,10 +83,11 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
-        const collabStat = document.querySelectorAll('#statsGrid .stat-item')[3];
+        const collabStat = document.getElementById('collabStat');
         if (collabStat) {
             collabStat.classList.add('animate-in');
             collabStat.classList.remove('animate-ready');
+            collabStat.style.opacity = '';
         }
         updateCartUI();
     } catch (err) {
