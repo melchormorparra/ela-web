@@ -134,6 +134,10 @@ function applyContentBlocks() {
     if (contentBlocks.contacto_telefono) {
         document.querySelector('#contacto .contact-item:nth-child(2) p').innerHTML = contentBlocks.contacto_telefono;
     }
+    // Contact visibility toggle
+    const showContact = contentBlocks.contact_visible === 'true';
+    document.getElementById('contactAddress')?.style.setProperty('display', showContact ? '' : 'none');
+    document.getElementById('contactPhone')?.style.setProperty('display', showContact ? '' : 'none');
     if (contentBlocks.contacto_email_valor) {
         document.querySelector('#contacto .contact-item:nth-child(3) p').innerHTML = contentBlocks.contacto_email_valor;
         document.getElementById('contactEmail').innerHTML = contentBlocks.contacto_email_valor;

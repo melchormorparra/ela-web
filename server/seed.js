@@ -109,6 +109,7 @@ async function seedData() {
         { block_key: 'colaborador_titulo', title: 'T\u00edtulo Colaborador', content: 'Hazte Colaborador' },
         { block_key: 'colaborador_texto', title: 'Texto Colaborador', content: 'Convi\u00e9rtete en colaborador mensual y apoya la investigaci\u00f3n de la ELA.' },
         { block_key: 'colaborador_impacto', title: 'Impacto Colaborador', content: '5\u20ac/mes = Ayuda constante para la investigaci\u00f3n' },
+        { block_key: 'contact_visible', title: 'Mostrar direcci\u00f3n y tel\u00e9fono', content: 'false' },
         { block_key: 'contacto_titulo', title: 'T\u00edtulo Contacto', content: 'Contacto' },
         { block_key: 'contacto_direccion', title: 'Direcci\u00f3n', content: 'C/ Ejemplo, 123<br>29001 M\u00e1laga, Espa\u00f1a' },
         { block_key: 'contacto_telefono', title: 'Tel\u00e9fono', content: '+34 612 345 678' },
