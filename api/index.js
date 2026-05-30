@@ -188,7 +188,12 @@ module.exports = async (req, res) => {
         if (url === '/api/page-views/increment' && method === 'POST') {
             const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
             const stats = data?.stats || {};
-            stats.page_views = (stats.page_views || 0) + 1;
+            // Initialize at 501 if first time (500 retroactive + this visit)
+            if (stats.page_views === undefined || stats.page_views === null) {
+                stats.page_views = 501;
+            } else {
+                stats.page_views += 1;
+            }
             await supabase.from('config').update({ stats }).eq('id', data?.id || 1);
             return ok({ count: stats.page_views });
         }
@@ -199,6 +204,7 @@ module.exports = async (req, res) => {
             if (!data) return ok(configToFrontend({}));
             const c = configToFrontend(data);
             delete c.stripeSecretKey;
+            c.pageViews = data?.stats?.page_views || 0;
             return ok(c);
         }
 

@@ -234,7 +234,11 @@ app.post('/api/page-views/increment', async (req, res) => {
         const supabase = getDb();
         const { data } = await supabase.from('config').select('stats').limit(1).maybeSingle();
         const stats = data?.stats || {};
-        stats.page_views = (stats.page_views || 0) + 1;
+        if (stats.page_views === undefined || stats.page_views === null) {
+            stats.page_views = 501;
+        } else {
+            stats.page_views += 1;
+        }
         await supabase.from('config').update({ stats }).eq('id', data?.id || 1);
         res.json({ count: stats.page_views });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -248,6 +252,7 @@ app.get('/api/config', async (req, res) => {
         if (!data) return res.json(configToFrontend({}));
         const c = configToFrontend(data);
         delete c.stripeSecretKey;
+        c.pageViews = data?.stats?.page_views || 0;
         res.json(c);
     } catch (e) { res.status(500).json({ error: e.message }); }
 });

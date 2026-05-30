@@ -67,6 +67,12 @@ async function fetchData() {
                 item.querySelector('.stat-number').dataset.count = counts[index];
             });
         }
+
+        // Page views from config response (single source of truth)
+        const pageViews = config.pageViews || 0;
+        sessionStorage.setItem('pageViews', pageViews);
+        const visitEl = document.getElementById('visitCount');
+        if (visitEl) visitEl.textContent = pageViews.toLocaleString('es-ES');
         
         renderProducts();
         renderBlog();
@@ -189,6 +195,12 @@ function applyContentBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Show cached page views immediately (from sessionStorage)
+    const cached = sessionStorage.getItem('pageViews');
+    if (cached) {
+        const el = document.getElementById('visitCount');
+        if (el) el.textContent = parseInt(cached).toLocaleString('es-ES');
+    }
     fetchData();
     fetchCounts();
     initNavigation();
@@ -1464,10 +1476,9 @@ document.getElementById('logoLink')?.addEventListener('click', function(e) {
     document.getElementById('donationModal')?.classList.remove('active');
 });
 
-// Fetch counts directly from Supabase (bypasses Vercel cold start)
+// Fetch collaborator count directly from Supabase (bypasses Vercel cold start)
 async function fetchCounts() {
     try {
-        // Collaborator count
         const collabRes = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&head=true`, {
             headers: SUPABASE_HEADERS
         });
@@ -1476,29 +1487,10 @@ async function fetchCounts() {
         if (statsItems[3]) {
             statsItems[3].querySelector('.stat-number').dataset.count = collabCount;
         }
-
-        // Page views count (from config.stats)
-        let viewCount = 0;
-        try {
-            const viewsRes = await fetch(`${SUPABASE_URL}/rest/v1/config?select=stats&limit=1`, {
-                headers: SUPABASE_HEADERS
-            });
-            const viewsData = await viewsRes.json();
-            if (Array.isArray(viewsData) && viewsData[0]?.stats) {
-                viewCount = viewsData[0].stats.page_views || 0;
-            }
-        } catch (e) {} // stats field may not have page_views yet
-
-        // If not yet counted this session, increment optimistically
         if (!sessionStorage.getItem('visitCounted')) {
             sessionStorage.setItem('visitCounted', '1');
-            viewCount++;
-            // Fire-and-forget: increment via our API (handles the read-update atomically)
             fetch(`${API_URL}/page-views/increment`, { method: 'POST' }).catch(() => {});
         }
-
-        const visitEl = document.getElementById('visitCount');
-        if (visitEl) visitEl.textContent = viewCount.toLocaleString('es-ES');
     } catch (err) {
         console.error('Counts fetch error:', err);
     }
