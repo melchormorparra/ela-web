@@ -134,10 +134,11 @@ function applyContentBlocks() {
     if (contentBlocks.contacto_telefono) {
         document.querySelector('#contacto .contact-item:nth-child(2) p').innerHTML = contentBlocks.contacto_telefono;
     }
-    // Contact visibility toggle
-    const showContact = contentBlocks.contact_visible === 'true';
-    document.getElementById('contactAddress')?.style.setProperty('display', showContact ? '' : 'none');
-    document.getElementById('contactPhone')?.style.setProperty('display', showContact ? '' : 'none');
+    // Contact & social visibility toggles
+    document.getElementById('contactAddress')?.style.setProperty('display', contentBlocks.contact_address_visible === 'true' ? '' : 'none');
+    document.getElementById('contactPhone')?.style.setProperty('display', contentBlocks.contact_phone_visible === 'true' ? '' : 'none');
+    document.getElementById('contactEmailItem')?.style.setProperty('display', contentBlocks.contact_email_visible === 'true' ? '' : 'none');
+    document.getElementById('contactSocial')?.style.setProperty('display', contentBlocks.social_visible === 'true' ? '' : 'none');
     if (contentBlocks.contacto_email_valor) {
         document.querySelector('#contacto .contact-item:nth-child(3) p').innerHTML = contentBlocks.contacto_email_valor;
         document.getElementById('contactEmail').innerHTML = contentBlocks.contacto_email_valor;

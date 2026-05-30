@@ -1411,8 +1411,8 @@
                 que_es_ela: { label: '¿Qué es la ELA?', keys: ['que_es_ela_titulo', 'que_es_ela_texto', 'que_es_ela_lista', 'ela_fact_1', 'ela_fact_2', 'ela_fact_3'] },
                 tienda: { label: 'Tienda', keys: ['tienda_titulo', 'tienda_subtitulo'] },
                 donar: { label: 'Donar', keys: ['donar_titulo', 'donar_subtitulo', 'donar_impacto_5', 'colaborador_titulo', 'colaborador_texto', 'colaborador_impacto'] },
-                contacto: { label: 'Contacto', keys: ['contacto_titulo', 'contact_visible', 'contacto_direccion', 'contacto_telefono', 'contacto_email_valor'] },
-                redes: { label: 'Redes Sociales', keys: ['facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'] },
+                contacto: { label: 'Contacto', keys: ['contacto_titulo', 'contact_address_visible', 'contact_phone_visible', 'contact_email_visible', 'contacto_direccion', 'contacto_telefono', 'contacto_email_valor'] },
+                redes: { label: 'Redes Sociales', keys: ['social_visible', 'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'] },
                 blog: { label: 'Blog', keys: ['blog_titulo', 'blog_subtitulo'] }
             };
             list.innerHTML = Object.entries(sections).map(([secId, sec]) => `
@@ -1420,13 +1420,21 @@
                     <h3 style="margin-bottom:15px; color:var(--primary);">${sec.label}</h3>
                     ${sec.keys.map(key => {
                         const block = blocks.find(b => b.block_key === key);
-                        if (key === 'contact_visible') {
+                        if (key === 'contact_address_visible') {
                             const checked = block && block.content === 'true' ? 'checked' : '';
-                            return `
-                                <div class="form-group checkbox-group">
-                                    <input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}>
-                                    <label for="cb-${key}"><strong>Mostrar dirección y teléfono</strong></label>
-                                </div>`;
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar dirección</strong></label></div>`;
+                        }
+                        if (key === 'contact_phone_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar teléfono</strong></label></div>`;
+                        }
+                        if (key === 'contact_email_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar email</strong></label></div>`;
+                        }
+                        if (key === 'social_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar redes sociales</strong></label></div>`;
                         }
                         if (richKeys.includes(key)) {
                             return `
