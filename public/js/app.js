@@ -134,11 +134,20 @@ function applyContentBlocks() {
     if (contentBlocks.contacto_telefono) {
         document.querySelector('#contacto .contact-item:nth-child(2) p').innerHTML = contentBlocks.contacto_telefono;
     }
-    // Contact & social visibility toggles
+    // Contact visibility toggles
     document.getElementById('contactAddress')?.style.setProperty('display', contentBlocks.contact_address_visible === 'true' ? '' : 'none');
     document.getElementById('contactPhone')?.style.setProperty('display', contentBlocks.contact_phone_visible === 'true' ? '' : 'none');
     document.getElementById('contactEmailItem')?.style.setProperty('display', contentBlocks.contact_email_visible === 'true' ? '' : 'none');
-    document.getElementById('contactSocial')?.style.setProperty('display', contentBlocks.social_visible === 'true' ? '' : 'none');
+    // Social visibility toggles
+    document.getElementById('socialFacebook')?.style.setProperty('display', contentBlocks.social_facebook_visible === 'true' ? '' : 'none');
+    document.getElementById('socialTwitter')?.style.setProperty('display', contentBlocks.social_twitter_visible === 'true' ? '' : 'none');
+    document.getElementById('socialInstagram')?.style.setProperty('display', contentBlocks.social_instagram_visible === 'true' ? '' : 'none');
+    document.getElementById('socialYoutube')?.style.setProperty('display', contentBlocks.social_youtube_visible === 'true' ? '' : 'none');
+    // Hide the whole social-links container if all are hidden
+    const social = document.getElementById('contactSocial');
+    if (social) {
+        social.style.display = (contentBlocks.social_facebook_visible === 'true' || contentBlocks.social_twitter_visible === 'true' || contentBlocks.social_instagram_visible === 'true' || contentBlocks.social_youtube_visible === 'true') ? '' : 'none';
+    }
     if (contentBlocks.contacto_email_valor) {
         document.querySelector('#contacto .contact-item:nth-child(3) p').innerHTML = contentBlocks.contacto_email_valor;
         document.getElementById('contactEmail').innerHTML = contentBlocks.contacto_email_valor;

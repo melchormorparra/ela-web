@@ -1412,7 +1412,7 @@
                 tienda: { label: 'Tienda', keys: ['tienda_titulo', 'tienda_subtitulo'] },
                 donar: { label: 'Donar', keys: ['donar_titulo', 'donar_subtitulo', 'donar_impacto_5', 'colaborador_titulo', 'colaborador_texto', 'colaborador_impacto'] },
                 contacto: { label: 'Contacto', keys: ['contacto_titulo', 'contact_address_visible', 'contact_phone_visible', 'contact_email_visible', 'contacto_direccion', 'contacto_telefono', 'contacto_email_valor'] },
-                redes: { label: 'Redes Sociales', keys: ['social_visible', 'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'] },
+                redes: { label: 'Redes Sociales', keys: ['social_facebook_visible', 'social_twitter_visible', 'social_instagram_visible', 'social_youtube_visible', 'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'] },
                 blog: { label: 'Blog', keys: ['blog_titulo', 'blog_subtitulo'] }
             };
             list.innerHTML = Object.entries(sections).map(([secId, sec]) => `
@@ -1432,9 +1432,21 @@
                             const checked = block && block.content === 'true' ? 'checked' : '';
                             return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar email</strong></label></div>`;
                         }
-                        if (key === 'social_visible') {
+                        if (key === 'social_facebook_visible') {
                             const checked = block && block.content === 'true' ? 'checked' : '';
-                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar redes sociales</strong></label></div>`;
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar Facebook</strong></label></div>`;
+                        }
+                        if (key === 'social_twitter_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar Twitter / X</strong></label></div>`;
+                        }
+                        if (key === 'social_instagram_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar Instagram</strong></label></div>`;
+                        }
+                        if (key === 'social_youtube_visible') {
+                            const checked = block && block.content === 'true' ? 'checked' : '';
+                            return `<div class="form-group checkbox-group"><input type="checkbox" data-key="${key}" id="cb-${key}" ${checked}><label for="cb-${key}"><strong>Mostrar YouTube</strong></label></div>`;
                         }
                         if (richKeys.includes(key)) {
                             return `
