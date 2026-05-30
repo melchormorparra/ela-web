@@ -1507,7 +1507,9 @@ async function fetchCounts() {
         if (statsItems[3]) {
             const el = statsItems[3].querySelector('.stat-number');
             el.dataset.count = collabCount;
-            el.textContent = collabCount;
+            el.textContent = collabCount.toLocaleString();
+            statsItems[3].classList.add('animate-in');
+            statsItems[3].classList.remove('animate-ready');
         }
         if (!sessionStorage.getItem('visitCounted')) {
             sessionStorage.setItem('visitCounted', '1');
