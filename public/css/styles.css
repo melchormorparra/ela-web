@@ -138,17 +138,14 @@ img {
   vertical-align: middle;
 }
 
-.visit-counter {
-    font-size: 0.75rem;
-    color: var(--gray);
-    text-align: center;
-    margin-top: -8px;
-    margin-bottom: 4px;
-    line-height: 1.2;
+.bottom-bar .visit-counter {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
     white-space: nowrap;
 }
-.visit-counter i {
-    font-size: 0.65rem;
+
+.bottom-bar .visit-counter i {
+    font-size: 0.7rem;
     margin-right: 3px;
 }
 
@@ -1147,13 +1144,23 @@ img {
     bottom: 0;
     left: 0;
     right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    padding: 12px 20px;
-    background: var(--primary);
     z-index: 999;
+    background: var(--primary);
     box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+.bottom-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+
+.bottom-bar-buttons {
+    display: flex;
+    gap: 12px;
 }
 
 .bottom-bar .btn {
@@ -1162,7 +1169,6 @@ img {
     border-radius: 8px;
     cursor: pointer;
     transition: opacity 0.3s;
-    flex: 0 1 auto;
 }
 
 .bottom-bar .btn-primary {
@@ -1179,6 +1185,12 @@ img {
 
 .bottom-bar .btn:hover {
     opacity: 0.85;
+}
+
+.bottom-bar .visit-counter {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .footer-bottom {
@@ -1757,23 +1769,29 @@ img {
         height: 70px;
     }
     
-    .visit-counter {
-        font-size: 0.6rem;
-        white-space: normal;
     }
-    
+
     .footer-content {
         gap: 30px;
     }
 
     .bottom-bar {
-        padding: 10px 15px;
-        gap: 10px;
+        padding: 0;
+    }
+
+    .bottom-bar-inner {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px 15px;
     }
 
     .bottom-bar .btn {
         font-size: 0.85rem;
         padding: 8px 16px;
+    }
+
+    .bottom-bar .visit-counter {
+        font-size: 0.7rem;
     }
 }
 

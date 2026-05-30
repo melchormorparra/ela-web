@@ -17,7 +17,6 @@
                     <!-- <i class="fas fa-brain"></i> -->
                     <img src="/images/logo.png" alt="Neuronas con Chispa" class="icono-logo">
                 </a>
-                <div class="visit-counter"><i class="fas fa-eye"></i> Visitantes: <span id="visitCount">—</span></div>
                 <button class="nav-toggle" id="navToggle">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -343,8 +342,13 @@
     </main>
 
     <div class="bottom-bar">
-        <button class="btn btn-primary" onclick="openRegisterAsColaborador()"><i class="fas fa-user-plus"></i> Hazte socio</button>
-        <button class="btn btn-secondary" onclick="shareWebsite()"><i class="fas fa-share-alt"></i> Compártenos</button>
+        <div class="bottom-bar-inner">
+            <div class="bottom-bar-buttons">
+                <button class="btn btn-primary" onclick="openRegisterAsColaborador()"><i class="fas fa-user-plus"></i> Hazte socio</button>
+                <button class="btn btn-secondary" onclick="shareWebsite()"><i class="fas fa-share-alt"></i> Compártenos</button>
+            </div>
+            <div class="visit-counter"><i class="fas fa-eye"></i> Visitantes: <span id="visitCount">—</span></div>
+        </div>
     </div>
 
     <footer class="footer">
