@@ -63,7 +63,7 @@ async function fetchData() {
         updateUserUI();
         
         if (config.stats) {
-            const counts = [config.stats.families, config.stats.euros, config.stats.events, config.collaboratorCount || 0];
+            const counts = [config.stats.families, config.investedEuros || 0, config.stats.events, config.collaboratorCount || 0];
             document.querySelectorAll('#statsGrid .stat-item').forEach((item, index) => {
                 item.querySelector('.stat-number').dataset.count = counts[index];
             });

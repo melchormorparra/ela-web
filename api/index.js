@@ -209,9 +209,36 @@ module.exports = async (req, res) => {
             stats.page_views = pv;
             await supabase.from('config').update({ stats }).eq('id', data.id);
             c.pageViews = pv;
+            c.investedEuros = stats.invested_euros || 0;
             const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
             c.collaboratorCount = collabCount || 0;
             return ok(c);
+        }
+
+        // ---- Monthly investment calculation ----
+        if (url === '/api/monthly-investment' && method === 'POST') {
+            if (!req.headers['x-vercel-cron'] && !req.headers['x-cron-secret']) {
+                return json(403, { error: 'Acceso no autorizado' });
+            }
+            const { data: cfg } = await supabase.from('config').select('*').limit(1).maybeSingle();
+            if (!cfg) return json(500, { error: 'Config no encontrada' });
+            let stats = cfg.stats || {};
+            const lastDate = stats.last_investment_date;
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            if (lastDate) {
+                const last = new Date(lastDate);
+                if (last.getMonth() === currentMonth && last.getFullYear() === currentYear) {
+                    return ok({ success: true, message: 'Ya calculado este mes' });
+                }
+            }
+            const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
+            const amount = (collabCount || 0) * 5;
+            stats.invested_euros = (stats.invested_euros || 0) + amount;
+            stats.last_investment_date = now.toISOString();
+            await supabase.from('config').update({ stats }).eq('id', cfg.id);
+            return ok({ success: true, investedEuros: stats.invested_euros, added: amount, collaborators: collabCount || 0 });
         }
 
         // ---- Create order ----
@@ -408,8 +435,13 @@ module.exports = async (req, res) => {
         }
         if (url === '/api/admin/config' && method === 'POST') {
             const dbData = configToDb(body);
-            const { data: existing } = await supabase.from('config').select('id').limit(1).maybeSingle();
+            const { data: existing } = await supabase.from('config').select('id, stats').limit(1).maybeSingle();
             if (existing) {
+                const existingStats = existing.stats || {};
+                if (dbData.stats) {
+                    dbData.stats.invested_euros = existingStats.invested_euros || 0;
+                    dbData.stats.last_investment_date = existingStats.last_investment_date || null;
+                }
                 await supabase.from('config').update(dbData).eq('id', existing.id);
             } else {
                 await supabase.from('config').insert(dbData);

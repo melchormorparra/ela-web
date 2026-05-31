@@ -257,6 +257,7 @@ app.get('/api/config', async (req, res) => {
         stats.page_views = pv;
         await supabase.from('config').update({ stats }).eq('id', data.id);
         c.pageViews = pv;
+        c.investedEuros = stats.invested_euros || 0;
         const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
         c.collaboratorCount = collabCount || 0;
         res.json(c);
@@ -498,8 +499,13 @@ app.get('/api/admin/config', authenticate, async (req, res) => {
 app.post('/api/admin/config', authenticate, async (req, res) => {
     const supabase = getDb();
     const dbData = configToDb(req.body);
-    const { data: existing } = await supabase.from('config').select('id').limit(1).maybeSingle();
+    const { data: existing } = await supabase.from('config').select('id, stats').limit(1).maybeSingle();
     if (existing) {
+        const existingStats = existing.stats || {};
+        if (dbData.stats) {
+            dbData.stats.invested_euros = existingStats.invested_euros || 0;
+            dbData.stats.last_investment_date = existingStats.last_investment_date || null;
+        }
         const { data } = await supabase.from('config').update(dbData).eq('id', existing.id).select().maybeSingle();
         res.json({ success: true, config: data ? configToFrontend(data) : dbData });
     } else {
@@ -629,6 +635,37 @@ app.post('/api/send-remesa', async (req, res) => {
             return res.status(500).json({ error: 'Error al enviar email: ' + errText });
         }
         res.json({ success: true, total: collaborators.length });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ---- Monthly investment calculation ----
+app.post('/api/monthly-investment', async (req, res) => {
+    try {
+        if (!req.headers['x-vercel-cron'] && req.headers['x-cron-secret'] !== process.env.CRON_SECRET) {
+            return res.status(403).json({ error: 'Acceso no autorizado' });
+        }
+        const supabase = getDb();
+        const { data: cfg } = await supabase.from('config').select('*').limit(1).maybeSingle();
+        if (!cfg) return res.status(500).json({ error: 'Config no encontrada' });
+        let stats = cfg.stats || {};
+        const lastDate = stats.last_investment_date;
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        if (lastDate) {
+            const last = new Date(lastDate);
+            if (last.getMonth() === currentMonth && last.getFullYear() === currentYear) {
+                return res.json({ success: true, message: 'Ya calculado este mes' });
+            }
+        }
+        const { count: collabCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'colaborador');
+        const amount = (collabCount || 0) * 5;
+        stats.invested_euros = (stats.invested_euros || 0) + amount;
+        stats.last_investment_date = now.toISOString();
+        await supabase.from('config').update({ stats }).eq('id', cfg.id);
+        res.json({ success: true, investedEuros: stats.invested_euros, added: amount, collaborators: collabCount || 0 });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
