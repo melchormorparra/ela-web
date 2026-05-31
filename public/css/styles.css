@@ -27,6 +27,7 @@ body {
     line-height: 1.6;
     background: var(--white);
     padding-bottom: 70px;
+    overflow-x: hidden;
 }
 
 .container {
@@ -1147,6 +1148,7 @@ img {
     z-index: 999;
     background: var(--primary);
     box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    overflow: hidden;
 }
 
 .bottom-bar-inner {
