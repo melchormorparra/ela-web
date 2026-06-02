@@ -1192,6 +1192,13 @@ async function handleRegister() {
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Nuevo colaborador mensual:\n\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
                     });
+                    // BCC to lawyer
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Nuevo colaborador',
+                        from_name: 'Neuronas con Chispa',
+                        to_email: 'nrodriguezabogados@gmail.com',
+                        message: `Nuevo colaborador mensual:\n\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
+                    });
                 } catch (err) {
                     console.error('EmailJS error:', err);
                 }
@@ -1300,6 +1307,13 @@ async function upgradeToColaborador() {
                         to_email: 'neuronasconchispa@gmail.com',
                         message: `Un usuario se ha convertido en colaborador:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
                     });
+                    // BCC to lawyer
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Nuevo colaborador (upgrade)',
+                        from_name: 'Neuronas con Chispa',
+                        to_email: 'nrodriguezabogados@gmail.com',
+                        message: `Un usuario se ha convertido en colaborador:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}\nIBAN: ${iban}\nCuota: 5€/mes`
+                    });
                 } catch (err) {
                     console.error('EmailJS error:', err);
                 }
@@ -1338,6 +1352,14 @@ async function cancelSubscription() {
                         from_name: 'Neuronas con Chispa',
                         reply_to: 'neuronasconchispa@gmail.com',
                         to_email: 'neuronasconchispa@gmail.com',
+                        message: `Un colaborador ha anulado su suscripción:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}`
+                    });
+                    // BCC to lawyer
+                    await emailjs.send(emailJSConfig.serviceId, emailJSConfig.templateId, {
+                        subject: 'NCCH: Colaborador anula suscripción',
+                        from_name: 'Neuronas con Chispa',
+                        reply_to: 'neuronasconchispa@gmail.com',
+                        to_email: 'nrodriguezabogados@gmail.com',
                         message: `Un colaborador ha anulado su suscripción:\n\nNombre: ${currentUser.name}\nEmail: ${currentUser.email}\nTeléfono: ${currentUser.phone || 'No especificado'}`
                     });
                 } catch (err) {
