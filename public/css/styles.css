@@ -1094,6 +1094,52 @@ img {
     border-color: var(--primary);
 }
 
+.consent-box {
+    background: #f0f7ff;
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+}
+
+.consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.consent-label input[type="checkbox"] {
+    width: auto;
+    flex-shrink: 0;
+    margin-top: 3px;
+    padding: 0;
+    accent-color: var(--primary);
+}
+
+.colab-box {
+    background: #e8f5e9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.colab-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.colab-label input[type="checkbox"] {
+    width: auto;
+    flex-shrink: 0;
+    padding: 0;
+    accent-color: var(--primary);
+}
+
 .footer {
     background: var(--dark);
     color: var(--white);

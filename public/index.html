@@ -586,25 +586,25 @@
                         <label>Teléfono (opcional)</label>
                         <input type="tel" id="registerPhone" placeholder="600 123 456">
                     </div>
-                    <div class="form-group" style="background:#e8f5e9; border-radius:10px; padding:15px; margin-bottom:15px;">
-                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                    <div class="colab-box">
+                        <label class="colab-label">
                             <input type="checkbox" id="registerColaborador" onchange="toggleIbanField()">
                             <strong>Quiero ser colaborador mensual (5€/mes)</strong>
                         </label>
-                        <p style="font-size:0.85rem; color:var(--gray); margin-top:5px;">Te pasaremos un recibo mensual de 5€ mediante transferencia bancaria para apoyar la investigación de la ELA.</p>
+                        <p style="font-size:0.85rem; color:var(--gray); margin-top:5px; line-height:1.4;">Te pasaremos un recibo mensual de 5€ mediante transferencia bancaria para apoyar la investigación de la ELA.</p>
                     </div>
                     <div class="form-group" id="ibanGroup" style="display:none;">
                         <label>IBAN (para domiciliación)</label>
                         <input type="text" id="registerIban" placeholder="ES00 0000 0000 0000 0000 0000">
                     </div>
-                    <div class="form-group" style="background:#f0f7ff; border-radius:10px; padding:12px 15px; margin-bottom:12px;">
-                        <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:normal; font-size:0.85rem;">
-                            <input type="checkbox" id="registerAgeConsent" required style="margin-top:3px;">
-                            Soy mayor de 14 años o tengo consentimiento parental
+                    <div class="consent-box">
+                        <label class="consent-label">
+                            <input type="checkbox" id="registerAgeConsent" required>
+                            <span>Soy mayor de 14 años o tengo consentimiento parental</span>
                         </label>
-                        <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:normal; font-size:0.85rem; margin-top:8px;">
-                            <input type="checkbox" id="registerPrivacyConsent" required style="margin-top:3px;">
-                            He leído y acepto el <a href="/aviso-legal.html" target="_blank">Aviso Legal</a> y la <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a>
+                        <label class="consent-label" style="margin-top:8px;">
+                            <input type="checkbox" id="registerPrivacyConsent" required>
+                            <span>He leído y acepto el <a href="/aviso-legal.html" target="_blank">Aviso Legal</a> y la <a href="/politica-de-privacidad.html" target="_blank">Política de Privacidad</a></span>
                         </label>
                     </div>
                     <button class="btn btn-primary btn-block" onclick="handleRegister()">
