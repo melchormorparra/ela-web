@@ -521,22 +521,38 @@
                 </div>
 
                 <div class="section-header" style="margin-top: 30px;">
-                    <h3>Fondo del Header</h3>
+                    <h3>Fondo versión PC</h3>
                 </div>
                 <p style="color:var(--gray); font-size:0.85rem; margin-bottom:15px;">
-                    Sube una imagen de fondo para el header de la página. Aparecerá detrás del contenido del hero.
+                    Imagen para escritorio (formato apaisado). Se muestra con <code>contain</code>.
                 </p>
                 <div class="form-group">
                     <input type="file" id="headerBgInput" accept="image/*" onchange="previewHeaderBg(event)">
                     <input type="hidden" id="headerBgData">
                     <div id="headerBgPreview" style="margin-top:10px; max-width:400px; border-radius:8px; overflow:hidden; display:none;">
                         <img id="headerBgPreviewImg" style="width:100%; display:block;">
-                        <button type="button" onclick="clearHeaderBg()" style="margin-top:5px; font-size:0.85rem; background:none; border:none; cursor:pointer; color:var(--danger);"><i class="fas fa-times"></i> Quitar fondo</button>
+                        <button type="button" onclick="clearHeaderBg()" style="margin-top:5px; font-size:0.85rem; background:none; border:none; cursor:pointer; color:var(--danger);"><i class="fas fa-times"></i> Quitar fondo PC</button>
                     </div>
                 </div>
+
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3>Fondo versión móvil</h3>
+                </div>
+                <p style="color:var(--gray); font-size:0.85rem; margin-bottom:15px;">
+                    Imagen para móvil (formato más cuadrado). Se muestra con <code>100% auto</code>.
+                </p>
+                <div class="form-group">
+                    <input type="file" id="headerBgMobileInput" accept="image/*" onchange="previewHeaderBgMobile(event)">
+                    <input type="hidden" id="headerBgMobileData">
+                    <div id="headerBgMobilePreview" style="margin-top:10px; max-width:400px; border-radius:8px; overflow:hidden; display:none;">
+                        <img id="headerBgMobilePreviewImg" style="width:100%; display:block;">
+                        <button type="button" onclick="clearHeaderBgMobile()" style="margin-top:5px; font-size:0.85rem; background:none; border:none; cursor:pointer; color:var(--danger);"><i class="fas fa-times"></i> Quitar fondo móvil</button>
+                    </div>
+                </div>
+
                 <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="btn btn-primary" onclick="saveHeaderBg()"><i class="fas fa-image"></i> Guardar fondo del header</button>
-                    <button class="btn btn-warning" onclick="resetHeaderBg()"><i class="fas fa-undo"></i> Fondo por defecto</button>
+                    <button class="btn btn-primary" onclick="saveHeaderBg()"><i class="fas fa-image"></i> Guardar fondos del header</button>
+                    <button class="btn btn-warning" onclick="resetHeaderBg()"><i class="fas fa-undo"></i> Fondos por defecto</button>
                 </div>
 
                 <div class="section-header" style="margin-top: 40px;">
@@ -1126,34 +1142,56 @@
             reader.readAsDataURL(file);
         }
 
+        function previewHeaderBgMobile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('headerBgMobileData').value = e.target.result;
+                document.getElementById('headerBgMobilePreviewImg').src = e.target.result;
+                document.getElementById('headerBgMobilePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
         function clearHeaderBg() {
             document.getElementById('headerBgData').value = '';
             document.getElementById('headerBgInput').value = '';
             document.getElementById('headerBgPreview').style.display = 'none';
         }
 
+        function clearHeaderBgMobile() {
+            document.getElementById('headerBgMobileData').value = '';
+            document.getElementById('headerBgMobileInput').value = '';
+            document.getElementById('headerBgMobilePreview').style.display = 'none';
+        }
+
         function saveHeaderBg() {
             const data = document.getElementById('headerBgData').value;
+            const dataMobile = document.getElementById('headerBgMobileData').value;
+            const blocks = { header_bg: data };
+            if (dataMobile) blocks.header_bg_mobile = dataMobile;
             fetch(`${API}/admin/content-blocks`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ blocks: { header_bg: data } })
+                body: JSON.stringify({ blocks: blocks })
             }).then(r => r.json()).then(d => {
-                if (d.success) alert('Fondo del header guardado');
+                if (d.success) alert('Fondos del header guardados');
                 else alert('Error al guardar');
             }).catch(() => alert('Error al conectar con el servidor'));
         }
 
         function resetHeaderBg() {
-            if (!confirm('¿Restablecer el fondo del header al gradiente por defecto?')) return;
+            if (!confirm('¿Restablecer los fondos del header al gradiente por defecto?')) return;
             fetch(`${API}/admin/content-blocks`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ blocks: { header_bg: '' } })
+                body: JSON.stringify({ blocks: { header_bg: '', header_bg_mobile: '' } })
             }).then(r => r.json()).then(d => {
                 if (d.success) {
                     clearHeaderBg();
-                    alert('Fondo restablecido. Recarga la página pública para ver el cambio.');
+                    clearHeaderBgMobile();
+                    alert('Fondos restablecidos. Recarga la página pública para ver el cambio.');
                 } else {
                     alert('Error al restablecer');
                 }
@@ -1169,6 +1207,12 @@
                         document.getElementById('headerBgData').value = block.content;
                         document.getElementById('headerBgPreviewImg').src = block.content;
                         document.getElementById('headerBgPreview').style.display = 'block';
+                    }
+                    const mobileBlock = blocks.find(b => b.block_key === 'header_bg_mobile');
+                    if (mobileBlock && mobileBlock.content) {
+                        document.getElementById('headerBgMobileData').value = mobileBlock.content;
+                        document.getElementById('headerBgMobilePreviewImg').src = mobileBlock.content;
+                        document.getElementById('headerBgMobilePreview').style.display = 'block';
                     }
                 })
                 .catch(() => {});

@@ -206,9 +206,19 @@ function applyContentBlocks() {
     });
 
     // Apply header background
-    if (contentBlocks.header_bg && contentBlocks.header_bg.startsWith('data:')) {
-        localStorage.setItem('cached_header_bg', contentBlocks.header_bg);
-        applyHeaderBg(contentBlocks.header_bg);
+    if (contentBlocks.header_bg || contentBlocks.header_bg_mobile) {
+        if (contentBlocks.header_bg) {
+            localStorage.setItem('cached_header_bg', contentBlocks.header_bg);
+        }
+        if (contentBlocks.header_bg_mobile) {
+            localStorage.setItem('cached_header_bg_mobile', contentBlocks.header_bg_mobile);
+        }
+        applyHeaderBg(contentBlocks);
+    } else {
+        const hero = document.querySelector('.hero');
+        if (hero) hero.style.background = '';
+        localStorage.removeItem('cached_header_bg');
+        localStorage.removeItem('cached_header_bg_mobile');
     }
 
     // Apply palette colors
@@ -226,17 +236,29 @@ function applyContentBlocks() {
 
 }
 
-function applyHeaderBg(dataUrl) {
+function applyHeaderBg(blocks) {
     const hero = document.querySelector('.hero');
-    if (!hero || !dataUrl || !dataUrl.startsWith('data:')) return;
-    const bgSize = window.innerWidth <= 480 ? '100% auto' : 'contain';
+    if (!hero) return;
+    const isMobile = window.innerWidth <= 480;
+    let dataUrl, bgSize;
+    if (isMobile) {
+        dataUrl = blocks.header_bg_mobile || blocks.header_bg;
+        bgSize = '100% auto';
+    } else {
+        dataUrl = blocks.header_bg;
+        bgSize = 'contain';
+    }
+    if (!dataUrl || !dataUrl.startsWith('data:')) return;
     hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/' + bgSize + ' no-repeat';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     // Show cached header background immediately (from localStorage)
     const cachedBg = localStorage.getItem('cached_header_bg');
-    if (cachedBg) applyHeaderBg(cachedBg);
+    const cachedBgMobile = localStorage.getItem('cached_header_bg_mobile');
+    if (cachedBg || cachedBgMobile) {
+        applyHeaderBg({ header_bg: cachedBg, header_bg_mobile: cachedBgMobile });
+    }
     
     // Show cached page views immediately (from sessionStorage)
     const cachedPv = sessionStorage.getItem('pageViews');
@@ -280,185 +302,18 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 });
 
-function renderProducts() {
-    const grid = document.getElementById('productsGrid');
-    grid.innerHTML = products.map(product => `
-        <div class="product-card" data-id="${product.id}">
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.name}">
-                ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-            </div>
-            <div class="product-info">
-                <span class="product-category">${product.category}</span>
-                <h3 class="product-name">${product.name}</h3>
-                <p class="product-price">${parseFloat(product.price).toFixed(2)}€</p>
-                <button class="add-to-cart" onclick="addToCart(${product.id})">
-                    <i class="fas fa-cart-plus"></i> Añadir al carrito
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        cart.push({
-            ...product,
-            quantity: 1
-        });
-    }
-    
-    saveCart();
-    updateCartUI();
-    showNotification(`${product.name} añadido al carrito`);
-}
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    saveCart();
-    updateCartUI();
-}
-
-function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
-    if (item) {
-        item.quantity += change;
-        if (item.quantity <= 0) {
-            removeFromCart(productId);
-        } else {
-            saveCart();
-            updateCartUI();
+// Re-apply header bg on resize (orientation change)
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        const cachedBg = localStorage.getItem('cached_header_bg');
+        const cachedBgMobile = localStorage.getItem('cached_header_bg_mobile');
+        if (cachedBg || cachedBgMobile) {
+            applyHeaderBg({ header_bg: cachedBg, header_bg_mobile: cachedBgMobile });
         }
-    }
-}
-
-function saveCart() {
-    localStorage.setItem('elaCart', JSON.stringify(cart));
-}
-
-function updateCartUI() {
-    const cartCount = document.getElementById('cartCount');
-    const cartItems = document.getElementById('cartItems');
-    const cartEmpty = document.getElementById('cartEmpty');
-    const cartFooter = document.getElementById('cartFooter');
-    const cartTotal = document.getElementById('cartTotal');
-    
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCount.textContent = totalItems;
-    
-    if (cart.length === 0) {
-        cartEmpty.style.display = 'block';
-        cartFooter.style.display = 'none';
-        cartItems.innerHTML = '';
-    } else {
-        cartEmpty.style.display = 'none';
-        cartFooter.style.display = 'block';
-        
-        cartItems.innerHTML = cart.map(item => `
-            <div class="cart-item">
-                <div class="cart-item-image">
-                    <img src="${item.image}" alt="${item.name}">
-                </div>
-                <div class="cart-item-details">
-                    <p class="cart-item-name">${item.name}</p>
-                    <p class="cart-item-price">${parseFloat(item.price).toFixed(2)}€</p>
-                    <div class="cart-item-qty">
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)"><i class="fas fa-minus"></i></button>
-                        <span>${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)"><i class="fas fa-plus"></i></button>
-                    </div>
-                </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
-            </div>
-        `).join('');
-        
-        const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-        cartTotal.textContent = total.toFixed(2) + '€';
-    }
-}
-
-document.getElementById('cartBtn').addEventListener('click', () => {
-    document.getElementById('cartModal').classList.add('active');
+    }, 200);
 });
-
-function closeCart() {
-    const el = document.getElementById('cartModal');
-    el.classList.remove('active');
-    el.classList.remove('closing');
-}
-
-document.getElementById('cartClose').addEventListener('click', closeCart);
-
-document.getElementById('cartModal').addEventListener('click', (e) => {
-    if (e.target.id === 'cartModal') closeCart();
-});
-
-document.getElementById('paypalBtn').addEventListener('click', handlePayPal);
-document.getElementById('cardBtn').addEventListener('click', handleCard);
-document.getElementById('transferBtn').addEventListener('click', handleTransfer);
-document.getElementById('bizumBtn').addEventListener('click', handleBizum);
-
-function getCartTotal() {
-    return cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-}
-
-function createCurrentOrder(paymentMethod) {
-    return {
-        items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price })),
-        total: getCartTotal(),
-        paymentMethod: paymentMethod,
-        date: new Date().toISOString(),
-        status: 'pending'
-    };
-}
-
-async function handlePayPal() {
-    if (cart.length === 0) return;
-    const total = getCartTotal();
-    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=Compra+Tienda+Solidaria&amount=${total.toFixed(2)}&currency_code=EUR`;
-    currentOrder = createCurrentOrder('paypal');
-    await saveOrder(currentOrder);
-    window.open(paypalUrl, '_blank');
-    closeCart();
-    showModal('emailModal');
-}
-
-function handleTransfer() {
-    if (cart.length === 0) return;
-    document.getElementById('transferAmount').textContent = getCartTotal().toFixed(2) + '€';
-    document.getElementById('transferHolder').textContent = bankAccount.holder;
-    document.getElementById('transferIban').textContent = bankAccount.iban;
-    document.getElementById('transferRef').textContent = 'Tienda-' + Date.now().toString().slice(-8);
-    closeCart();
-    showModal('transferModal');
-}
-
-function handleBizum() {
-    if (cart.length === 0) return;
-    const total = getCartTotal();
-    alert(`Para pagar con Bizum:\n\n1. Abre tu app de banco\n2. Envía ${total.toFixed(2)}€ al número: ${bizumPhone}\n3. Indica "Tienda Solidaria" en el concepto\n\nRecibirás un email de confirmación.`);
-    currentOrder = createCurrentOrder('bizum');
-    saveOrder(currentOrder);
-    closeCart();
-    showModal('emailModal');
-}
-
-function handleCard() {
-    if (cart.length === 0) return;
-    if (!stripePublishableKey) {
-        alert('El pago con tarjeta no está configurado. Contacta con el administrador.');
-        return;
-    }
-    document.getElementById('cardTotal').textContent = getCartTotal().toFixed(2) + '€';
-    closeCart();
-    showModal('cardModal');
-    initStripe();
-}
 
 let stripe = null;
 let elements = null;
