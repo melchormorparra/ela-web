@@ -62,21 +62,18 @@ async function fetchData() {
         
         updateUserUI();
         
-        if (config.stats) {
-            const counts = [config.stats.families, config.investedEuros || 0, config.stats.events, config.collaboratorCount || 0];
-            document.querySelectorAll('#statsGrid .stat-item').forEach((item, index) => {
-                item.querySelector('.stat-number').dataset.count = counts[index];
-            });
-        }
-        const collabEl = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
-        if (collabEl) {
-            const count = config.collaboratorCount || 0;
-            collabEl.dataset.count = count;
-            localStorage.setItem('cached_collaborator_count', count);
-            if (collabEl.textContent === '0' && collabEl.dataset.animating !== '1') {
-                animateCounter(collabEl);
+        const stats = config.stats || {};
+        const counts = [stats.families, config.investedEuros || 0, stats.events, config.collaboratorCount || 0];
+        document.querySelectorAll('#statsGrid .stat-item .stat-number').forEach((el, index) => {
+            const newVal = counts[index];
+            const oldVal = parseInt(el.textContent.replace(/\./g, ''));
+            el.dataset.count = newVal;
+            if (oldVal !== newVal && el.dataset.animating !== '1') {
+                el.textContent = '0';
+                animateCounter(el);
             }
-        }
+        });
+        localStorage.setItem('cached_collaborator_count', config.collaboratorCount || 0);
 
         // Page views from config response (single source of truth)
         const pageViews = config.pageViews || 0;
