@@ -8,7 +8,8 @@ let bankAccount = { holder: 'Neuronas con Chispa', iban: 'ES00 0000 0000 0000 00
 let currentOrder = null;
 let emailJSConfig = { serviceId: '', templateId: '', publicKey: '' };
 let stripePublishableKey = '';
-let currentUser = JSON.parse(localStorage.getItem('elaUser')) || null;
+let currentUser = null;
+try { currentUser = JSON.parse(localStorage.getItem('elaUser')); } catch(e) {}
 
 const API_URL = '/api';
 
@@ -250,6 +251,9 @@ function applyHeaderBg(blocks) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Show user menu immediately from localStorage
+    updateUserUI();
+    
     // Show cached header background immediately (from localStorage)
     const cachedBg = localStorage.getItem('cached_header_bg');
     const cachedBgMobile = localStorage.getItem('cached_header_bg_mobile');
