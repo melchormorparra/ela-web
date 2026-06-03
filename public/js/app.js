@@ -207,8 +207,8 @@ function applyContentBlocks() {
     const hero = document.querySelector('.hero');
     if (hero) {
         if (contentBlocks.header_bg && contentBlocks.header_bg.startsWith('data:')) {
-            const bgSize = window.innerWidth <= 480 ? 'cover' : 'contain';
-            hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + contentBlocks.header_bg + ') center/' + bgSize + ' no-repeat';
+            const bgSize = window.innerWidth <= 480 ? '100% auto' : 'contain';
+            hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + contentBlocks.header_bg + ') center top/' + bgSize + ' no-repeat';
         } else {
             hero.style.background = '';
         }
