@@ -12,11 +12,8 @@ let currentUser = null;
 try { currentUser = JSON.parse(localStorage.getItem('elaUser')); } catch(e) {}
 
 const API_URL = '/api';
-
 const SUPABASE_URL = 'https://ljlicipifdiirstjbgmc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqbGljaXBpZmRpaXJzdGpiZ21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzExOTQsImV4cCI6MjA5NDAwNzE5NH0.PAFYYAXbc8SsvUooHkAnCVIPiRpz3GTI4LeYS0ZKGiQ';
-const SUPABASE_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
-
 
 let contentBlocks = {};
 
@@ -62,19 +59,24 @@ async function fetchData() {
         }
         
         updateUserUI();
-        
-        const stats = config.stats || {};
-        const counts = [stats.families, stats.euros || 0, stats.events, config.collaboratorCount || 0];
-        document.querySelectorAll('#statsGrid .stat-item .stat-number').forEach((el, index) => {
-            const newVal = counts[index];
-            const oldVal = parseInt(el.textContent.replace(/\./g, ''));
-            el.dataset.count = newVal;
-            if (oldVal !== newVal && el.dataset.animating !== '1') {
-                el.textContent = '0';
-                animateCounter(el);
-            }
-        });
-        localStorage.setItem('cached_collaborator_count', config.collaboratorCount || 0);
+
+        const stats = config.stats;
+        if (stats) {
+            const counts = [stats.families || 0, stats.euros || 0, stats.events || 0];
+            document.querySelectorAll('#statsGrid .stat-item .stat-number').forEach((el, index) => {
+                if (index < 3) {
+                    el.dataset.count = counts[index];
+                    animateCounter(el);
+                }
+            });
+        }
+        // Collaborator count always updated (independent of stats block)
+        const collabEl = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
+        if (collabEl) {
+            collabEl.dataset.count = config.collaboratorCount || 0;
+            animateCounter(collabEl);
+            localStorage.setItem('cached_collaborator_count', config.collaboratorCount || 0);
+        }
 
         // Page views from config response (single source of truth)
         const pageViews = config.pageViews || 0;
@@ -85,11 +87,6 @@ async function fetchData() {
         renderProducts();
         renderBlog();
         initAnimations();
-        const collabStat = document.querySelector('#statsGrid .stat-item:last-child');
-        if (collabStat) {
-            collabStat.classList.add('animate-in');
-            collabStat.classList.remove('animate-ready');
-        }
         updateCartUI();
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -267,40 +264,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById('visitCount');
         if (el) el.textContent = parseInt(cachedPv).toLocaleString('es-ES');
     }
-    // Show cached collaborator count immediately (from localStorage)
-    const cachedCollab = localStorage.getItem('cached_collaborator_count');
-    if (cachedCollab) {
-        const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
-        if (el) {
-            el.dataset.count = cachedCollab;
-            el.textContent = parseInt(cachedCollab).toLocaleString('es-ES');
-            const statItem = el.closest('.stat-item');
-            if (statItem) {
-                statItem.classList.add('animate-in');
-                statItem.classList.remove('animate-ready');
-            }
-        }
-    }
     fetchData();
-    initNavigation();
-    initForms();
-    initBlogFilters();
-    // Visit counter is now incremented server-side by /api/config
-    // Fast collaborator count from Supabase direct (bypasses Vercel cold start)
+    // Fetch collaborator count directly from database
     (async () => {
         try {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&limit=0`, {
-                headers: { ...SUPABASE_HEADERS, Prefer: 'count=exact' }
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/users?select=id&role=eq.colaborador&limit=1000`, {
+                headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
             });
-            let count = parseInt(res.headers.get('x-total-count') || '0', 10);
-            if (!count) { const d = await res.json(); count = Array.isArray(d) ? d.length : 0; }
+            const data = await res.json();
+            const count = Array.isArray(data) ? data.length : 0;
             const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
-            if (el && el.textContent === '0') {
+            if (el && count > 0) {
                 el.dataset.count = count;
                 animateCounter(el);
             }
-        } catch (e) { console.error('Supabase count error:', e); }
+        } catch (e) {
+            console.error('Error fetching collaborator count:', e);
+        }
     })();
+    initNavigation();
+    initForms();
+    initBlogFilters();
 });
 
 // Re-apply header bg on resize (orientation change)
@@ -315,6 +299,186 @@ window.addEventListener('resize', () => {
         }
     }, 200);
 });
+
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = products.map(product => `
+        <div class="product-card" data-id="${product.id}">
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.name}">
+                ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+            </div>
+            <div class="product-info">
+                <span class="product-category">${product.category}</span>
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-price">${parseFloat(product.price).toFixed(2)}€</p>
+                <button class="add-to-cart" onclick="addToCart(${product.id})">
+                    <i class="fas fa-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+    
+    saveCart();
+    updateCartUI();
+    showNotification(`${product.name} añadido al carrito`);
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    saveCart();
+    updateCartUI();
+}
+
+function updateQuantity(productId, change) {
+    const item = cart.find(item => item.id === productId);
+    if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+            removeFromCart(productId);
+        } else {
+            saveCart();
+            updateCartUI();
+        }
+    }
+}
+
+function saveCart() {
+    localStorage.setItem('elaCart', JSON.stringify(cart));
+}
+
+function updateCartUI() {
+    const cartCount = document.getElementById('cartCount');
+    const cartItems = document.getElementById('cartItems');
+    const cartEmpty = document.getElementById('cartEmpty');
+    const cartFooter = document.getElementById('cartFooter');
+    const cartTotal = document.getElementById('cartTotal');
+    
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCount.textContent = totalItems;
+    
+    if (cart.length === 0) {
+        cartEmpty.style.display = 'block';
+        cartFooter.style.display = 'none';
+        cartItems.innerHTML = '';
+    } else {
+        cartEmpty.style.display = 'none';
+        cartFooter.style.display = 'block';
+        
+        cartItems.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    <img src="${item.image}" alt="${item.name}">
+                </div>
+                <div class="cart-item-details">
+                    <p class="cart-item-name">${item.name}</p>
+                    <p class="cart-item-price">${parseFloat(item.price).toFixed(2)}€</p>
+                    <div class="cart-item-qty">
+                        <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)"><i class="fas fa-minus"></i></button>
+                        <span>${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <button class="cart-item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+        
+        const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+        cartTotal.textContent = total.toFixed(2) + '€';
+    }
+}
+
+document.getElementById('cartBtn').addEventListener('click', () => {
+    document.getElementById('cartModal').classList.add('active');
+});
+
+function closeCart() {
+    const el = document.getElementById('cartModal');
+    el.classList.remove('active');
+    el.classList.remove('closing');
+}
+
+document.getElementById('cartClose').addEventListener('click', closeCart);
+
+document.getElementById('cartModal').addEventListener('click', (e) => {
+    if (e.target.id === 'cartModal') closeCart();
+});
+
+document.getElementById('paypalBtn').addEventListener('click', handlePayPal);
+document.getElementById('cardBtn').addEventListener('click', handleCard);
+document.getElementById('transferBtn').addEventListener('click', handleTransfer);
+document.getElementById('bizumBtn').addEventListener('click', handleBizum);
+
+function getCartTotal() {
+    return cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+}
+
+function createCurrentOrder(paymentMethod) {
+    return {
+        items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price })),
+        total: getCartTotal(),
+        paymentMethod: paymentMethod,
+        date: new Date().toISOString(),
+        status: 'pending'
+    };
+}
+
+async function handlePayPal() {
+    if (cart.length === 0) return;
+    const total = getCartTotal();
+    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=Compra+Tienda+Solidaria&amount=${total.toFixed(2)}&currency_code=EUR`;
+    currentOrder = createCurrentOrder('paypal');
+    await saveOrder(currentOrder);
+    window.open(paypalUrl, '_blank');
+    closeCart();
+    showModal('emailModal');
+}
+
+function handleTransfer() {
+    if (cart.length === 0) return;
+    document.getElementById('transferAmount').textContent = getCartTotal().toFixed(2) + '€';
+    document.getElementById('transferHolder').textContent = bankAccount.holder;
+    document.getElementById('transferIban').textContent = bankAccount.iban;
+    document.getElementById('transferRef').textContent = 'Tienda-' + Date.now().toString().slice(-8);
+    closeCart();
+    showModal('transferModal');
+}
+
+function handleBizum() {
+    if (cart.length === 0) return;
+    const total = getCartTotal();
+    alert('Para pagar con Bizum:\n\n1. Abre tu app de banco\n2. Envía ' + total.toFixed(2) + '€ al número: ' + bizumPhone + '\n3. Indica "Tienda Solidaria" en el concepto\n\nRecibirás un email de confirmación.');
+    currentOrder = createCurrentOrder('bizum');
+    saveOrder(currentOrder);
+    closeCart();
+    showModal('emailModal');
+}
+
+function handleCard() {
+    if (cart.length === 0) return;
+    if (!stripePublishableKey) {
+        alert('El pago con tarjeta no está configurado. Contacta con el administrador.');
+        return;
+    }
+    document.getElementById('cardTotal').textContent = getCartTotal().toFixed(2) + '€';
+    closeCart();
+    showModal('cardModal');
+    initStripe();
+}
 
 let stripe = null;
 let elements = null;
@@ -607,6 +771,11 @@ function initAnimations() {
 function animateCounter(element) {
     if (element.dataset.animating === '1') return;
     element.dataset.animating = '1';
+    const parent = element.closest('.stat-item');
+    if (parent) {
+        parent.classList.add('animate-in');
+        parent.classList.remove('animate-ready');
+    }
     const target = parseInt(element.dataset.count);
     const duration = 600;
     const step = target / (duration / 16);

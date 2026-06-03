@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "@supabase/supabase-js": "^2.105.4",
     "stripe": "^17.0.0"
   }
