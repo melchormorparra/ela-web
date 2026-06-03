@@ -64,7 +64,7 @@ async function fetchData() {
         updateUserUI();
         
         const stats = config.stats || {};
-        const counts = [stats.families, config.investedEuros || 0, stats.events, config.collaboratorCount || 0];
+        const counts = [stats.families, stats.euros || 0, stats.events, config.collaboratorCount || 0];
         document.querySelectorAll('#statsGrid .stat-item .stat-number').forEach((el, index) => {
             const newVal = counts[index];
             const oldVal = parseInt(el.textContent.replace(/\./g, ''));
