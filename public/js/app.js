@@ -204,14 +204,9 @@ function applyContentBlocks() {
     });
 
     // Apply header background
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        if (contentBlocks.header_bg && contentBlocks.header_bg.startsWith('data:')) {
-            const bgSize = window.innerWidth <= 480 ? '100% auto' : 'contain';
-            hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + contentBlocks.header_bg + ') center top/' + bgSize + ' no-repeat';
-        } else {
-            hero.style.background = '';
-        }
+    if (contentBlocks.header_bg && contentBlocks.header_bg.startsWith('data:')) {
+        localStorage.setItem('cached_header_bg', contentBlocks.header_bg);
+        applyHeaderBg(contentBlocks.header_bg);
     }
 
     // Apply palette colors
@@ -229,7 +224,18 @@ function applyContentBlocks() {
 
 }
 
+function applyHeaderBg(dataUrl) {
+    const hero = document.querySelector('.hero');
+    if (!hero || !dataUrl || !dataUrl.startsWith('data:')) return;
+    const bgSize = window.innerWidth <= 480 ? '100% auto' : 'contain';
+    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/' + bgSize + ' no-repeat';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Show cached header background immediately (from localStorage)
+    const cachedBg = localStorage.getItem('cached_header_bg');
+    if (cachedBg) applyHeaderBg(cachedBg);
+    
     // Show cached page views immediately (from sessionStorage)
     const cachedPv = sessionStorage.getItem('pageViews');
     if (cachedPv) {
