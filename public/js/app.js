@@ -244,16 +244,9 @@ function applyHeaderBg(blocks) {
         dataUrl = blocks.header_bg;
     }
     if (!dataUrl || !dataUrl.startsWith('data:')) return;
-    function setBg(img) {
-        const aspectRatio = img.naturalWidth + '/' + img.naturalHeight;
-        hero.style.minHeight = 'auto';
-        hero.style.aspectRatio = aspectRatio;
-        hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/100% auto no-repeat';
-    }
-    const img = new Image();
-    img.onload = function() { setBg(this); };
-    if (img.complete) setBg(img);
-    img.src = dataUrl;
+    hero.style.minHeight = '';
+    hero.style.aspectRatio = '';
+    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center center/contain no-repeat';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
