@@ -70,7 +70,9 @@ async function fetchData() {
         }
         const collabEl = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
         if (collabEl) {
-            collabEl.dataset.count = config.collaboratorCount || 0;
+            const count = config.collaboratorCount || 0;
+            collabEl.dataset.count = count;
+            localStorage.setItem('cached_collaborator_count', count);
             if (collabEl.textContent === '0' && collabEl.dataset.animating !== '1') {
                 animateCounter(collabEl);
             }
@@ -241,6 +243,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cachedPv) {
         const el = document.getElementById('visitCount');
         if (el) el.textContent = parseInt(cachedPv).toLocaleString('es-ES');
+    }
+    // Show cached collaborator count immediately (from localStorage)
+    const cachedCollab = localStorage.getItem('cached_collaborator_count');
+    if (cachedCollab) {
+        const el = document.querySelector('#statsGrid .stat-item:last-child .stat-number');
+        if (el) {
+            el.dataset.count = cachedCollab;
+            el.textContent = parseInt(cachedCollab).toLocaleString('es-ES');
+            const statItem = el.closest('.stat-item');
+            if (statItem) {
+                statItem.classList.add('animate-in');
+                statItem.classList.remove('animate-ready');
+            }
+        }
     }
     fetchData();
     initNavigation();
