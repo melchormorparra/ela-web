@@ -237,16 +237,14 @@ function applyHeaderBg(blocks) {
     const hero = document.querySelector('.hero');
     if (!hero) return;
     const isMobile = window.innerWidth <= 480;
-    let dataUrl, bgSize;
+    let dataUrl;
     if (isMobile) {
         dataUrl = blocks.header_bg_mobile || blocks.header_bg;
-        bgSize = '100% auto';
     } else {
         dataUrl = blocks.header_bg;
-        bgSize = 'contain';
     }
     if (!dataUrl || !dataUrl.startsWith('data:')) return;
-    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/' + bgSize + ' no-repeat';
+    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/100% auto no-repeat';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
