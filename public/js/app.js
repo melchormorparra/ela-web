@@ -244,7 +244,7 @@ function applyHeaderBg(blocks) {
     if (!dataUrl || !dataUrl.startsWith('data:')) return;
     hero.style.minHeight = '';
     hero.style.aspectRatio = '';
-    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center center/cover no-repeat';
+    hero.style.background = 'linear-gradient(rgba(27,46,110,0.7), rgba(0,217,245,0.3)), url(' + dataUrl + ') center top/contain no-repeat';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
