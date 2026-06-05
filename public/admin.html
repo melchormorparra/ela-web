@@ -1130,28 +1130,41 @@
             });
         }
 
+        function resizeImage(file, maxWidth, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    if (w > maxWidth) { h = h * maxWidth / w; w = maxWidth; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    callback(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function previewHeaderBg(event) {
             const file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('headerBgData').value = e.target.result;
-                document.getElementById('headerBgPreviewImg').src = e.target.result;
+            resizeImage(file, 1920, 0.8, function(dataUrl) {
+                document.getElementById('headerBgData').value = dataUrl;
+                document.getElementById('headerBgPreviewImg').src = dataUrl;
                 document.getElementById('headerBgPreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            });
         }
 
         function previewHeaderBgMobile(event) {
             const file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('headerBgMobileData').value = e.target.result;
-                document.getElementById('headerBgMobilePreviewImg').src = e.target.result;
+            resizeImage(file, 1920, 0.8, function(dataUrl) {
+                document.getElementById('headerBgMobileData').value = dataUrl;
+                document.getElementById('headerBgMobilePreviewImg').src = dataUrl;
                 document.getElementById('headerBgMobilePreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            });
         }
 
         function clearHeaderBg() {
