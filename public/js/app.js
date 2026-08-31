@@ -4,7 +4,7 @@ let config = {};
 let cart = JSON.parse(localStorage.getItem('elaCart')) || [];
 let paypalEmail = 'info@neuronasconchispa.es';
 let bizumPhone = '617 123 456';
-let bankAccount = { holder: 'Neuronas con Chispa', iban: 'ES00 0000 0000 0000 0000 0000' };
+let bankAccount = { holder: 'Neuronas con Chispa', iban: 'ES39 2100 4823 0322 0036 2949' };
 let currentOrder = null;
 let emailJSConfig = { serviceId: '', templateId: '', publicKey: '' };
 let stripePublishableKey = '';
@@ -1551,7 +1551,7 @@ async function showUserDashboard() {
                     <div id="upgradeForm">
                         <div class="form-group" style="margin-bottom:12px;">
                             <label>IBAN (para domiciliación mensual)</label>
-                            <input type="text" id="upgradeIban" class="dash-input" placeholder="ES00 0000 0000 0000 0000 0000">
+                            <input type="text" id="upgradeIban" class="dash-input" placeholder="ES39 2100 4823 0322 0036 2949">
                         </div>
                         <button class="btn btn-success" onclick="upgradeToColaborador()">
                             <i class="fas fa-hand-holding-heart"></i> Hacerme colaborador
