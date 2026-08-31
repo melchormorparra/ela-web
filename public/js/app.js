@@ -451,8 +451,8 @@ async function handlePayPal() {
 function handleTransfer() {
     if (cart.length === 0) return;
     document.getElementById('transferAmount').textContent = getCartTotal().toFixed(2) + '€';
-    document.getElementById('transferHolder').textContent = bankAccount.holder;
-    document.getElementById('transferIban').textContent = bankAccount.iban;
+    document.getElementById('transferHolder').textContent = (bankAccount && bankAccount.holder) || 'Neuronas con Chispa';
+    document.getElementById('transferIban').textContent = (bankAccount && bankAccount.iban) || 'ES39 2100 4823 0322 0036 2949';
     document.getElementById('transferRef').textContent = 'Tienda-' + Date.now().toString().slice(-8);
     closeCart();
     showModal('transferModal');
@@ -687,8 +687,10 @@ function showThankYouModal(type) {
     } else {
         const holderEl = document.getElementById('donationBankHolder');
         const ibanEl = document.getElementById('donationBankIban');
-        if (holderEl) holderEl.textContent = bankAccount.holder;
-        if (ibanEl) ibanEl.textContent = bankAccount.iban;
+        const defaultIban = 'ES39 2100 4823 0322 0036 2949';
+        const defaultHolder = 'Neuronas con Chispa';
+        if (holderEl) holderEl.textContent = (bankAccount && bankAccount.holder) || defaultHolder;
+        if (ibanEl) ibanEl.textContent = (bankAccount && bankAccount.iban) || defaultIban;
         if (titleEl) titleEl.textContent = '¡Gracias por tu donación!';
         if (subtextEl) subtextEl.textContent = 'Tu generosidad hace posible que sigamos luchando contra la ELA.';
         if (bankInfoEl) bankInfoEl.style.display = '';
